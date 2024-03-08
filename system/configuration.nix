@@ -156,12 +156,14 @@
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
+    
     neovim
     pulseaudio
 
     # Required for the system
     brightnessctl
     acpi
+    
 
     alacritty
     neofetch
@@ -172,6 +174,9 @@
     greetd.gtkgreet
     cage
   ];
+
+  services.flatpak.enable = true;
+
   programs.neovim = {
     enable = true;
     defaultEditor = true;

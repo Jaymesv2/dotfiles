@@ -5,46 +5,68 @@
     stateVersion = "23.11";
     packages = with pkgs; [
       # ----- SYSTEM -----
+
       # fonts
       fira-code-nerdfont
+      # hyprpaper
+      # hyprpicker
 
       cinnamon.nemo
 
-      tofi
-      #eww-wayland
-      htop
-      pavucontrol
-
-      hyprpaper
-      hyprpicker
-      gnumake
-
-      qjournalctl
-      lnav    
       libnotify
-      zathura
-      wget
 
       # ----- cli tools -----
+      lnav    
+      gnumake
+      wget
+      tofi
+      htop
+      zip
+      p7zip
+      loc
       jq
       yq
+      btop
       pandoc
       fzf
+      globalprotect-openconnect
+      wireguard-tools
+
+      # ----- system stuff -----
+      networkmanagerapplet
+      #eww-wayland
+      pavucontrol
+      flameshot
+      gnome.gnome-software
 
       # ----- applications -----
-      
-      discord
-      signal-desktop
-      thunderbird
-      logseq
-      obsidian
-      libreoffice
-      todoist-electron
-      qbittorrent
-      wireguard-tools
-      networkmanagerapplet
+    
+        # communication
+        discord
+        signal-desktop
+        thunderbird
+        qpwgraph
 
-      #wg-netmanager
+        # productivity
+        logseq
+        obsidian
+        libreoffice
+        todoist-electron
+        pdfmixtool
+        okular
+        
+        # other
+        qbittorrent
+        ledger-live-desktop
+        qjournalctl
+        
+        #
+        zathura
+        sxiv
+        vlc
+
+
+
       
     ];
     sessionVariables = {
@@ -94,10 +116,10 @@
 
   fonts.fontconfig.enable = true;
 
-  services.mako = {
-    enable = true;
-    defaultTimeout = 10000;
-  };
+  # services.mako = {
+  #   enable = true;
+  #   defaultTimeout = 10000;
+  # };
 
   # xresources.extraConfig = ''
   #   Xft.dpi: 141
@@ -106,12 +128,9 @@
   xsession.windowManager.awesome = {
     enable = true;
   };
-
-
-
   xsession.enable = true;
 
-
+  programs.mpv.enable = true;
 
   # programs.thunderbird.enable = true;
 
@@ -172,7 +191,9 @@
   services.network-manager-applet.enable = true;
 
   programs.home-manager.enable = true;
+
   programs.firefox.enable = true;
+
   #programs.wofi.enable = true;
   programs.rofi = {
     enable = true;
@@ -316,6 +337,7 @@
 
     initExtra = ''
       zstyle ':completion:*' menu select
+      setopt NO_EXTENDED_GLOB
     '';
 
     shellAliases = {
