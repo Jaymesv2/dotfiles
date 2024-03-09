@@ -26,6 +26,11 @@
   boot.initrd.luks.devices."luks-9a777e5b-11f1-4bff-b65a-4427855f3cc0".device = "/dev/disk/by-uuid/9a777e5b-11f1-4bff-b65a-4427855f3cc0";
   networking.hostName = "nixos"; # Define your hostname.
 
+  services.udev.packages = with pkgs; [
+    ledger-udev-rules
+    libu2f-host
+  ];
+
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
