@@ -3,6 +3,7 @@
   programs.neovim = {
     enable = true;
     extraConfig = lib.fileContents ./init.vim;
+    # extraLuaConfig = lib.filecontents ./init.lua;
 
     plugins = with pkgs.vimPlugins; [
       nvim-treesitter.withAllGrammars

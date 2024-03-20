@@ -9,4 +9,5 @@
     #   gpgPath = "";
     # };
   };
+  programs.gitui.enable = true;
 }

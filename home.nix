@@ -34,6 +34,9 @@
       pavucontrol
       flameshot
       gnome.gnome-software
+      gnome.file-roller
+      cinnamon.nemo-fileroller
+      peazip
 
       # ----- applications -----
     
@@ -64,6 +67,14 @@
         ledger-live-desktop
         monero-gui
         monero-cli
+
+
+        # drive recovery
+        diskscan
+        parted
+        gnomecast
+        gnome.gnome-disk-utility
+        gparted
       
     ];
     sessionVariables = {
