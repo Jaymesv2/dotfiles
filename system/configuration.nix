@@ -48,15 +48,15 @@
 
   # ------ DNS -----
 
-  networking.nameservers = [ "1.1.1.1#one.one.one.one" "1.0.0.1#one.one.one.one" ];
+  #networking.nameservers = [ "1.1.1.1#one.one.one.one" "1.0.0.1#one.one.one.one" ];
 
-  services.resolved = {
-    enable = true;
-    dnssec = "true";
-    domains = [ "~." ];
-    fallbackDns = [ "1.1.1.1#one.one.one.one" "1.0.0.1#one.one.one.one" ];
-    dnsovertls = "true";
-  };
+  # services.resolved = {
+  #   enable = true;
+  #   dnssec = "true";
+  #   domains = [ "~." ];
+  #   fallbackDns = [ "1.1.1.1#one.one.one.one" "1.0.0.1#one.one.one.one" ];
+  #   dnsovertls = "true";
+  # };
 
 
 
@@ -82,6 +82,19 @@
        turbo = "auto";
     };
   };
+
+
+
+  # ------------ STEAM -------------
+  programs.steam = {
+    enable = true;
+    # package = pkgs.steam.override {
+    #   #withJava = true;
+    #   extraPkgs = with pkgs; [ glxinfo ];
+    # };
+  };
+  programs.java.enable = true;
+
 
 
   # Nvidia Configuration 
@@ -155,7 +168,7 @@
     description = "Trent";
     group = "trent";
     shell = pkgs.zsh;
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
     packages = with pkgs; [];
   };
   programs.zsh.enable = true;
@@ -167,13 +180,20 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # virtualization stuff
+  programs.dconf.enable = true;
+
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
+
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.pathsToLink = [ "/share/zsh" ];
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
-    
+    qemu
     neovim
     pulseaudio
 
