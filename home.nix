@@ -1,4 +1,13 @@
 { lib, pkgs, pkgs-unstable, ... }: rec {
+  imports = [
+    home/nvim/nvim.nix
+    home/zsh/zsh.nix
+    home/alacritty.nix
+    home/waybar.nix
+    home/ssh.nix
+    home/git.nix
+    #home/emacs.nix
+  ];
   home = {
     username = "trent";
     homeDirectory = "/home/trent";
@@ -15,6 +24,7 @@
 
       # ----- cli tools -----
       lnav    
+      tree
       gnumake
       wget
       htop
@@ -28,6 +38,10 @@
       fzf
       globalprotect-openconnect
       wireguard-tools
+      tmux
+
+      # ----- languages -----
+      swiProlog
 
       # ----- system stuff -----
       networkmanagerapplet
@@ -94,14 +108,6 @@
   
   programs.home-manager.enable = true;
 
-  imports = [
-    home/nvim/nvim.nix
-    home/zsh/zsh.nix
-    home/alacritty.nix
-    home/waybar.nix
-    home/ssh.nix
-    home/git.nix
-  ];
 
   xdg = {
     mime.enable = true;
@@ -132,6 +138,14 @@
     #     "gtk-4.0/gtk-dark.css".source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/gtk-dark.css";
     # };
   };
+
+  dconf.settings = {
+    "org/virt-manager/virt-manager/connections" = {
+      autoconnect = ["qemu:///system"];
+      uris = ["qemu:///system"];
+    };
+  };
+
 
 
   fonts.fontconfig.enable = true;

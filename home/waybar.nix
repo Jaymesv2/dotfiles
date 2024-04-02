@@ -20,7 +20,7 @@
           #"disk"
           "memory"
           #"mpd" 
-          "temperature" 
+          "temperature"
           "network"
           "pulseaudio"
           #"pulseaudio/slider"
