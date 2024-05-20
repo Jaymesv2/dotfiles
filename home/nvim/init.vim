@@ -6,10 +6,16 @@ set number relativenumber
 
 syntax on
 filetype plugin indent on
-map <leader>o :setlocal spell! spelllang=en_us<CR>
 
 set wildmode=longest,list,full
 set splitbelow splitright
+set tabstop=4
+set shiftwidth=4
+set expandtab
+
+map <leader>h :noh<CR>
+
+map <leader>o :setlocal spell! spelllang=en_us<CR>
 
 map <leader>n :NERDTreeToggle<CR>
 
@@ -25,11 +31,14 @@ nnoremap <C-f> :NERDTreeFind<CR>
 
 
 
-set tabstop=4
-set shiftwidth=4
-set expandtab
-
 let g:vimspector_enable_mappings = 'HUMAN'
 nnoremap <Leader>dd :call vimspector#Launch()<CR>
+
+" Telescope binds
+nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
+nnoremap <leader>fc <cmd>lua require('telescope.builtin').tags()<cr>
 
 autocmd VimLeave \lc %

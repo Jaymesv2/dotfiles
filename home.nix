@@ -1,4 +1,4 @@
-{ lib, pkgs, pkgs-unstable, ... }: rec {
+{ lib, pkgs, pkgs-unstable, nix-gaming, ... }: rec {
   imports = [
     home/nvim/nvim.nix
     home/zsh/zsh.nix
@@ -36,9 +36,15 @@
       btop
       pandoc
       fzf
-      globalprotect-openconnect
+      #globalprotect-openconnect
       wireguard-tools
       tmux
+      findutils
+
+      ripgrep
+      fd
+      ctags
+
 
       # ----- languages -----
       swiProlog
@@ -59,6 +65,7 @@
         signal-desktop
         thunderbird
         qpwgraph
+        element-desktop
 
         # productivity
         logseq
@@ -67,10 +74,14 @@
         todoist-electron
         pdfmixtool
         okular
+	notepadqq
         
         # other
         qbittorrent
         qjournalctl
+	hydrus
+	mcomix
+	
         
         #
         zathura
@@ -89,7 +100,19 @@
         gnomecast
         gnome.gnome-disk-utility
         gparted
+
+
+        # games
+        ckan
+	#osu-lazer-bin
+	prismlauncher
+	graalvm-ce
+
+	nix-gaming.packages.x86_64-linux.osu-stable
+	nix-gaming.packages.x86_64-linux.osu-lazer-bin
       
+    ] ++ [
+        pkgs-unstable.devenv
     ];
     sessionVariables = {
       XDG_CACHE_HOME  = "$HOME/.cache";
@@ -115,6 +138,7 @@
       enable = true;
       defaultApplications = {
         "application/pdf" = "org.pwmt.zathura-pdf-mupdf.desktop;";
+	"application/cbz" = "mcomix.desktop";
       };
       #defaultApplications = {
       #  "word"
@@ -154,7 +178,15 @@
 
   xsession.windowManager.awesome = {
     enable = true;
+    package = pkgs.writeShellScriptBin "awesome" ''
+    ${pkgs.systemd}/bin/systemd-cat -t awesome ${pkgs.awesome}/bin/awesome
+    '';
   };
+  
+  # pkgs.writeShellScriptBin "hello" ''
+  # Call hello with a traditional greeting 
+  #exec ${pkgs.hello}/bin/hello -t
+
   
   programs.rofi = {
     enable = true;
