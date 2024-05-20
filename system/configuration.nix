@@ -2,22 +2,25 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ lib, config, pkgs, ... }:
-
-{
+{ lib, config, pkgs, pkgs-unstable, ... }: {
   imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
+    [ ./hardware-configuration.nix # Include the results of the hardware scan.
+      ./network.nix
+      #./channel.nix
     ];
 
-  #nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix = {
+    # pkgs.nixFlakes is an alias for pkgs.nixVersions.stable
     package = pkgs.nixFlakes;
     settings.experimental-features = [ "nix-command" "flakes" ];
-  #extraOptions = ''
-  #  experimental-features = nix-command flakes
-  #'';
+    settings = {
+      substituters = ["https://nix-gaming.cachix.org"];
+      trusted-public-keys = ["nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="];
+    };
   };
+
+
+  nixpkgs.config.nvidia.acceptLicense = true;
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -31,12 +34,22 @@
     libu2f-host
   ];
 
+    # emulate aarch64 for building rpi images
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+
+
+
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
+  services.fwupd.enable = true;
+
   # Enable networking
   networking.networkmanager.enable = true;
+  services.gvfs.enable = true;
+  services.udisks2.enable = true;
+
 
   # Set your time zone.
   time.timeZone = "America/Chicago";
@@ -83,15 +96,16 @@
     };
   };
 
-
-
   # ------------ STEAM -------------
   programs.steam = {
     enable = true;
-    # package = pkgs.steam.override {
-    #   #withJava = true;
-    #   extraPkgs = with pkgs; [ glxinfo ];
-    # };
+    gamescopeSession.enable = true;
+    package = pkgs.steam.override {
+      #withJava = true;
+      #withPrimus = true;
+
+      extraPkgs = p: with p; [ bumblebee glxinfo ];
+    };
   };
   programs.java.enable = true;
 
@@ -127,6 +141,16 @@
   # Load nvidia driver for Xorg and Wayland
   specialisation = {
     nogpu.configuration = {
+      hardware.nvidia.prime = {
+        sync.enable = pkgs.lib.mkForce false;
+
+        offload = {
+          enable = pkgs.lib.mkForce true;
+          enableOffloadCmd = pkgs.lib.mkForce true;
+        };
+
+
+      };
       boot.extraModprobeConfig = ''
         blacklist nouveau
         options nouveau modeset=0
@@ -168,7 +192,7 @@
     description = "Trent";
     group = "trent";
     shell = pkgs.zsh;
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" ];
     packages = with pkgs; [];
   };
   programs.zsh.enable = true;
@@ -185,6 +209,17 @@
 
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
+
+
+  virtualisation.docker = {
+    enable = true;
+  };
+
+
+
+  services.globalprotect.enable = true;
+
+
 
 
   # List packages installed in system profile. To search, run:
@@ -211,6 +246,7 @@
     greetd.gtkgreet
     cage
     dig
+    globalprotect-openconnect
   ];
 
   services.flatpak.enable = true;
@@ -225,6 +261,8 @@
     xwayland.enable = true;
     enableNvidiaPatches = true;
   };
+
+
   fonts.packages = with pkgs; [
     noto-fonts
     noto-fonts-cjk
@@ -235,6 +273,8 @@
     mplus-outline-fonts.githubRelease
     dina-font
     proggyfonts
+    # (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
+    (nerdfonts.override { } )
   ];
 
   services.xserver = {
@@ -247,7 +287,8 @@
       touchpad.naturalScrolling = false;
       touchpad.accelProfile = "flat";
     };
-    logFile = "/dev/null";
+    #logFile = "/dev/null";
+    logFile = "/var/log/Xorg.0.log";
     displayManager.lightdm = {
       enable = true;
       greeters.gtk = {
@@ -293,6 +334,11 @@
     # If you want to use JACK applications, uncomment this
     #jack.enable = true;
   };
+
+  # programs.nix-ld.enable = true;
+  # environment.variables = {
+  #   NIX_LD = lib.fileContents "${pkgs.stdenv.cc}/nix-support/dynamic-linker";
+  # };
 
 
   # Some programs need SUID wrappers, can be configured further or are

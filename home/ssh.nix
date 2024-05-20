@@ -1,8 +1,11 @@
 { pkgs, lib, ... }: {
   programs.ssh = {
     enable = true;
-    #addKeysToAgent = "yes";
+    # addKeysToAgent = "yes";
     matchBlocks = {
+      "*".extraOptions = {
+        AddKeysToAgent = "yes";
+      };
       "10.0.0.246".user = "trent";
       "10.0.0.1".extraOptions = {
 	      PubkeyAcceptedAlgorithms = "+ssh-rsa";
@@ -25,5 +28,4 @@
     };
   };
   services.ssh-agent.enable = true;
-  
 }
