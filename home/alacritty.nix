@@ -2,8 +2,8 @@
   programs.alacritty = {
     enable = true;
     settings = {
-      #font.size = 8.0;
-      "font.normal".family = "MesloLGS NF";
+      font.size = 8.0;
+      # "font.normal".family = "MesloLGS NF";
       window = {
         decorations = "full";
         decorations_theme_variant = "Dark";
