@@ -74,13 +74,11 @@
         todoist-electron
         pdfmixtool
         okular
-	notepadqq
+	    notepadqq
         
         # other
         qbittorrent
         qjournalctl
-	hydrus
-	mcomix
 	
         
         #
