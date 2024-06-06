@@ -6,7 +6,6 @@
   imports =
     [ ./hardware-configuration.nix # Include the results of the hardware scan.
       ./network.nix
-      #./channel.nix
     ];
 
   nix = {
