@@ -136,7 +136,9 @@
       enable = true;
       defaultApplications = {
         "application/pdf" = "org.pwmt.zathura-pdf-mupdf.desktop;";
-	"application/cbz" = "mcomix.desktop";
+        "image/jpeg" = "sxiv.desktop";
+        "image/png" = "sxiv.desktop";
+        "image.gif" = "sxiv.desktop";
       };
       #defaultApplications = {
       #  "word"
