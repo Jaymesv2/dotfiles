@@ -56,7 +56,7 @@
       gnome.gnome-software
       gnome.file-roller
       cinnamon.nemo-fileroller
-      peazip
+      # peazip
 
       # ----- applications -----
     
