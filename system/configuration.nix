@@ -20,6 +20,8 @@
   };
 
 
+
+
   nixpkgs.config.nvidia.acceptLicense = true;
 
   # Bootloader.
@@ -58,6 +60,7 @@
   hardware.bluetooth = {
     enable = true;
   };
+
 
   # ------ DNS -----
 
@@ -104,7 +107,7 @@
       #withJava = true;
       #withPrimus = true;
 
-      extraPkgs = p: with p; [ bumblebee glxinfo ];
+      extraPkgs = p: with p; [ glxinfo ];
     };
   };
   programs.java.enable = true;
@@ -259,7 +262,7 @@
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
-    enableNvidiaPatches = true;
+    #enableNvidiaPatches = true;
   };
 
 
@@ -273,37 +276,51 @@
     mplus-outline-fonts.githubRelease
     dina-font
     proggyfonts
-    # (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
-    (nerdfonts.override { } )
+    (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
+    # (nerdfonts.override { } )
   ];
+
+
+  # Why is this here on 24.05??
+  services.displayManager = {
+    defaultSession = "xsession";
+  };
+
+
+
+  services.libinput = {
+    touchpad.naturalScrolling = false;
+    touchpad.accelProfile = "flat";
+  };
 
   services.xserver = {
     # dpi = 166;
     enable = true;
-    layout = "us";
-    xkbVariant = "";
-    wacom.enable = true;
-    libinput = {
-      touchpad.naturalScrolling = false;
-      touchpad.accelProfile = "flat";
+    xkb = {
+      layout = "us";
+      variant = "";
     };
+    wacom.enable = true;
     #logFile = "/dev/null";
     logFile = "/var/log/Xorg.0.log";
-    displayManager.lightdm = {
-      enable = true;
-      greeters.gtk = {
-        enable = true;
 
+    displayManager = {
+      lightdm = {
+        enable = true;
+        greeters.gtk = {
+          enable = true;
+
+        };
       };
+      session = [
+        {
+          manage = "desktop";
+          name = "xsession";
+          start = ''exec $HOME/.xsession'';
+        }
+      ];
     };
-    displayManager.defaultSession = "xsession";
-    displayManager.session = [
-      {
-        manage = "desktop";
-        name = "xsession";
-        start = ''exec $HOME/.xsession'';
-      }
-    ];
+
     # windowManager.awesome = {
     #   enable = true;
     #   luaModules = with pkgs.luaPackages; [
