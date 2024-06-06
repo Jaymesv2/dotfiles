@@ -24,6 +24,7 @@
   nixpkgs.config.nvidia.acceptLicense = true;
 
   # Bootloader.
+  boot.loader.systemd-boot.configurationLimit = 25;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
