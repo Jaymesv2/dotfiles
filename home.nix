@@ -144,6 +144,12 @@
       #  "word"
       #};
     };
+    portal = {
+      enable = true;
+      xdgOpenUsePortal = true;
+      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+      # config = {};
+    };
     userDirs = {
       enable = true;
       createDirectories = true;
