@@ -6,6 +6,9 @@ vim.g.loaded_netrwPlugin = 1
 vim.o.termguicolors = true
 
 -- vim.o.wildmode={ 'longest', 'list', 'full' }
+
+vim.o.breakindent = true
+
 vim.o.clipboard = 'unnamedplus'
 -- vim.o.completeopt = {'menu', 'menuone', 'noselect'}
 vim.o.mouse = 'a'
@@ -15,8 +18,15 @@ vim.o.softtabstop = 4
 vim.o.shiftwidth = 4
 vim.o.expandtab = true
 
-vim.o.number = true
-vim.o.relativenumber = true
+-- vim.o.number = true
+-- vim.o.relativenumber = true
+--
+vim.opt.nu = true
+vim.opt.number = true
+vim.opt.relativenumber = true
+-- vim.opt.statuscolumn = "%=%{v:virtnum < 1 ? (v:relnum ? v:relnum : v:lnum < 10 ? v:lnum . '  ' : v:lnum) : ''}%=%s"
+-- -- vim.o.statuscolumn = "%s %l %r "
+
 vim.o.cursorline = true
 vim.o.splitbelow = true
 vim.o.splitright = true

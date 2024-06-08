@@ -15,3 +15,5 @@ vim.keymap.set('n', '<leader>rf', function()
   ht.repl.toggle(vim.api.nvim_buf_get_name(0))
 end, opts)
 vim.keymap.set('n', '<leader>rq', ht.repl.quit, opts)
+
+require('telescope').load_extension('ht')
