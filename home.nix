@@ -6,7 +6,7 @@
     home/waybar.nix
     home/ssh.nix
     home/git.nix
-    #home/emacs.nix
+    home/emacs/emacs.nix
   ];
   home = {
     username = "trent";
