@@ -69,12 +69,6 @@ vim.keymap.set('v', '<', '<gv', opts)
 vim.keymap.set('v', '>', '>gv', opts)
 
 
-vim.keymap.set("n", "<leader>bp", function()
-    require('cokeline.mappings').pick("focus")
-end, { desc = "Pick a buffer to focus" })
-
-
-
 
 vim.keymap.set('i', '<F2>', function() require("renamer").rename() end, { noremap = true, silent = true }, { desc = 'Rename under cursor' })
 vim.keymap.set('n', '<leader>rn', function () require("renamer").rename() end, { noremap = true, silent = true }, { desc = 'Rename under cursor' })

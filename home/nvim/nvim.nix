@@ -83,6 +83,7 @@ in {
     fzf
     fd
     ripgrep
+    lua-language-server
   ];
 
   programs.neovim = {
@@ -118,9 +119,9 @@ in {
 
       # Motions
       leap-nvim # https://github.com/ggandor/leap.nvim
-      # harpoon2 # https://github.com/ThePrimeagen/harpoon/tree/harpoon2
+      harpoon2 # https://github.com/ThePrimeagen/harpoon/tree/harpoon2
       # 
-      # nvim-spider # https://github.com/chrisgrieser/nvim-spider
+      nvim-spider # https://github.com/chrisgrieser/nvim-spider
       # tabout-nvim # https://github.com/abecodes/tabout.nvim
 
 
@@ -134,6 +135,8 @@ in {
       dressing-nvim # https://github.com/stevearc/dressing.nvim?tab=readme-ov-file
       nvim-notify # https://github.com/rcarriga/nvim-notify
       nui-nvim # https://github.com/MunifTanjim/nui.nvim
+      scope-nvim # https://github.com/tiagovla/scope.nvim
+
 
         # Telescope
         telescope-nvim
@@ -154,7 +157,9 @@ in {
         lualine-nvim # https://github.com/nvim-lualine/lualine.nvim
 
         # Buffer line
-        nvim-cokeline # https://github.com/willothy/nvim-cokeline
+        # nvim-cokeline # https://github.com/willothy/nvim-cokeline
+        # barbar-nvim # https://github.com/romgrk/barbar.nvim?tab=readme-ov-file#integrations
+        bufferline-nvim # https://github.com/akinsho/bufferline.nvim
 
         # Scroll
         # neoscroll-nvim # https://github.com/karb94/neoscroll.nvim
@@ -170,9 +175,10 @@ in {
       # toggleterm-nvim # https://github.com/akinsho/toggleterm.nvim
       # nix-develop-nvim # https://github.com/figsoda/nix-develop.nvim
 
-      # iron-nvim https://github.com/Vigemus/iron.nvim
+      iron-nvim # https://github.com/Vigemus/iron.nvim
+      neorepl-nvim # https://github.com/ii14/neorepl.nvim
 
-
+    
       # Workspace management
       # direnv-vim
       # editorconfig-vim # https://github.com/editorconfig/editorconfig-vim
@@ -192,7 +198,7 @@ in {
         renamer-nvim # https://github.com/filipdutescu/renamer.nvim
         nvim-autopairs # https://github.com/windwp/nvim-autopairs
 
-        # nvim-surround # https://github.com/kylechui/nvim-surround
+        nvim-surround # https://github.com/kylechui/nvim-surround
         nvim-ufo # https://github.com/kevinhwang91/nvim-ufo
         indent-blankline-nvim # https://github.com/lukas-reineke/indent-blankline.nvim?tab=readme-ov-file
         # vim-multiple-cursors
