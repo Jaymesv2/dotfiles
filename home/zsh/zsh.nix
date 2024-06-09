@@ -19,7 +19,7 @@
 	#"dbz/kube-aliases"
 
 
-      ];
+    ];
 
       # what does this do?
       #useFriendlyNames = true;
