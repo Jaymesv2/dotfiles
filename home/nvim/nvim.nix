@@ -1,82 +1,17 @@
 {config, lib, pkgs, ... }: let 
-  mutable_conf = true;
-  #utils = import ./utils.nix {inherit config pkgs lib; };
-  #  vimconf = config.lib.file.mkOutOfStoreSymlink "~/.config/nix/home/nvim/init.vim";
-  #  luaconf = config.lib.file.mkOutOfStoreSymlink "~/.config/nix/home/nvim/init.lua";
-
-    # Recursively finds all file names in the specified directory and returns a list of them all seperated by a '/' with not prefix
-    # relativeNamesRec :: String -> [String]
-    relativeNamesRec = dir:
-        lib.lists.flatten
-            (lib.attrsets.mapAttrsToList
-                (name: v:
-                    if v == "directory" 
-                        then builtins.map (path: "${name}/${path}") (relativeNamesRec ("${dir}/${name}" ))
-                        else [ name ] )
-                (builtins.readDir dir));
-	
-    # makeFiles :: (Strias a set mapping directory entries to the corresponding file type. For instance, if directory A contains a regular file B and another directory C, then builtins.readDir ./A will return the setng -> ??) -> Path -> String -> String -> Attrset
-    mirrorFiles_ = f: src: absolutPathToSrc: dst: 
-        builtins.listToAttrs 
-                (builtins.map 
-                    (path: {name = "${dst}/${path}"; value = { source = f "${absolutPathToSrc}/${path}"; }; } )
-                    (relativeNamesRec src));
-
-    mirrorFilesOutOfStore = mirrorFiles_ config.lib.file.mkOutOfStoreSymlink;
-    mirrorFiles = mirrorFiles_ (x: x);
-
-        
 in {
-
-  imports = [
-  ] ++ (if mutable_conf then 
-    [({...}: { 
-      home.file =
-      mirrorFilesOutOfStore ./. "${config.home.homeDirectory}/.config/nix/home/nvim" ".config/nvim";
-
-      #programs.neovim.extraConfig = "source ${vimconf}";
-      # home.activation.neovimConf = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      #     echo "-------------------------------------------------------------"
-      #     echo "------------ START MANUAL IDEMPOTENT SECTION ----------------"
-      #     echo "-------------------------------------------------------------"
-      #     # homedir=${config.home.homeDirectory}
-      #     homedir="/home/trent"
-      #     echo "****** homedir=$homedir"
-
-      #     echo
-      #     echo "------ symlinks ----"
-
-      #     symlink() {
-      #       local src="$1"
-      #       local dest="$2"
-      #       [[ -e "$src" ]] && {
-      #           [[ -e $dest ]] && {
-      #               echo "****** OK: $dest exists"
-      #           } || {
-      #               ln -s "$src" "$dest" || {
-      #                   echo "****** ERROR: could not symlink $src to $dest"
-      #               }
-      #               echo "****** CHANGED: $dest updated"
-      #           }
-      #       } || {
-      #           echo "****** ERROR: source $src does not exist"
-      #       }
-      #     }
-      #     
-      #     symlink "$homedir/.config/nix/home/nvim" "$homedir/.config/nvim" 
-
-      #     echo "-------------------------------------------------------------"
-      #     echo "------------ END MANUAL IDEMPOTENT SECTION ----------------"
-      #     echo "-------------------------------------------------------------"
-      # '';
-    })]
-  else 
-    [({...}: {
-      programs.neovim.extraConfig = lib.fileContents ./init.vim;
-    })]
-  );
+  imports = [ ./workingFiles.nix ];
+  workingFiles.enable = true;
+  workingFiles.file.neovimConfig.linkSource = ".config/nix/home/nvim";
+  home.file.neovimConfig = {
+      enable = true;
+      source = ./.;
+      recursive = true;
+      target = ".config/nvim";
+  };
 
   home.packages = with pkgs; [
+    neovide
     clang-tools
     nixd
     lazygit
@@ -111,7 +46,20 @@ in {
     # Need to look into
     # - smart renaming
     # - 
-    plugins = with pkgs.vimPlugins; [
+    plugins = [ 
+        /* (pkgs.callPackage ({ neovimUtils, fetchFromGitHub, ... }:  neovimUtils.buildNeovimPlugin {
+            pname = "bufresize.nvim";
+            version = "2022-03-20";
+            src = fetchFromGitHub {
+              owner = "kwkarlwang";
+              repo = "bufresize.nvim";
+              rev = "3b19527ab936d6910484dcc20fb59bdb12322d8b";
+              #sha256 = "";
+              sha256 = "0g0z1g1nmrjmg9298vg2ski6m41f1yhpas8kr9mi8pa6ibk4m63x";
+            };
+            meta.homepage = "https://github.com/kwkarlwang/bufresize.nvim";
+        }) {}) */
+    ] ++ (with pkgs.vimPlugins; [
       # Treesitter
       nvim-treesitter.withAllGrammars
       # nvim-treesitter-textobjects # https://github.com/nvim-treesitter/nvim-treesitter-textobjects
@@ -123,6 +71,7 @@ in {
       # 
       nvim-spider # https://github.com/chrisgrieser/nvim-spider
       # tabout-nvim # https://github.com/abecodes/tabout.nvim
+
 
 
       # test framework
@@ -137,24 +86,31 @@ in {
       nui-nvim # https://github.com/MunifTanjim/nui.nvim
       scope-nvim # https://github.com/tiagovla/scope.nvim
 
+      smart-splits-nvim # https://github.com/mrjones2014/smart-splits.nvim
+
+      # dropbar-nvim # https://github.com/Bekaboo/dropbar.nvim?tab=readme-ov-file#similar-projects
+
+      statuscol-nvim # https://github.com/luukvbaal/statuscol.nvim
+
+
 
         # Telescope
         telescope-nvim
         telescope-fzf-native-nvim # https://github.com/nvim-telescope/telescope-fzf-native.nvim
 
 
-      # smart-splits-nvim # https://github.com/mrjones2014/smart-splits.nvim
       # winshift-nvim # https://github.com/sindrets/winshift.nvim
       # nvim-window-picker # https://github.com/s1n7ax/nvim-window-picker/
 
-      # which-key-nvim # https://github.com/folke/which-key.nvim
+      which-key-nvim # https://github.com/folke/which-key.nvim
+      legendary-nvim # 
 
-      # cheatsheet-nvim # https://github.com/sudormrfbin/cheatsheet.nvim/
-      # vim-illuminate # https://github.com/RRethy/vim-illuminate
+      vim-illuminate # https://github.com/RRethy/vim-illuminate
 
 
         # Status line
         lualine-nvim # https://github.com/nvim-lualine/lualine.nvim
+        heirline-nvim # https://github.com/rebelot/heirline.nvim
 
         # Buffer line
         # nvim-cokeline # https://github.com/willothy/nvim-cokeline
@@ -172,7 +128,7 @@ in {
       # Task Management stuff
       overseer-nvim # https://github.com/stevearc/overseer.nvim/tree/master
       # neomake
-      # toggleterm-nvim # https://github.com/akinsho/toggleterm.nvim
+      toggleterm-nvim # https://github.com/akinsho/toggleterm.nvim
       # nix-develop-nvim # https://github.com/figsoda/nix-develop.nvim
 
       iron-nvim # https://github.com/Vigemus/iron.nvim
@@ -245,8 +201,9 @@ in {
 
       # Language Support
         # Misc
-        vimtex
-        #  rustaceanvim # https://github.com/mrcjkb/rustaceanvim
+        vimtex # 
+
+        rustaceanvim # https://github.com/mrcjkb/rustaceanvim
 
         # Haskell
         haskell-tools-nvim # https://github.com/mrcjkb/haskell-tools.nvim
@@ -260,6 +217,8 @@ in {
       conform-nvim # https://github.com/stevearc/conform.nvim
 
 
+      nvim-sops # https://github.com/lucidph3nx/nvim-sops
+
       # Deps
       plenary-nvim
 
@@ -271,7 +230,7 @@ in {
 
       # Icons
       nvim-web-devicons
-    ];
+    ]) ;
 
 
   };

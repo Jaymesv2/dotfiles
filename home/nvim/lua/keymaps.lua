@@ -1,5 +1,8 @@
+
+local wk = require('which-key')
+
 vim.g.mapleader = ' '
--- vim.g.maplocalleader = ','
+vim.g.maplocalleader = ' '
 
 -- define common options
 local opts = {
@@ -18,23 +21,20 @@ vim.keymap.set({'n', 'x', 'o'}, 'gs', '<Plug>(leap-from-window)', { desc = 'Leap
 
 -- Hint: see `:h vim.map.set()`
 -- Better window navigation
-vim.keymap.set('n', '<C-h>', '<C-w>h', opts)
-vim.keymap.set('n', '<C-j>', '<C-w>j', opts)
-vim.keymap.set('n', '<C-k>', '<C-w>k', opts)
-vim.keymap.set('n', '<C-l>', '<C-w>l', opts)
+-- vim.keymap.set('n', '<C-h>', '<C-w>h', opts)
+-- vim.keymap.set('n', '<C-j>', '<C-w>j', opts)
+-- vim.keymap.set('n', '<C-k>', '<C-w>k', opts)
+-- vim.keymap.set('n', '<C-l>', '<C-w>l', opts)
 
 -- Resize with arrows
 -- delta: 2 lines
-vim.keymap.set('n', '<C-Up>', ':resize -2<CR>', opts)
-vim.keymap.set('n', '<C-Down>', ':resize +2<CR>', opts)
-vim.keymap.set('n', '<C-Left>', ':vertical resize +2<CR>', opts)
-vim.keymap.set('n', '<C-Right>', ':vertical resize -2<CR>', opts)
+-- vim.keymap.set('n', '<C-Up>', ':resize -2<CR>', opts)
+-- vim.keymap.set('n', '<C-Down>', ':resize +2<CR>', opts)
+-- vim.keymap.set('n', '<C-Left>', ':vertical resize +2<CR>', opts)
+-- vim.keymap.set('n', '<C-Right>', ':vertical resize -2<CR>', opts)
 
 -- reset 
-vim.keymap.set('n', '<Leader>h', ':noh<CR>')
-vim.keymap.set('n', '<Leader>o', ':setlocal spell! spelllang=en_us<CR>')
 -- map <leader>o :setlocal spell! spelllang=en_us<CR>
--- map <leader>n :NERDTreeToggle<CR>
 vim.keymap.set('n', '<Leader>n', function() vim.cmd('NvimTreeToggle')  end)
 
 vim.keymap.set('n', '<Leader>y', '"+y')
@@ -50,15 +50,68 @@ vim.keymap.set('n', '<Leader>fc', function() require('telescope.builtin').tags()
 vim.keymap.set('n', '<Leader>fr', function() require('telescope.builtin').registers() end, { desc = 'Telescope registers' })
 vim.keymap.set('n', '<Leader>fs', function() require('telescope.builtin').spell_suggest() end, {desc = 'Telescope spell suggest'})
 vim.keymap.set('n', '<leader>fk', function() require('telescope.builtin').keymaps() end, { desc = 'Telescope keymaps' })
+vim.keymap.set('n', '<leader>fm', function() require('telescope.builtin').marks() end, { desc = 'Telescope marks' })
 vim.keymap.set('n', '<leader>fj', function() require('telescope.builtin').jumplist() end, { desc = 'Telescope Jumplist' })
 vim.keymap.set('n', '<leader>fa', function() require('telescope.builtin').builtin() end, { desc = 'Telescope all' })
+
+
+wk.register({
+    f = {
+        name = "find"
+    }
+}, {prefix = "<leader>"})
+
+vim.keymap.set('n', '<leader>k', ':WhichKey<CR>', { desc = "Whichkey"} )
 
 -------------------
 -- Terminal mode --
 -------------------
 
-vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', opts)
+--vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', opts)
 
+
+vim.keymap.set('n', '<leader>tt', ':ToggleTerm<CR>')
+vim.keymap.set('n', '<leader>ta', ':ToggleTermToggleAll<CR>')
+vim.keymap.set('n', '<leader>te', ':TermExec<CR>')
+vim.keymap.set('n', '<leader>ts', ':TermSelect<CR>')
+
+vim.keymap.set({'n', 'v'}, '<leader>oo', ':OverseerToggle<CR>', { desc = "Toggle overseer" } )
+
+vim.keymap.set({'n', 'v'}, '<leader>or', ':OverseerRun<CR>')
+vim.keymap.set({'n', 'v'}, '<leader>oi', ':OverseerInfo<CR>')
+-- vim.keymap.set({'n', 'v'}, '<leader>oob', ':OverseerOpen bottom<CR>')
+-- vim.keymap.set({'n', 'v'}, '<leader>oor', ':OverseerOpen right<CR>')
+-- vim.keymap.set({'n', 'v'}, '<leader>ool', ':OverseerOpen left<CR>')
+--vim.keymap.set({'n', 'v'}, '<leader>oo', ':OverseerOpen left<CR>')
+--
+vim.keymap.set({'n', 'v'}, '<leader>oc', ':OverseerClose<CR>')
+vim.keymap.set({'n', 'v'}, '<leader>ob', ':OverseerBuild<CR>')
+
+
+
+function _G.set_terminal_keymaps()
+  local opts = {buffer = 0}
+  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+  -- vim.keymap.set('t', 'jk', [[<C-\><C-n>]], opts)
+  vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
+  vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
+  vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
+  vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
+  vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
+end
+
+
+-- if you only want these mappings for toggle term use term://*toggleterm#* instead
+vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+
+
+
+
+-----------------
+-- OverSeer --
+-----------------
+
+--vim.keymap.set('n', '<Leader>o', ':setlocal spell! spelllang=en_us<CR>')
 
 -----------------
 -- Visual mode --
@@ -73,5 +126,66 @@ vim.keymap.set('v', '>', '>gv', opts)
 vim.keymap.set('i', '<F2>', function() require("renamer").rename() end, { noremap = true, silent = true }, { desc = 'Rename under cursor' })
 vim.keymap.set('n', '<leader>rn', function () require("renamer").rename() end, { noremap = true, silent = true }, { desc = 'Rename under cursor' })
 vim.keymap.set('v', '<leader>rn', function() require("renamer").rename() end, { noremap = true, silent = true }, { desc = 'Rename under cursor' })
+
+
+
+
+
+
+
+-- local trim_spaces = true
+--
+-- vim.keymap.set("v", "<leader>s", function()
+--     require("toggleterm").send_lines_to_terminal("single_line", trim_spaces, { args = vim.v.count })
+-- end)
+--     -- Replace with these for the other two options
+--     -- require("toggleterm").send_lines_to_terminal("visual_lines", trim_spaces, { args = vim.v.count })
+--     -- require("toggleterm").send_lines_to_terminal("visual_selection", trim_spaces, { args = vim.v.count })
+--
+-- -- For use as an operator map:
+-- -- Send motion to terminal
+-- vim.keymap.set("n", [[<leader><c-\>]], function()
+--   set_opfunc(function(motion_type)
+--     require("toggleterm").send_lines_to_terminal(motion_type, false, { args = vim.v.count })
+--   end)
+--   vim.api.nvim_feedkeys("g@", "n", false)
+-- end)
+-- -- Double the command to send line to terminal
+-- vim.keymap.set("n", [[<leader><c-\><c-\>]], function()
+--   set_opfunc(function(motion_type)
+--     require("toggleterm").send_lines_to_terminal(motion_type, false, { args = vim.v.count })
+--   end)
+--   vim.api.nvim_feedkeys("g@_", "n", false)
+-- end)
+-- -- Send whole file
+-- vim.keymap.set("n", [[<leader><leader><c-\>]], function()
+--   set_opfunc(function(motion_type)
+--     require("toggleterm").send_lines_to_terminal(motion_type, false, { args = vim.v.count })
+--   end)
+--   vim.api.nvim_feedkeys("ggg@G''", "n", false)
+-- end)
+
+
+vim.keymap.set('n', '<A-h>', require('smart-splits').resize_left, { desc = "Resize split left" })
+vim.keymap.set('n', '<A-j>', require('smart-splits').resize_down, { desc = "Resize split down" })
+vim.keymap.set('n', '<A-k>', require('smart-splits').resize_up,   { desc = "Resize split up" })
+vim.keymap.set('n', '<A-l>', require('smart-splits').resize_right, { desc = "Resize split right" })
+-- moving between splits
+vim.keymap.set('n', '<C-h>', require('smart-splits').move_cursor_left, { desc = "Move left"})
+vim.keymap.set('n', '<C-j>', require('smart-splits').move_cursor_down, { desc = "Move down"})
+vim.keymap.set('n', '<C-k>', require('smart-splits').move_cursor_up, { desc = "Move up"})
+vim.keymap.set('n', '<C-l>', require('smart-splits').move_cursor_right, { desc = "Move right"})
+vim.keymap.set('n', '<C-\\>', require('smart-splits').move_cursor_previous, { desc = "Move to previous split" })
+-- swapping buffers between windows
+vim.keymap.set('n', '<leader><leader>h', require('smart-splits').swap_buf_left, { desc = "Swap buffer left"})
+vim.keymap.set('n', '<leader><leader>j', require('smart-splits').swap_buf_down, { desc = "Swap buffer down"})
+vim.keymap.set('n', '<leader><leader>k', require('smart-splits').swap_buf_up, { desc = "Swap buffer up"})
+vim.keymap.set('n', '<leader><leader>l', require('smart-splits').swap_buf_right, { desc = "Swap buffer right"})
+
+
+-- nvim keybind
+vim.keymap.set('n', '<leader>ef', function() vim.cmd.SopsEncrypt() end, { desc = '[E]ncrypt [F]ile' })
+vim.keymap.set('n', '<leader>df', function() vim.cmd.SopsDecrypt() end, { desc = '[D]ecrypt [F]ile' })
+
 
 

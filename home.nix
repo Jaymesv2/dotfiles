@@ -29,6 +29,7 @@
       wget
       htop
       zip
+      unzip
       p7zip
       loc
       jq
@@ -36,6 +37,7 @@
       btop
       pandoc
       fzf
+      xclip
       #globalprotect-openconnect
       wireguard-tools
       tmux
@@ -44,6 +46,7 @@
       ripgrep
       fd
       ctags
+      just
 
 
       # ----- languages -----
@@ -148,6 +151,7 @@
       enable = true;
       xdgOpenUsePortal = true;
       extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+      config.common.default = "*";
       # config = {};
     };
     userDirs = {

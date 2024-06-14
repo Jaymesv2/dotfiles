@@ -15,6 +15,13 @@ bufferline.setup({
         },
         offsets = {
             {
+                filetype = "OverseerList",
+                text = function() return "Overseer" end,
+                --highlight = "Directory",
+                text_align = "center", -- | "left" | "right"
+                separator = true,
+            },
+            {
                 filetype = "NvimTree",
                 text = function() return "File Explorer" end,
                 --highlight = "Directory",

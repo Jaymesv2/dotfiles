@@ -1,3 +1,5 @@
+local overseer = require('overseer')
+
 require('lualine').setup {
   options = {
     icons_enabled = true,
@@ -17,11 +19,31 @@ require('lualine').setup {
       winbar = 1000,
     }
   },
+
   sections = {
     lualine_a = {'mode'},
     lualine_b = {'branch', 'diff', 'diagnostics'},
     lualine_c = {'filename', require('auto-session.lib').current_session_name},
-    lualine_x = {'encoding', 'fileformat', 'filetype'},
+    -- lualine_c = {require('auto-session.lib').current_session_name},
+    lualine_x = {
+        'encoding', 'fileformat', 'filetype',
+        {
+          "overseer",
+          label = "", -- Prefix for task counts
+          colored = true, -- Color the task icons and counts
+          symbols = {
+            [overseer.STATUS.FAILURE] = "F:",
+            [overseer.STATUS.CANCELED] = "C:",
+            [overseer.STATUS.SUCCESS] = "S:",
+            [overseer.STATUS.RUNNING] = "R:",
+          },
+          unique = false, -- Unique-ify non-running task count by name
+          name = nil, -- List of task names to search for
+          name_not = false, -- When true, invert the name search
+          status = nil, -- List of task statuses to display
+          status_not = false, -- When true, invert the status search
+        },
+    },
     lualine_y = {'progress'},
     lualine_z = {'location'}
   },
