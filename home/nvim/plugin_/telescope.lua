@@ -1,3 +1,4 @@
+
 -- You dont need to set any of these options. These are the default ones. Only
 -- the loading is important
 require('telescope').setup {

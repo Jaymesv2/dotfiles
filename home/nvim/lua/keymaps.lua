@@ -1,4 +1,5 @@
 
+
 local wk = require('which-key')
 
 vim.g.mapleader = ' '
@@ -35,6 +36,7 @@ vim.keymap.set({'n', 'x', 'o'}, 'gs', '<Plug>(leap-from-window)', { desc = 'Leap
 
 -- reset 
 -- map <leader>o :setlocal spell! spelllang=en_us<CR>
+--
 vim.keymap.set('n', '<Leader>n', function() vim.cmd('NvimTreeToggle')  end)
 
 vim.keymap.set('n', '<Leader>y', '"+y')
@@ -63,27 +65,36 @@ wk.register({
 
 vim.keymap.set('n', '<leader>k', ':WhichKey<CR>', { desc = "Whichkey"} )
 
+
+
 -------------------
 -- Terminal mode --
 -------------------
 
---vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', opts)
+vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', opts)
 
+
+-- vim.api.nvim_set_keymap("n", "<C-s>", ":lua ToggleTerm()<cr>", opts)
+-- vim.api.nvim_set_keymap("n", "<leader>ot", [[:lua ToggleTerm("horizontal")<cr>]], opts)
+-- vim.api.nvim_set_keymap("n", "<leader>ol", [[:lua ToggleTerm("vertical")<cr>]], opts)
+-- vim.api.nvim_set_keymap("i", "<C-s>", "<esc>:lua ToggleTerm()<cr>", opts)
+-- vim.api.nvim_set_keymap("t", "<C-s>", "<C-\\><C-n>:lua ToggleTerm()<cr>", opts)
 
 vim.keymap.set('n', '<leader>tt', ':ToggleTerm<CR>')
 vim.keymap.set('n', '<leader>ta', ':ToggleTermToggleAll<CR>')
 vim.keymap.set('n', '<leader>te', ':TermExec<CR>')
 vim.keymap.set('n', '<leader>ts', ':TermSelect<CR>')
 
+
+
+
+
+
+
 vim.keymap.set({'n', 'v'}, '<leader>oo', ':OverseerToggle<CR>', { desc = "Toggle overseer" } )
 
 vim.keymap.set({'n', 'v'}, '<leader>or', ':OverseerRun<CR>')
 vim.keymap.set({'n', 'v'}, '<leader>oi', ':OverseerInfo<CR>')
--- vim.keymap.set({'n', 'v'}, '<leader>oob', ':OverseerOpen bottom<CR>')
--- vim.keymap.set({'n', 'v'}, '<leader>oor', ':OverseerOpen right<CR>')
--- vim.keymap.set({'n', 'v'}, '<leader>ool', ':OverseerOpen left<CR>')
---vim.keymap.set({'n', 'v'}, '<leader>oo', ':OverseerOpen left<CR>')
---
 vim.keymap.set({'n', 'v'}, '<leader>oc', ':OverseerClose<CR>')
 vim.keymap.set({'n', 'v'}, '<leader>ob', ':OverseerBuild<CR>')
 
@@ -123,9 +134,12 @@ vim.keymap.set('v', '>', '>gv', opts)
 
 
 
+
 vim.keymap.set('i', '<F2>', function() require("renamer").rename() end, { noremap = true, silent = true }, { desc = 'Rename under cursor' })
 vim.keymap.set('n', '<leader>rn', function () require("renamer").rename() end, { noremap = true, silent = true }, { desc = 'Rename under cursor' })
 vim.keymap.set('v', '<leader>rn', function() require("renamer").rename() end, { noremap = true, silent = true }, { desc = 'Rename under cursor' })
+
+
 
 
 
@@ -164,12 +178,30 @@ vim.keymap.set('v', '<leader>rn', function() require("renamer").rename() end, { 
 --   end)
 --   vim.api.nvim_feedkeys("ggg@G''", "n", false)
 -- end)
+--
+local ss = require('smart-splits')
+local br = require('bufresize')
 
+local function optsWithDesc(desc)
+    return { noremap=true, silent=true, desc = desc }
+end
 
-vim.keymap.set('n', '<A-h>', require('smart-splits').resize_left, { desc = "Resize split left" })
-vim.keymap.set('n', '<A-j>', require('smart-splits').resize_down, { desc = "Resize split down" })
-vim.keymap.set('n', '<A-k>', require('smart-splits').resize_up,   { desc = "Resize split up" })
-vim.keymap.set('n', '<A-l>', require('smart-splits').resize_right, { desc = "Resize split right" })
+vim.keymap.set('n', '<A-h>', function()
+    ss.resize_left()
+end, { desc = "Resize split left" })
+
+vim.keymap.set('n', '<A-j>', function()
+    ss.resize_down()
+end, optsWithDesc("Resize split down"))
+
+vim.keymap.set('n', '<A-k>', function()
+    ss.resize_up()
+end,   optsWithDesc("Resize split up" ))
+
+vim.keymap.set('n', '<A-l>', function()
+    ss.resize_right()
+end, optsWithDesc("Resize split right"))
+
 -- moving between splits
 vim.keymap.set('n', '<C-h>', require('smart-splits').move_cursor_left, { desc = "Move left"})
 vim.keymap.set('n', '<C-j>', require('smart-splits').move_cursor_down, { desc = "Move down"})
@@ -182,10 +214,49 @@ vim.keymap.set('n', '<leader><leader>j', require('smart-splits').swap_buf_down, 
 vim.keymap.set('n', '<leader><leader>k', require('smart-splits').swap_buf_up, { desc = "Swap buffer up"})
 vim.keymap.set('n', '<leader><leader>l', require('smart-splits').swap_buf_right, { desc = "Swap buffer right"})
 
+vim.keymap.set(
+	"t",
+	"<leader>wd",
+	"<C-\\><C-n>"
+		.. ":lua require('bufresize').block_register()<cr>"
+		.. "<C-w>c"
+		.. ":lua require('bufresize').resize_close()<cr>",
+    optsWithDesc("")
+)
+
+vim.keymap.set(
+	"n",
+	"<leader>wd",
+	":lua require('bufresize').block_register()<cr>" .. "<C-w>c" .. ":lua require('bufresize').resize_close()<cr>",
+	optsWithDesc("")
+)
+
+--local opts = { noremap = true, silent = true }
+ToggleTerm = function(direction)
+    local command = "ToggleTerm"
+    if direction == "horizontal" then
+        command = command .. " direction=horizontal"
+    elseif direction == "vertical" then
+        command = command .. " direction=vertical"
+    end
+    if vim.bo.filetype == "toggleterm" then
+        require("bufresize").block_register()
+        vim.api.nvim_command(command)
+        require("bufresize").resize_close()
+    else
+        require("bufresize").block_register()
+        vim.api.nvim_command(command)
+        require("bufresize").resize_open()
+        vim.api.nvim_command([[execute "normal! i"]])
+    end
+end
+
+
+vim.keymap.set({'n', 'i', 't'}, "<C-s>", ToggleTerm, opts)
+
+
 
 -- nvim keybind
 vim.keymap.set('n', '<leader>ef', function() vim.cmd.SopsEncrypt() end, { desc = '[E]ncrypt [F]ile' })
 vim.keymap.set('n', '<leader>df', function() vim.cmd.SopsDecrypt() end, { desc = '[D]ecrypt [F]ile' })
-
-
 

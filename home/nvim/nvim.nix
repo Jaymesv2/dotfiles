@@ -1,8 +1,10 @@
-{config, lib, pkgs, ... }: let 
+{config, lib, pkgs, pkgs-unstable, ... }: let 
 in {
   imports = [ ./workingFiles.nix ];
   workingFiles.enable = true;
   workingFiles.file.neovimConfig.linkSource = ".config/nix/home/nvim";
+  # 
+  programs.neovim.package = pkgs-unstable.neovim-unwrapped; 
   home.file.neovimConfig = {
       enable = true;
       source = ./.;
@@ -22,7 +24,9 @@ in {
   ];
 
   programs.neovim = {
+
     enable = true;
+    extraLuaPackages = luaPkgs: with luaPkgs; [ jsregexp ];
 
 
 
@@ -42,28 +46,75 @@ in {
     # https://github.com/nvim-focus/focus.nvim
 
     # https://github.com/m4xshen/hardtime.nvim
-
-    # Need to look into
+# Need to look into
     # - smart renaming
     # - 
-    plugins = [ 
-        /* (pkgs.callPackage ({ neovimUtils, fetchFromGitHub, ... }:  neovimUtils.buildNeovimPlugin {
-            pname = "bufresize.nvim";
+    /*
+        vim-mips = (pkgs.callPackage ({ vimUtils, fetchFromGitHub, ... }:  vimUtils.buildVimPlugin {
+            pname = "vim-mips";
             version = "2022-03-20";
             src = fetchFromGitHub {
+              owner = "benknoble";
+              repo = "vim-mips";
+              sha256 = "";
+        #       sha256 = lib.fakeSha256;
+            };
+            meta.homepage = "https://github.com/benknoble/vim-mips";
+        }) {});
+*/
+
+
+    plugins = let 
+        /* extraPlugins = { lib, vimUtils, neovimUtils, fetchFromGitHub, ... }:  final: prev: {
+            bufresize-nvim = vimUtils.buildVimPlugin {
+                pname = "bufresize";
+                version = "2022-03-20";
+                src = fetchFromGitHub {
+                  owner = "kwkarlwang";
+                  repo = "bufresize.nvim";
+                  rev = "3b19527ab936d6910484dcc20fb59bdb12322d8b";
+                  hash = "sha256-6jqlKe8Ekm+3dvlgFCpJnI0BZzWC3KDYoOb88/itH+g=";
+                };
+                meta.homepage = "https://github.com/kwkarlwang/bufresize.nvim";
+            };
+        };
+        plugins = pkgs.vimPlugins.extend (pkgs.callPackage extraPlugins {});
+    in (with plugins; [ */
+        bufresize-nvim = pkgs-unstable.vimUtils.buildVimPlugin {
+            pname = "bufresize";
+            version = "2022-03-20";
+            src = pkgs.fetchFromGitHub {
               owner = "kwkarlwang";
               repo = "bufresize.nvim";
               rev = "3b19527ab936d6910484dcc20fb59bdb12322d8b";
-              #sha256 = "";
-              sha256 = "0g0z1g1nmrjmg9298vg2ski6m41f1yhpas8kr9mi8pa6ibk4m63x";
+              hash = "sha256-6jqlKe8Ekm+3dvlgFCpJnI0BZzWC3KDYoOb88/itH+g=";
             };
             meta.homepage = "https://github.com/kwkarlwang/bufresize.nvim";
-        }) {}) */
-    ] ++ (with pkgs.vimPlugins; [
+        };
+        hbac-nvim = pkgs-unstable.vimUtils.buildVimPlugin {
+            pname = "hbac-nvim";
+            version = "2022-05-28";
+            src = pkgs.fetchFromGitHub {
+              owner = "axkirillov";
+              repo = "hbac.nvim";
+              rev = "991b13a33a017f4e5d73a483d2aab53bd5490c17";
+              hash = "sha256-JDMP7Nmh5S7eDLd2sJMYrEDZ9W1J/iAtJ8Zuo0rfzEE=";
+            };
+            meta.homepage = "https://github.com/axkirillov/hbac.nvim";
+        };
+        makeOptional = x: {plugin = x; optional = true;};
+    in [ # non lazy plugins
+        pkgs-unstable.vimPlugins.lz-n
+    ] ++ /*builtins.map makeOptional*/ (with pkgs-unstable.vimPlugins; [
+
+      bufresize-nvim
+      hbac-nvim
+
+
       # Treesitter
       nvim-treesitter.withAllGrammars
-      # nvim-treesitter-textobjects # https://github.com/nvim-treesitter/nvim-treesitter-textobjects
-      # nvim-treesitter-context # https://github.com/nvim-treesitter/nvim-treesitter-context
+      nvim-treesitter-textobjects # https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+      nvim-treesitter-context # https://github.com/nvim-treesitter/nvim-treesitter-context
 
       # Motions
       leap-nvim # https://github.com/ggandor/leap.nvim
@@ -72,7 +123,7 @@ in {
       nvim-spider # https://github.com/chrisgrieser/nvim-spider
       # tabout-nvim # https://github.com/abecodes/tabout.nvim
 
-
+      actions-preview-nvim
 
       # test framework
       # neotest # https://github.com/nvim-neotest/neotest
@@ -84,7 +135,9 @@ in {
       dressing-nvim # https://github.com/stevearc/dressing.nvim?tab=readme-ov-file
       nvim-notify # https://github.com/rcarriga/nvim-notify
       nui-nvim # https://github.com/MunifTanjim/nui.nvim
-      scope-nvim # https://github.com/tiagovla/scope.nvim
+
+      # dont need scope :/
+      #  scope-nvim # https://github.com/tiagovla/scope.nvim
 
       smart-splits-nvim # https://github.com/mrjones2014/smart-splits.nvim
 
@@ -174,6 +227,8 @@ in {
         cmp-cmdline
         nvim-cmp
         cmp_luasnip
+        cmp-nvim-lsp-document-symbol
+        cmp-nvim-lsp-signature-help
 
       # Snippets
       luasnip # https://github.com/L3MON4D3/LuaSnip
@@ -182,6 +237,8 @@ in {
       # LSP config
       nvim-lspconfig
       nvim-lsputils
+      lspsaga-nvim
+      lsp_lines-nvim # https://git.sr.ht/~whynothugo/lsp_lines.nvim
       
       # DAP
       # nvim-dap # https://github.com/mfussenegger/nvim-dap
@@ -207,11 +264,13 @@ in {
 
         # Haskell
         haskell-tools-nvim # https://github.com/mrcjkb/haskell-tools.nvim
+        haskell-snippets-nvim
+        telescope_hoogle
         # neotest-haskell # https://github.com/MrcJkb/neotest-haskell
         # haskell-debug-adapter # https://github.com/phoityne/haskell-debug-adapter/
 
 
-      # Coqtail # https://github.com/whonore/Coqtail
+      Coqtail # https://github.com/whonore/Coqtail
 
       # markdown-preview-nvim # https://github.com/iamcco/markdown-preview.nvim
       conform-nvim # https://github.com/stevearc/conform.nvim
@@ -230,7 +289,7 @@ in {
 
       # Icons
       nvim-web-devicons
-    ]) ;
+    ]);
 
 
   };

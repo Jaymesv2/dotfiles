@@ -1,3 +1,5 @@
+
+
 local ht = require('haskell-tools')
 local bufnr = vim.api.nvim_get_current_buf()
 local opts = { noremap = true, silent = true, buffer = bufnr, }
@@ -16,4 +18,6 @@ vim.keymap.set('n', '<leader>rf', function()
 end, opts)
 vim.keymap.set('n', '<leader>rq', ht.repl.quit, opts)
 
-require('telescope').load_extension('ht')
+local telescope = require('telescope')
+telescope.load_extension('ht')
+telescope.load_extension('hoogle')
