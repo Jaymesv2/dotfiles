@@ -4,21 +4,22 @@ require('neovide')
 
 require('options')
 
+require('keymaps')
+
+
+
+vim.g.lz_n = {
+    ---@type fun(name: string)
+    load = function(_) end
+}
+
+
 --vim.cmd('syntax enable')
 --vim.cmd('filetype plugin indent on')
 vim.cmd.syntax('enable')
 vim.cmd.filetype('plugin', 'indent', 'on')
 -- vim.cmd.packadd('cfilter')
 
---require('keymaps')
-
-
--- load auto-session
-local packadd = vim.cmd.packadd
-packadd("plenary.nvim")
-
-
-packadd("auto-session")
 require("auto-session").setup {
   log_level = "error",
 
@@ -32,18 +33,13 @@ require("auto-session").setup {
 }
 
 
-packadd("which-key.nvim")
-
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ';'
-
-local wk = require('which-key')
+-- local wk = require('which-key')
 
 
 
 vim.keymap.set('n', '<leader>k', ':WhichKey<CR>', { desc = "Whichkey"} )
 
-packadd("tokyonight.nvim")
+-- packadd("tokyonight.nvim")
 
 require("tokyonight").setup({
   -- your configuration comes here
@@ -85,24 +81,31 @@ require("tokyonight").setup({
 })
 
 vim.cmd[[colorscheme tokyonight]]
+
 require('Comment').setup()
+
 require("toggleterm").setup( {
-open_mapping = [[<C-\>]], -- or { [[<c-\>]], [[<c-¥>]] } if you also use a Japanese keyboard.
-winbar = {
-  enabled = true,
-  name_formatter = function(term) --  term: Terminal
-    return term.name
-  end
-},
+    open_mapping = [[<C-\>]], -- or { [[<c-\>]], [[<c-¥>]] } if you also use a Japanese keyboard.
+    winbar = {
+      enabled = true,
+      name_formatter = function(term) --  term: Terminal
+        return term.name
+      end
+    },
 } )
+
 require("conform").setup({
-formatters_by_ft = {
-  lua = { "stylua" },
-},
+    formatters_by_ft = {
+      lua = { "stylua" },
+    },
 })
+
 require("gitsigns").setup()
+
 require("nvim-surround").setup()
+
 local opts = { noremap=true, silent=true }
+
 require("bufresize").setup({
     register = {
         keys = {
@@ -125,13 +128,13 @@ require("bufresize").setup({
     },
 })
 
-  require('smart-splits').setup({
-    resize_mode = {
-      hooks = {
-        on_leave = require('bufresize').register,
-      },
+require('smart-splits').setup({
+  resize_mode = {
+    hooks = {
+      on_leave = require('bufresize').register,
     },
-  })
+  },
+})
 require("hbac").setup({
   autoclose     = true, -- set autoclose to false if you want to close manually
   threshold     = 10, -- hbac will start closing :unedited buffers once that number is reached
@@ -141,8 +144,8 @@ require("hbac").setup({
   close_buffers_with_windows = false, -- hbac will close buffers with associated windows if this option is `true`
   telescope = {
     -- See #telescope-configuration below
-    },
-    })
+  },
+})
 
 require("notify")
 require('dressing').setup({
@@ -309,6 +312,28 @@ vim.diagnostic.config {
     enabled = true,
   },
 }
+
+
+
+require('plugin.bufferline')
+require('plugin.harpoon')
+require('plugin.illuminate')
+require('plugin.indent-blankline')
+require('plugin.iron')
+require('plugin.lspconfig')
+require('plugin.lualine')
+require('plugin.nvim-autopairs')
+require('plugin.nvim-tree')
+require('plugin.overseer')
+-- require('plugin.scope')
+require('plugin.spider')
+require('plugin.statuscol')
+require('plugin.telescope')
+require('plugin.treesitter')
+require('plugin.ufo')
+require('plugin.whichkey')
+
+
 
 --lua/code_action_utils.lua
 --local M = {}

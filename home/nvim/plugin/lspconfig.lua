@@ -1,4 +1,7 @@
-
+if vim.g.completion_setup_done then
+  return
+end
+vim.g.completion_setup_done = true
 
 
 

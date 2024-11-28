@@ -2,29 +2,75 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ lib, config, pkgs, pkgs-unstable, ... }: {
+{ lib, config, pkgs, pkgs-unstable, ... }: let something = "something"; in {
   imports =
     [ ./hardware-configuration.nix # Include the results of the hardware scan.
       ./network.nix
+      ./sops.nix
+      ./audio.nix
     ];
-
+    
   nix = {
     # pkgs.nixFlakes is an alias for pkgs.nixVersions.stable
     package = pkgs.nixFlakes;
-    settings.experimental-features = [ "nix-command" "flakes" ];
+
     settings = {
+      experimental-features = [ "nix-command" "flakes" ];
       substituters = ["https://nix-gaming.cachix.org"];
       trusted-public-keys = ["nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="];
+      trusted-users = [
+        "root"
+        "trent"
+        "@wheel"
+      ];
     };
   };
 
+  # select (Birthday, Address) FROM employee WHERE fname = 'john' and minit = 'b' and lname = 'smith';
 
+  services.postgresql = {
+    enable = true;
+    ensureUsers = [
+      {
+        name = "pgadmin";
+        ensureDBOwnership = true;
+        ensureClauses = {
+          login = true;
+          createrole = true;
+          superuser = true;
+        };
+      }
+      {
+        name = "trent";
+        ensureDBOwnership = true;
+        ensureClauses = {
+          login = true;
+          createrole = true;
+          superuser = true;
+        };
+      }
+    ];
+    ensureDatabases = ["pgadmin" "trent"];
+    enableJIT = true;
 
+  };
+
+  sops.secrets.pgadmin_password = {
+    sopsFile = ../secrets/pg_admin.sops.txt;
+    format = "binary";
+  };
+  services.pgadmin = {
+    enable = true;
+    initialEmail = "ghastfilms613@gmail.com";
+    initialPasswordFile = config.sops.secrets.pgadmin_password.path;
+  };
+
+  programs.zsh.interactiveShellInit = "source ${pkgs.zsh-nix-shell}/share/zsh-nix-shell/nix-shell.plugin.zsh";
 
   nixpkgs.config.nvidia.acceptLicense = true;
 
   # Bootloader.
-  boot.loader.systemd-boot.configurationLimit = 25;
+  boot.loader.systemd-boot.configurationLimit = 15;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
@@ -34,6 +80,7 @@
   services.udev.packages = with pkgs; [
     ledger-udev-rules
     libu2f-host
+    yubikey-personalization
   ];
 
     # emulate aarch64 for building rpi images
@@ -59,10 +106,6 @@
   # Set your time zone.
   time.timeZone = "America/Chicago";
 
-  # ----- Bluetooth -----
-  hardware.bluetooth = {
-    enable = true;
-  };
 
 
   # ------ DNS -----
@@ -154,8 +197,6 @@
           enable = pkgs.lib.mkForce true;
           enableOffloadCmd = pkgs.lib.mkForce true;
         };
-
-
       };
       boot.extraModprobeConfig = ''
         blacklist nouveau
@@ -175,7 +216,6 @@
       boot.blacklistedKernelModules = [ "nouveau" "nvidia" "nvidia_drm" "nvidia_modeset" ];
     };
   };
-
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -203,9 +243,7 @@
   };
   programs.zsh.enable = true;
 
-
   users.groups.trent = {};
-
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -221,12 +259,7 @@
     enable = true;
   };
 
-
-
   services.globalprotect.enable = true;
-
-
-
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -236,7 +269,6 @@
   #  wget
     qemu
     neovim
-    pulseaudio
 
     # Required for the system
     brightnessctl
@@ -268,7 +300,6 @@
     #enableNvidiaPatches = true;
   };
 
-
   fonts.packages = with pkgs; [
     noto-fonts
     noto-fonts-cjk
@@ -282,7 +313,6 @@
     (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
     # (nerdfonts.override { } )
   ];
-
 
   # Why is this here on 24.05??
   services.displayManager = {
@@ -324,12 +354,6 @@
       ];
     };
 
-    # windowManager.awesome = {
-    #   enable = true;
-    #   luaModules = with pkgs.luaPackages; [
-    #     luarocks
-    #   ];
-    # };
     #dpi = 180;
   };
 
@@ -345,20 +369,11 @@
 
   #programs.regreet.enable = true;
 
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-  };
 
-  # programs.nix-ld.enable = true;
-  # environment.variables = {
-  #   NIX_LD = lib.fileContents "${pkgs.stdenv.cc}/nix-support/dynamic-linker";
-  # };
+  programs.nix-ld.enable = true;
+  environment.variables = {
+    #NIX_LD = lib.fileContents "${pkgs.stdenv.cc}/nix-support/dynamic-linker";
+  };
 
 
   # Some programs need SUID wrappers, can be configured further or are

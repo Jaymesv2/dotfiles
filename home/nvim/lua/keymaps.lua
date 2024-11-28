@@ -3,7 +3,7 @@
 local wk = require('which-key')
 
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.maplocalleader = ';'
 
 -- define common options
 local opts = {
@@ -37,7 +37,6 @@ vim.keymap.set({'n', 'x', 'o'}, 'gs', '<Plug>(leap-from-window)', { desc = 'Leap
 -- reset 
 -- map <leader>o :setlocal spell! spelllang=en_us<CR>
 --
-vim.keymap.set('n', '<Leader>n', function() vim.cmd('NvimTreeToggle')  end)
 
 vim.keymap.set('n', '<Leader>y', '"+y')
 vim.keymap.set('n', '<Leader>p', '"+p')
