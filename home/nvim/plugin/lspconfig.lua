@@ -4,9 +4,6 @@ end
 vim.g.completion_setup_done = true
 
 
-
-
-
   -- Set up nvim-cmp.
 local cmp = require('cmp')
 
@@ -16,6 +13,7 @@ ls.setup({})
 
 -- local haskell_snippets = require('haskell-snippets').all
 -- ls.add_snippets('haskell', haskell_snippets, { key = 'haskell' })
+
 
 vim.keymap.set({"i"}, "<C-K>", function() ls.expand() end, {silent = true, desc = "Expand snippet"})
 vim.keymap.set({"i", "s"}, "<C-L>", function() ls.jump( 1) end, {silent = true, desc = "Snippet Jump 1"})

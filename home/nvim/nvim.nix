@@ -1,6 +1,6 @@
 {config, lib, pkgs, pkgs-unstable, ... }: let 
 in {
-  imports = [ ./workingFiles.nix ];
+  imports = [ ../util/workingFiles.nix ];
   workingFiles.enable = true;
   workingFiles.file.neovimConfig.linkSource = ".config/nix/home/nvim";
   # 
@@ -91,24 +91,27 @@ in {
             };
             meta.homepage = "https://github.com/kwkarlwang/bufresize.nvim";
         };
-        hbac-nvim = pkgs-unstable.vimUtils.buildVimPlugin {
-            pname = "hbac-nvim";
-            version = "2022-05-28";
-            src = pkgs.fetchFromGitHub {
-              owner = "axkirillov";
-              repo = "hbac.nvim";
-              rev = "991b13a33a017f4e5d73a483d2aab53bd5490c17";
-              hash = "sha256-JDMP7Nmh5S7eDLd2sJMYrEDZ9W1J/iAtJ8Zuo0rfzEE=";
-            };
-            meta.homepage = "https://github.com/axkirillov/hbac.nvim";
-        };
+        # hbac-nvim = pkgs-unstable.vimUtils.buildVimPlugin {
+        #     pname = "hbac-nvim";
+        #     version = "2022-05-28";
+        #     src = pkgs.fetchFromGitHub {
+        #       owner = "axkirillov";
+        #       repo = "hbac.nvim";
+        #       rev = "991b13a33a017f4e5d73a483d2aab53bd5490c17";
+        #       hash = "sha256-JDMP7Nmh5S7eDLd2sJMYrEDZ9W1J/iAtJ8Zuo0rfzEE=";
+        #     };
+        #     meta.homepage = "https://github.com/axkirillov/hbac.nvim";
+        # };
         makeOptional = x: {plugin = x; optional = true;};
     in [ # non lazy plugins
         pkgs-unstable.vimPlugins.lz-n
     ] ++ /*builtins.map makeOptional*/ (with pkgs-unstable.vimPlugins; [
+      lean-nvim
 
       bufresize-nvim
-      hbac-nvim
+      # hbac-nvim
+
+      rustaceanvim
 
 
       # Treesitter
@@ -130,7 +133,7 @@ in {
 
 
       # UI
-      dashboard-nvim
+      # dashboard-nvim
       nvim-tree-lua # https://github.com/nvim-tree/nvim-tree.lua
       dressing-nvim # https://github.com/stevearc/dressing.nvim?tab=readme-ov-file
       nvim-notify # https://github.com/rcarriga/nvim-notify
@@ -191,7 +194,9 @@ in {
       # Workspace management
       # direnv-vim
       # editorconfig-vim # https://github.com/editorconfig/editorconfig-vim
-      auto-session # https://github.com/rmagatti/auto-session
+
+      # never works :/
+      # auto-session # https://github.com/rmagatti/auto-session
 
 
       # Editing

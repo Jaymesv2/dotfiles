@@ -6,7 +6,7 @@ local cfg = {
                          -- statuscolumn to benefit from the performance optimizations in this plugin.
   -- builtin.lnumfunc number string options
   thousands = false,     -- or line number thousands separator string ("." / ",")
-  relculright = false,   -- whether to right-align the cursor line number with 'relativenumber' set
+  relculright = true,   -- whether to right-align the cursor line number with 'relativenumber' set
   -- Builtin 'statuscolumn' options
   ft_ignore = nil,       -- lua table with 'filetype' values for which 'statuscolumn' will be unset
   bt_ignore = nil,       -- lua table with 'buftype' values for which 'statuscolumn' will be unset
@@ -22,7 +22,7 @@ local cfg = {
     }, ]]
     {
       text = { builtin.lnumfunc },
-      condition = { true, builtin.not_empty },
+      condition = { true },
       click = "v:lua.ScLa",
     },
     {
@@ -55,6 +55,20 @@ local cfg = {
 }
 
 require("statuscol").setup(cfg)
+
+-- require("heirline").setup({
+--     -- statusline = {...},
+--     -- winbar = {...},
+--     -- tabline = {...},
+--     statuscolumn = {
+--         init = function(self) self.bufnr = vim.api.nvim_get_current_buf() end,
+--         {
+--             provider = function() return "%l " end
+--         },
+--         ...
+--     },
+-- })
+
 --require("statuscol").setup({
       -- configuration goes here, for example:
       -- relculright = true,

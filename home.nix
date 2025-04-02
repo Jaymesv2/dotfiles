@@ -7,23 +7,69 @@
     home/ssh.nix
     home/git.nix
     home/emacs/emacs.nix
+    home/sops.nix
+    home/java.nix
+    home/awesome.nix
   ];
+
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-27.3.11"
+  ];
+  nixpkgs.config.allowUnfreePredicate = pkg: 
+  builtins.elem (lib.getName pkg) [
+    "discord"
+    "obsidian"
+    "todoist-electron"
+    "vscode"
+    "burpsuite"
+];
+
+
   home = {
     username = "trent";
     homeDirectory = "/home/trent";
     stateVersion = "23.11";
-    packages = with pkgs; [
+    packages = 
+        (let
+        # https://discourse.nixos.org/t/nix-flamegraph-or-profiling-tool/33333
+        stackCollapse = pkgs.writeTextFile {
+          name = "stack-collapse.py";
+          destination = "/bin/stack-collapse.py";
+          text = builtins.readFile (builtins.fetchurl
+            {
+              url = "https://raw.githubusercontent.com/NixOS/nix/master/contrib/stack-collapse.py";
+              sha256 = "sha256:0mi9cf3nx7xjxcrvll1hlkhmxiikjn0w95akvwxs50q270pafbjw";
+            });
+          executable = true;
+        };
+        nixFunctionCalls = pkgs.writeShellApplication {
+          name = "nixFunctionCalls";
+          runtimeInputs = [ stackCollapse pkgs.inferno ];
+          text = ''
+#!/usr/bin/env zsh
+
+WORKDIR=$(mktemp -d)
+
+nix eval -vvvvvvvvvvvvvvvvvvvv --raw --option trace-function-calls true $1 1>/dev/null 2> $WORKDIR/nix-function-calls.trace
+stack-collapse.py $WORKDIR/nix-function-calls.trace > $WORKDIR/nix-function-calls.folded
+inferno-flamegraph $WORKDIR/nix-function-calls.folded > $WORKDIR/nix-function-calls.svg
+echo "$WORKDIR/nix-function-calls.svg"
+          ''; #./nix-function-calls.sh;
+          checkPhase = "";
+        };
+      in [ nixFunctionCalls stackCollapse ] ) ++ (with pkgs; [
       # ----- SYSTEM -----
 
       # fonts
       fira-code-nerdfont
 
-      cinnamon.nemo
+
+      nemo
 
       libnotify
 
       # ----- cli tools -----
-      lnav    
+      lnav
       tree
       gnumake
       wget
@@ -40,25 +86,31 @@
       xclip
       #globalprotect-openconnect
       wireguard-tools
-      tmux
       findutils
+
+      kopia
+
+      wireshark
+
+      hexchat
 
       ripgrep
       fd
       ctags
       just
 
-
+      yubikey-personalization-gui
+      yubioath-flutter
+      yubikey-manager-qt
       # ----- languages -----
-      swiProlog
-
+      swi-prolog
       # ----- system stuff -----
       networkmanagerapplet
       pavucontrol
       flameshot
-      gnome.gnome-software
-      gnome.file-roller
-      cinnamon.nemo-fileroller
+      gnome-software
+      file-roller
+      nemo-fileroller
       # peazip
 
       # ----- applications -----
@@ -80,8 +132,9 @@
 	    notepadqq
         
         # other
-        qbittorrent
         qjournalctl
+        audacity
+        easyeffects
 	
         
         #
@@ -89,51 +142,120 @@
         sxiv
         vlc
 
+        prusa-slicer
+        freecad
+        librecad
+
         # crypto 
         ledger-live-desktop
         monero-gui
         monero-cli
+
+        rpi-imager
+
+        # drawing
+        inkscape
 
 
         # drive recovery
         diskscan
         parted
         gnomecast
-        gnome.gnome-disk-utility
+        gnome-disk-utility
         gparted
 
 
         # games
         ckan
+
+
+        kdePackages.skanpage
+        epsonscan2
+        burpsuite
+
+        sops
+
+        zotero
+
 	#osu-lazer-bin
 	prismlauncher
+    packwiz
+
 	graalvm-ce
 
-	nix-gaming.packages.x86_64-linux.osu-stable
-	nix-gaming.packages.x86_64-linux.osu-lazer-bin
       
-    ] ++ [
+    ]) ++ [
         pkgs-unstable.devenv
+
+        pkgs-unstable.qbittorrent
+	    # nix-gaming.packages.x86_64-linux.osu-stable
+	    # nix-gaming.packages.x86_64-linux.osu-lazer-bin
     ];
+
+
     sessionVariables = {
       XDG_CACHE_HOME  = "$HOME/.cache";
       XDG_CONFIG_HOME = "$HOME/.config";
       XDG_DATA_HOME   = "$HOME/.local/share";
       XDG_STATE_HOME  = "$HOME/.local/state";
 
+      XDG_CURRENT_DESKTOP="GNOME";
+
       EDITOR = "nvim";
       BROWSER = "firefox";
       TERMINAL = "alacritty";
       TERM = "alacritty";
-
-      NIXOS_OZONE_WL = "1";
+      
+      # NIXOS_OZONE_WL = "1"; # Needed for electron on wayland
     };
+  };
+
+
+  programs.nushell = {
+    enable = true;
+    environmentVariables= {
+
+    };
+
+    # plugins = with pkgs.nushellPlugins; [ 
+    #     formats 
+    #     dbus
+    #     units
+    #     query
+    #     skim
+    #     net
+    # ];
+
   };
   
   programs.home-manager.enable = true;
 
-
+  
   xdg = {
+    portal = {
+      enable = true;
+      xdgOpenUsePortal = true;
+      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+      # config.common.default = "*";
+      config = {
+        common = {
+          default = [
+            "gtk"
+          ];
+          "org.freedesktop.impl.portal.FileChooser" = [
+            "nemo"
+          ];
+          "org.freedesktop.impl.portal.Secret" = [
+            "gnome-keyring"
+          ];
+        };
+        x-gnome = {
+          default = [
+            "gtk"
+          ];
+        };
+      };
+    };
     mime.enable = true;
     mimeApps = {
       enable = true;
@@ -141,18 +263,11 @@
         "application/pdf" = "org.pwmt.zathura-pdf-mupdf.desktop;";
         "image/jpeg" = "sxiv.desktop";
         "image/png" = "sxiv.desktop";
-        "image.gif" = "sxiv.desktop";
+        "image/gif" = "sxiv.desktop";
       };
       #defaultApplications = {
       #  "word"
       #};
-    };
-    portal = {
-      enable = true;
-      xdgOpenUsePortal = true;
-      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-      config.common.default = "*";
-      # config = {};
     };
     userDirs = {
       enable = true;
@@ -186,13 +301,6 @@
 
   xsession.enable = true;
 
-  xsession.windowManager.awesome = {
-    enable = true;
-    package = pkgs.writeShellScriptBin "awesome" ''
-    ${pkgs.systemd}/bin/systemd-cat -t awesome ${pkgs.awesome}/bin/awesome
-    '';
-  };
-  
   # pkgs.writeShellScriptBin "hello" ''
   # Call hello with a traditional greeting 
   #exec ${pkgs.hello}/bin/hello -t
@@ -203,6 +311,8 @@
     package = pkgs.rofi-wayland;
   };
 
+  
+
 
   programs.mpv.enable = true;
   
@@ -211,7 +321,14 @@
   programs.gpg = {
     enable = true;
   };
-  services.gpg-agent.enable = true;
+
+  services.gpg-agent = {
+    enable = true;
+    enableZshIntegration = true;
+    pinentryPackage = pkgs.pinentry-gnome3;
+  };
+
+  #services.dbus.packages = [ pkgs.gcr ];
 
   services.blueman-applet.enable = true;
   services.network-manager-applet.enable = true;
@@ -220,6 +337,7 @@
   
   programs.direnv = {
     enable = true;
+    nix-direnv.enable = true;
     config = {};
   };
   
@@ -228,6 +346,14 @@
     extensions = with pkgs.vscode-extensions; [
       
     ];
+  };
+
+
+  programs.zathura = {
+    enable = true;
+    options = {
+        selection-clipboard = "clipboard";
+    };
   };
 
   # gtk = {
@@ -247,5 +373,7 @@
   #   xwayland.enable = true;
   # };
   # programs.thunderbird.enable = true;
+
+
 }
 

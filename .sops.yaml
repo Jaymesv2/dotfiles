@@ -1,0 +1,11 @@
+keys:
+  - &laptop age1h67eflr20l0u503lrgwd0wup2ju776pdk5vnkf6w69wy4fxnffdqh9gyfd
+creation_rules:
+  - path_regex: secrets/[^/]+\.(yaml|json|env|ini|txt)$
+    key_groups:
+    - age:
+      - *laptop
+  - path_regex: home/git/[^/]+\.(yaml|json|env|ini|gitconfig|txt)$
+    key_groups:
+    - age:
+      - *laptop

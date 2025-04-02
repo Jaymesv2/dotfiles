@@ -1,4 +1,5 @@
 vim.loader.enable()
+--vim.loader.disable()
 
 require('neovide')
 
@@ -20,17 +21,17 @@ vim.cmd.syntax('enable')
 vim.cmd.filetype('plugin', 'indent', 'on')
 -- vim.cmd.packadd('cfilter')
 
-require("auto-session").setup {
-  log_level = "error",
-
-  cwd_change_handling = {
-    restore_upcoming_session = true, -- already the default, no need to specify like this, only here as an example
-    pre_cwd_changed_hook = nil, -- already the default, no need to specify like this, only here as an example
-    post_cwd_changed_hook = function() -- example refreshing the lualine status line _after_ the cwd changes
-      require("lualine").refresh() -- refresh lualine so the new session name is displayed in the status bar
-    end,
-  },
-}
+-- require("auto-session").setup {
+--   log_level = "error",
+--
+--   cwd_change_handling = {
+--     restore_upcoming_session = true, -- already the default, no need to specify like this, only here as an example
+--     pre_cwd_changed_hook = nil, -- already the default, no need to specify like this, only here as an example
+--     post_cwd_changed_hook = function() -- example refreshing the lualine status line _after_ the cwd changes
+--       require("lualine").refresh() -- refresh lualine so the new session name is displayed in the status bar
+--     end,
+--   },
+-- }
 
 
 -- local wk = require('which-key')
@@ -135,17 +136,17 @@ require('smart-splits').setup({
     },
   },
 })
-require("hbac").setup({
-  autoclose     = true, -- set autoclose to false if you want to close manually
-  threshold     = 10, -- hbac will start closing :unedited buffers once that number is reached
-  close_command = function(bufnr)
-    vim.api.nvim_buf_delete(bufnr, {})
-  end,
-  close_buffers_with_windows = false, -- hbac will close buffers with associated windows if this option is `true`
-  telescope = {
-    -- See #telescope-configuration below
-  },
-})
+-- require("hbac").setup({
+--   autoclose     = true, -- set autoclose to false if you want to close manually
+--   threshold     = 10, -- hbac will start closing :unedited buffers once that number is reached
+--   close_command = function(bufnr)
+--     vim.api.nvim_buf_delete(bufnr, {})
+--   end,
+--   close_buffers_with_windows = false, -- hbac will close buffers with associated windows if this option is `true`
+--   telescope = {
+--     -- See #telescope-configuration below
+--   },
+-- })
 
 require("notify")
 require('dressing').setup({
@@ -169,7 +170,7 @@ require('renamer').setup({with_popup=true})
 
 
 
-
+require('lean').setup{ mappings = true }
 
 
 
@@ -181,10 +182,9 @@ require('renamer').setup({with_popup=true})
 
 local g = vim.g
 local keymap = vim.keymap
--- local telescope = require('telescope')
+local telescope = require('telescope')
 local keymap_opts = { noremap = true, silent = true }
 
-local telescope = {}
 
 ---@return HTOpts
 g.haskell_tools = function()
@@ -315,23 +315,23 @@ vim.diagnostic.config {
 
 
 
-require('plugin.bufferline')
-require('plugin.harpoon')
-require('plugin.illuminate')
-require('plugin.indent-blankline')
-require('plugin.iron')
-require('plugin.lspconfig')
-require('plugin.lualine')
-require('plugin.nvim-autopairs')
-require('plugin.nvim-tree')
-require('plugin.overseer')
--- require('plugin.scope')
-require('plugin.spider')
-require('plugin.statuscol')
-require('plugin.telescope')
-require('plugin.treesitter')
-require('plugin.ufo')
-require('plugin.whichkey')
+-- require('plugin.bufferline')
+-- require('plugin.harpoon')
+-- require('plugin.illuminate')
+-- require('plugin.indent-blankline')
+-- require('plugin.iron')
+-- require('plugin.lspconfig')
+-- require('plugin.lualine')
+-- require('plugin.nvim-autopairs')
+-- require('plugin.nvim-tree')
+-- require('plugin.overseer')
+-- -- require('plugin.scope')
+-- require('plugin.spider')
+-- require('plugin.statuscol')
+-- require('plugin.telescope')
+-- require('plugin.treesitter')
+-- require('plugin.ufo')
+-- require('plugin.whichkey')
 
 
 

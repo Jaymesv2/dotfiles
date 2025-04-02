@@ -44,10 +44,6 @@ local keys = {
     {'n', '<Leader>n', function() vim.cmd('NvimTreeToggle')  end, {}}
 }
 
-
-
-
-
 -- local function unregister_lazy_keys()
 --     for value, _ in ipairs(keys) do
 --         vim.keymap.del(value[0], value[1],value[2] )
@@ -95,31 +91,19 @@ end
 register_lazy_keys(keys)
 register_lazy_commands({"NvimTreeToggle", "NvimTreeOpen", "NvimTreeClose", "NvimTreeFocus", "NvimTreeRefresh", "NvimTreeCollapse", "NvimTreeFindFile", "NvimTreeClipboard"}) ]]
 
+-- OR setup with some options
+require("nvim-tree").setup({
+  on_attach = function(bufnr)
+  local api = require "nvim-tree.api"
+  local function opts(desc)
+    return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+  end
+  -- default mappings
+  api.config.mappings.default_on_attach(bufnr)
+  -- custom mappings
+  vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
+  vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
+end,
+})
 
-
---[[ require("lz.n").load{
-    "nvim-tree",
-    keys = {
-        {"<leader>n", function() vim.cmd('NvimTreeToggle')  end}
-    },
-    cmd = {"NvimTreeToggle", "NvimTreeOpen", "NvimTreeClose", "NvimTreeFocus", "NvimTreeRefresh", "NvimTreeCollapse", "NvimTreeFindFile", "NvimTreeClipboard"},
-    after = function()
-        -- OR setup with some options
-        require("nvim-tree").setup({
-          on_attach = function(bufnr)
-          local api = require "nvim-tree.api"
-          local function opts(desc)
-            return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
-          end
-          -- default mappings
-          api.config.mappings.default_on_attach(bufnr)
-          -- custom mappings
-          vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
-          vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
-        end,
-        })
-
-    end
-} ]]
-
-
+vim.keymap.set('n', '<Leader>n', function() vim.cmd('NvimTreeToggle')  end)

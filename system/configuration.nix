@@ -4,15 +4,17 @@
 
 { lib, config, pkgs, pkgs-unstable, ... }: let something = "something"; in {
   imports =
-    [ ./hardware-configuration.nix # Include the results of the hardware scan.
-      ./network.nix
+    [ ./network.nix
+      ./marc_laptop.nix
       ./sops.nix
       ./audio.nix
+      # ./postgres.nix
+      ./graphics.nix
     ];
     
   nix = {
     # pkgs.nixFlakes is an alias for pkgs.nixVersions.stable
-    package = pkgs.nixFlakes;
+    package = pkgs.nixVersions.stable;
 
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
@@ -25,49 +27,12 @@
       ];
     };
   };
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
 
-  # select (Birthday, Address) FROM employee WHERE fname = 'john' and minit = 'b' and lname = 'smith';
-
-  services.postgresql = {
-    enable = true;
-    ensureUsers = [
-      {
-        name = "pgadmin";
-        ensureDBOwnership = true;
-        ensureClauses = {
-          login = true;
-          createrole = true;
-          superuser = true;
-        };
-      }
-      {
-        name = "trent";
-        ensureDBOwnership = true;
-        ensureClauses = {
-          login = true;
-          createrole = true;
-          superuser = true;
-        };
-      }
-    ];
-    ensureDatabases = ["pgadmin" "trent"];
-    enableJIT = true;
-
-  };
-
-  sops.secrets.pgadmin_password = {
-    sopsFile = ../secrets/pg_admin.sops.txt;
-    format = "binary";
-  };
-  services.pgadmin = {
-    enable = true;
-    initialEmail = "ghastfilms613@gmail.com";
-    initialPasswordFile = config.sops.secrets.pgadmin_password.path;
-  };
 
   programs.zsh.interactiveShellInit = "source ${pkgs.zsh-nix-shell}/share/zsh-nix-shell/nix-shell.plugin.zsh";
 
-  nixpkgs.config.nvidia.acceptLicense = true;
 
   # Bootloader.
   boot.loader.systemd-boot.configurationLimit = 15;
@@ -88,16 +53,8 @@
 
 
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   services.fwupd.enable = true;
-
-  # Enable networking
-  networking.networkmanager.enable = true;
-  
-  services.tailscale.enable = true;
 
   services.gvfs.enable = true;
   services.udisks2.enable = true;
@@ -105,45 +62,8 @@
 
   # Set your time zone.
   time.timeZone = "America/Chicago";
+  # time.timeZone = "America/New_York";
 
-
-
-  # ------ DNS -----
-
-  #networking.nameservers = [ "1.1.1.1#one.one.one.one" "1.0.0.1#one.one.one.one" ];
-
-  # services.resolved = {
-  #   enable = true;
-  #   dnssec = "true";
-  #   domains = [ "~." ];
-  #   fallbackDns = [ "1.1.1.1#one.one.one.one" "1.0.0.1#one.one.one.one" ];
-  #   dnsovertls = "true";
-  # };
-
-
-
-  # ------ POWER MANAGEMENT
-
-  services.acpid.enable = true;
-
-
-  services.upower.enable = true;
-
-  powerManagement.enable = true;
-  services.thermald.enable = true;
-  powerManagement.powertop.enable = true;
-
-  services.auto-cpufreq.enable = true;
-  services.auto-cpufreq.settings = {
-    battery = {
-       governor = "powersave";
-       turbo = "never";
-    };
-    charger = {
-       governor = "performance";
-       turbo = "auto";
-    };
-  };
 
   # ------------ STEAM -------------
   programs.steam = {
@@ -160,62 +80,6 @@
 
 
 
-  # Nvidia Configuration 
-  services.xserver.videoDrivers = [ "nvidia" ]; 
-
-  hardware.opengl = {
-    enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
-  };
-  
-  # Optionally, you may need to select the appropriate driver version for your specific GPU. 
-  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable; 
-  
-  # nvidia-drm.modeset=1 is required for some wayland compositors, e.g. sway 
-  hardware.nvidia.modesetting.enable = true; 
-  
-  hardware.nvidia.prime = { 
-    sync.enable = true; 
-  
-    # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA 
-    nvidiaBusId = "PCI:1:0:0"; 
-  
-    # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA 
-    intelBusId = "PCI:0:2:0"; 
-  };
-
-
-
-  # Load nvidia driver for Xorg and Wayland
-  specialisation = {
-    nogpu.configuration = {
-      hardware.nvidia.prime = {
-        sync.enable = pkgs.lib.mkForce false;
-
-        offload = {
-          enable = pkgs.lib.mkForce true;
-          enableOffloadCmd = pkgs.lib.mkForce true;
-        };
-      };
-      boot.extraModprobeConfig = ''
-        blacklist nouveau
-        options nouveau modeset=0
-      '';
-  
-      services.udev.extraRules = ''
-        # Remove NVIDIA USB xHCI Host Controller devices, if present
-        ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{power/control}="auto", ATTR{remove}="1"
-        # Remove NVIDIA USB Type-C UCSI devices, if present
-        ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{power/control}="auto", ATTR{remove}="1"
-        # Remove NVIDIA Audio devices, if present
-        ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{power/control}="auto", ATTR{remove}="1"
-        # Remove NVIDIA VGA/3D controller devices
-        ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{power/control}="auto", ATTR{remove}="1"
-      '';
-      boot.blacklistedKernelModules = [ "nouveau" "nvidia" "nvidia_drm" "nvidia_modeset" ];
-    };
-  };
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -240,13 +104,12 @@
     shell = pkgs.zsh;
     extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" ];
     packages = with pkgs; [];
+
+    initialPassword = "123abc"; # best password
   };
   programs.zsh.enable = true;
 
   users.groups.trent = {};
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
 
   # virtualization stuff
   programs.dconf.enable = true;
@@ -294,15 +157,10 @@
     defaultEditor = true;
   };
 
-  programs.hyprland = {
-    enable = true;
-    xwayland.enable = true;
-    #enableNvidiaPatches = true;
-  };
 
   fonts.packages = with pkgs; [
     noto-fonts
-    noto-fonts-cjk
+    noto-fonts-cjk-sans
     noto-fonts-emoji
     liberation_ttf
     fira-code
@@ -326,36 +184,6 @@
     touchpad.accelProfile = "flat";
   };
 
-  services.xserver = {
-    # dpi = 166;
-    enable = true;
-    xkb = {
-      layout = "us";
-      variant = "";
-    };
-    wacom.enable = true;
-    #logFile = "/dev/null";
-    logFile = "/var/log/Xorg.0.log";
-
-    displayManager = {
-      lightdm = {
-        enable = true;
-        greeters.gtk = {
-          enable = true;
-
-        };
-      };
-      session = [
-        {
-          manage = "desktop";
-          name = "xsession";
-          start = ''exec $HOME/.xsession'';
-        }
-      ];
-    };
-
-    #dpi = 180;
-  };
 
 
   # services.greetd = {

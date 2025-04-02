@@ -207,21 +207,23 @@ vim.keymap.set('n', '<C-j>', require('smart-splits').move_cursor_down, { desc = 
 vim.keymap.set('n', '<C-k>', require('smart-splits').move_cursor_up, { desc = "Move up"})
 vim.keymap.set('n', '<C-l>', require('smart-splits').move_cursor_right, { desc = "Move right"})
 vim.keymap.set('n', '<C-\\>', require('smart-splits').move_cursor_previous, { desc = "Move to previous split" })
+
+
 -- swapping buffers between windows
 vim.keymap.set('n', '<leader><leader>h', require('smart-splits').swap_buf_left, { desc = "Swap buffer left"})
 vim.keymap.set('n', '<leader><leader>j', require('smart-splits').swap_buf_down, { desc = "Swap buffer down"})
 vim.keymap.set('n', '<leader><leader>k', require('smart-splits').swap_buf_up, { desc = "Swap buffer up"})
 vim.keymap.set('n', '<leader><leader>l', require('smart-splits').swap_buf_right, { desc = "Swap buffer right"})
 
-vim.keymap.set(
-	"t",
-	"<leader>wd",
-	"<C-\\><C-n>"
-		.. ":lua require('bufresize').block_register()<cr>"
-		.. "<C-w>c"
-		.. ":lua require('bufresize').resize_close()<cr>",
-    optsWithDesc("")
-)
+-- vim.keymap.set(
+-- 	"t",
+-- 	"<leader>wd",
+-- 	"<C-\\><C-n>"
+-- 		.. ":lua require('bufresize').block_register()<cr>"
+-- 		.. "<C-w>c"
+-- 		.. ":lua require('bufresize').resize_close()<cr>",
+--     optsWithDesc("")
+-- )
 
 vim.keymap.set(
 	"n",

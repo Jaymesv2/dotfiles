@@ -1,4 +1,4 @@
-{ pkgs, lib, config, options, ... }: {
+{ lib, pkgs, config, options, ... }: {
   # ----- Bluetooth -----
     hardware.bluetooth = {
         enable = true;
@@ -12,8 +12,6 @@
             };
         };
     };
-
-    sound.enable = lib.mkForce false;
 
     hardware.pulseaudio.enable = false;
 

@@ -2,41 +2,16 @@
 
   programs.zsh = {
     enable = true;
-    antidote = {
-      enable = true;
-      plugins = [
-        "jeffreytse/zsh-vi-mode"
-	"belak/zsh-utils path:editor"
-	"belak/zsh-utils path:history"
-	"belak/zsh-utils path:prompt"
-	"belak/zsh-utils path:utility"
-	"belak/zsh-utils path:completion"
-	"ohmyzsh/ohmyzsh"
-	"zsh-users/zsh-autosuggestions"
-	"zsh-users/zsh-syntax-highlight"
-	#"pkulev/zsh-rustup-completion"
-	"sunlei/zsh-ssh"
-	#"dbz/kube-aliases"
+    # what does this do?
+    #useFriendlyNames = true;
 
-
-    ];
-
-      # what does this do?
-      #useFriendlyNames = true;
-
-    };
-    # oh-my-zsh = {
-    #   enable = true;
-    #   plugins = [
-    #     "git"
-    #     "gpg-agent"
-    #     "vi-mode"
-    #   ];
-    # };
+    enableCompletion = true;
+    syntaxHighlighting.enable = true;
 
     initExtra = ''
       zstyle ':completion:*' menu select
       setopt NO_EXTENDED_GLOB
+      # bindkey -M menuselect '\r' .accept-line
     '';
 
     shellAliases = {
@@ -50,7 +25,12 @@
       "du"   = "du -h -c";
       "cls"  = "clear";
       "step" = "step-cli";
+
+      "k" = "kubectl";
+      "kns" = "kubens";
+      "kctx" = "kubectx";
     };
+
     plugins = [
       {
         name = "powerlevel10k";
@@ -62,6 +42,40 @@
         src = ./p10k;
         file = "p10k.zsh";
       }
+      {
+        name = "autosuggestions";
+        src = pkgs.zsh-autosuggestions;
+        file = "share/zsh-autosuggestions/zsh-autosuggestions.zsh";
+      }
+      # {
+      #   name = "autocomplete";
+      #   src = pkgs.zsh-autocomplete;
+      #   file = "share/zsh-autocomplete/zsh-autocomplete.plugin.zsh";
+      # }
+      # {
+      #   name = "zsh-vi-mode";
+      #   src = pkgs.zsh-vi-mode;
+      #   file = "share/zsh-autosuggestions/zsh-autosuggestions.zsh";
+      # }
+
+      {
+        name = "zsh-nix-shell";
+        src = pkgs.zsh-nix-shell;
+        file = "nix-shell.plugin.zsh";
+      }
+
+ #        "jeffreytse/zsh-vi-mode"
+	# "belak/zsh-utils path:editor"
+	# "belak/zsh-utils path:history"
+	# "belak/zsh-utils path:prompt"
+	# "belak/zsh-utils path:utility"
+	# "belak/zsh-utils path:completion"
+	# "ohmyzsh/ohmyzsh"
+	# "zsh-users/zsh-autosuggestions"
+	# "zsh-users/zsh-syntax-highlight"
+	# #"pkulev/zsh-rustup-completion"
+	# "sunlei/zsh-ssh"
+	# #"dbz/kube-aliases"
     ];
 
   };

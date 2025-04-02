@@ -1,0 +1,9 @@
+[submodule "home/awesome/awesome-buttons"]
+	path = home/awesome/awesome-buttons
+	url = git@github.com:streetturtle/awesome-buttons.git
+[submodule "home/awesome/awesome-wm-widgets"]
+	path = home/awesome/awesome-wm-widgets
+	url = git@github.com:streetturtle/awesome-wm-widgets.git
+[submodule "home/awesome/awesome-cyclefocus"]
+	path = home/awesome/awesome-cyclefocus
+	url = git@github.com:blueyed/awesome-cyclefocus.git

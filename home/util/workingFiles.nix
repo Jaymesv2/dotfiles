@@ -61,7 +61,7 @@ in {
                 (lib.attrsets.mapAttrsToList
                     (name: v:
                         if v == "directory" 
-                            then builtins.map (path: "${name}/${path}") (relativePathsRec ("${dir}/${name}" ))
+                            then builtins.map (path: "${name}/${path}") (relativePathsRec "${dir}/${name}")
                             else [ name ] )
                     (builtins.readDir dir));
         
@@ -79,7 +79,7 @@ in {
                     (name: ys: runNonnull (xs: xs // ys) (xattrs."${name}" or null))
                     yattrs );
 
-        trace = x: builtins.trace (builtins.deepSeq x x) x;
+        # trace = x: builtins.trace (builtins.deepSeq x x) x;
 
         # filesWithoutDisabledNames = builtins.attrNames filesWithoutDisabled;
         vals = 
@@ -91,9 +91,9 @@ in {
                             then fileList source linkSource target 
                             else [{source = linkSource; target = target;}]) 
                     (builtins.attrValues
-                        (trace (intersectionMerge 
+                        (intersectionMerge 
                             (filterEnabled config.workingFiles.file)
-                            (filterEnabled config.home.file)))));
+                            (filterEnabled config.home.file))));
 
     in mkIf config.workingFiles.enable {
         # Need to check if there is a matching entry in `home.files` for each of the entries.
@@ -129,18 +129,27 @@ in {
             #     echo "This generation does not exist"
             # fi
             # checks if the file 
-            # symlink() {
-            #   local src="$1"
-            #   local dest="$2"
-            #   ln -sf "$src" "$dest" && {
-            #       echo "updated $dest"
-            #   } || {
-            #       echo "Failed to link file"
-            #   }
-            # }
-            # 
+
+            symlink() {
+              local src="$1"
+              local dest="$2"
+              if [ -e "$src" ]; then
+                ln -sf "$src" "$dest"
+                # echo "created symlink"
+              # else 
+              #   echo "original file didn't exist"
+              fi
+
+              # ln -sf "$src" "$dest" && {
+              #     echo "updated $dest"
+              # } || {
+              #     echo "Failed to link file"
+              # }
+            }
+            
             ''  + lib.strings.concatStringsSep "\n" (
-                    builtins.map (v: "run ln -sf ${lib.escapeShellArgs [ v.source v.target ]}") vals
+                    # builtins.map (v: "run ln -sf ${lib.escapeShellArgs [ v.source v.target ]}") vals
+                    builtins.map (v: "symlink ${lib.escapeShellArgs [ v.source v.target ]}") vals
                 )
             );
         #     + lib.concatStrings (
