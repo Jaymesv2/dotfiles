@@ -1,11 +1,13 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    home-manager.url = "github:nix-community/home-manager/release-24.11";
+    home-manager.url = "github:nix-community/home-manager/release-25.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-gaming.url = "github:fufexan/nix-gaming";
     sops-nix.url = "github:Mic92/sops-nix";
+
+    nixos-wsl.url = "github:nix-community/NixOS-WSL";
     # nix-gaming.inputs.nixpkgs.follows = "nixpkgs";
     disko.url = "github:nix-community/disko/latest";
     disko.inputs.nixpkgs.follows = "nixpkgs";
@@ -15,7 +17,8 @@
     defaultPackage = home-manager.defaultPackage;
 
     homeConfigurations = {
-      trent = home-manager.lib.homeManagerConfiguration {
+      # laptop config
+      "trent@nixos" = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
 	      system = "x86_64-linux";
 	      config.allowUnfree = true;
@@ -38,12 +41,50 @@
             sops-nix.homeManagerModules.sops
         ];
       };
+      # wsl config
+      "trent@desktop-wsl" = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+	      system = "x86_64-linux";
+	      config.allowUnfree = true;
+	    };
+        modules = [ 
+             (./. + "/configurations/home-manager/trent@desktop-wsl/home.nix")
+            # ./home/nvim/nvim.nix
+            # sops-nix.homeManagerModules.sops
+        ];
+	    # extraSpecialArgs = {
+     #      nix-gaming = inputs.nix-gaming;
+     #      pkgs-unstable = import nixpkgs-unstable {
+     #        system = "x86_64-linux";
+     #        config.allowUnfree = true;
+     #      };
+     #      sops-nix = inputs.sops-nix;
+					#
+     #    };
+      };
     };
 
     nixosConfigurations = {
       nixos = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
 	    modules = [ ./system/configuration.nix inputs.sops-nix.nixosModules.sops ];
+        specialArgs = {
+          pkgs-unstable = import nixpkgs-unstable {
+            system = "x86_64-linux";
+          };
+          nixpkgs = nixpkgs;
+          nixpkgs-unstable = nixpkgs-unstable;
+          nixpkgs2311 = nixpkgs;
+        };
+      };
+      desktop-wsl = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+	    modules = [ 
+            ./configurations/nixos/desktop-wsl/configuration.nix
+            inputs.nixos-wsl.nixosModules.wsl
+            # ./system/configuration.nix 
+            # inputs.sops-nix.nixosModules.sops 
+        ];
         specialArgs = {
           pkgs-unstable = import nixpkgs-unstable {
             system = "x86_64-linux";
