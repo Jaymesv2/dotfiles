@@ -1,6 +1,6 @@
 { config, lib, pkgs, ...}: {
     imports = [
-        # nixoswsl
+        ../../../modules/nixos/nix.nix
     ];
     wsl.enable = true;
     wsl.defaultUser = "trent";
