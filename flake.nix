@@ -52,15 +52,15 @@
             # ./home/nvim/nvim.nix
             # sops-nix.homeManagerModules.sops
         ];
-	    # extraSpecialArgs = {
-     #      nix-gaming = inputs.nix-gaming;
-     #      pkgs-unstable = import nixpkgs-unstable {
-     #        system = "x86_64-linux";
-     #        config.allowUnfree = true;
-     #      };
-     #      sops-nix = inputs.sops-nix;
+	    extraSpecialArgs = {
+          # nix-gaming = inputs.nix-gaming;
+          pkgs-unstable = import nixpkgs-unstable {
+            system = "x86_64-linux";
+            config.allowUnfree = true;
+          };
+          # sops-nix = inputs.sops-nix;
 					#
-     #    };
+        };
       };
     };
 
