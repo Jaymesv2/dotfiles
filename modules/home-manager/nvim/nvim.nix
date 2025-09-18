@@ -1,6 +1,6 @@
 {config, lib, pkgs, pkgs-unstable, ... }: let 
 in {
-  imports = [ ../util/workingFiles.nix ];
+  imports = [ ../../../home/util/workingFiles.nix ];
   workingFiles.enable = true;
   workingFiles.file.neovimConfig.linkSource = ".config/nix/home/nvim";
   # 

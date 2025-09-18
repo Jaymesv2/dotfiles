@@ -1,5 +1,6 @@
 { lib, pkgs, pkgs-unstable, nix-gaming, ... }: rec {
   imports = [
+    ../../../modules/home-manager/nvim/nvim.nix
   ];
 
 
