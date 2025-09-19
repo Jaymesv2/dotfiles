@@ -11,5 +11,11 @@
     stateVersion = "25.05";
   };
 
+  programs.git = {
+    enable = true;
+    userEmail = "ghastfilms613@gmail.com";
+    userName = "Trent";
+  };
+
   programs.home-manager.enable = true;
 }
