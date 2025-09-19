@@ -82,5 +82,10 @@
 
   programs.direnv.enableZshIntegration = true;
   services.gpg-agent.enableZshIntegration = true;
-  
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+    config = {};
+  };
 }

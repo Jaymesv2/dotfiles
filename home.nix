@@ -370,12 +370,6 @@ echo "$WORKDIR/nix-function-calls.svg"
   
   services.mpd.enable = true;
   
-  programs.direnv = {
-    enable = true;
-    nix-direnv.enable = true;
-    config = {};
-  };
-  
   programs.vscode = {
     enable = true;
   };
