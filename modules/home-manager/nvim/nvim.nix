@@ -2,7 +2,7 @@
 in {
   imports = [ ../../../home/util/workingFiles.nix ];
   workingFiles.enable = true;
-  workingFiles.file.neovimConfig.linkSource = ".config/nix/modules/nvim/nvim";
+  workingFiles.file.neovimConfig.linkSource = ".config/nix/modules/home-manager/nvim";
   # 
   programs.neovim.package = pkgs-unstable.neovim-unwrapped; 
   home.file.neovimConfig = {
