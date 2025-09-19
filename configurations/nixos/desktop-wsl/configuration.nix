@@ -6,7 +6,7 @@
     wsl.defaultUser = "trent";
     networking.hostName = "desktop-wsl";
 
-
+    users.groups.trent = {};
     # Define a user account. Don't forget to set a password with ‘passwd’.
     users.users.trent = {
       isNormalUser = true;
