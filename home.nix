@@ -1,7 +1,8 @@
 { lib, pkgs, pkgs-unstable, nix-gaming, ... }: rec {
   imports = [
-    home/nvim/nvim.nix
-    home/zsh/zsh.nix
+    # home/nvim/nvim.nix
+    modules/home-manager/nvim/nvim.nix
+    modules/home-manager/zsh/zsh.nix
     home/alacritty.nix
     home/waybar.nix
     home/ssh.nix
@@ -77,7 +78,7 @@ echo "$WORKDIR/nix-function-calls.svg"
       zip
       unzip
       p7zip
-      loc
+      tokei
       jq
       yq
       btop
@@ -101,7 +102,7 @@ echo "$WORKDIR/nix-function-calls.svg"
 
       yubikey-personalization-gui
       yubioath-flutter
-      yubikey-manager-qt
+      #yubikey-manager-qt
       # ----- languages -----
       swi-prolog
       # ----- system stuff -----
@@ -109,6 +110,7 @@ echo "$WORKDIR/nix-function-calls.svg"
       pavucontrol
       flameshot
       gnome-software
+
       file-roller
       nemo-fileroller
       # peazip
@@ -128,7 +130,7 @@ echo "$WORKDIR/nix-function-calls.svg"
         libreoffice
         todoist-electron
         pdfmixtool
-        okular
+        libsForQt5.okular
 	    notepadqq
         
         # other
@@ -259,11 +261,44 @@ echo "$WORKDIR/nix-function-calls.svg"
     mime.enable = true;
     mimeApps = {
       enable = true;
-      defaultApplications = {
-        "application/pdf" = "org.pwmt.zathura-pdf-mupdf.desktop;";
-        "image/jpeg" = "sxiv.desktop";
-        "image/png" = "sxiv.desktop";
-        "image/gif" = "sxiv.desktop";
+      defaultApplications = let 
+        document_viewer = "org.pwmt.zathura-pdf-mupdf.desktop;";
+        image_viewer = "sxiv.desktop";
+        video_player = "vlc.desktop";
+        archive_viewer = "org.gnome.FileRoller.desktop";
+    in {
+      # documents
+        "application/pdf" = document_viewer;
+        "application/vnd.amazon.ebook" = document_viewer;
+        "application/epub+zip" = document_viewer;
+        #"text/html" = "firefox.desktop";
+
+
+      # images
+        "image/jpeg" = image_viewer;
+        "image/webp" = image_viewer;
+        "image/png" = image_viewer;
+        "image/gif" = image_viewer;
+
+        "image/apng" = image_viewer;
+        "image/avif" = image_viewer;
+        "image/vnd.microsoft.icon" = image_viewer;
+        
+      # audio
+
+      # video
+        "video/mp4" = video_player;
+        "video/x-msvideo" = video_player; # .avi
+
+      # archives
+        "application/x-bzip" = archive_viewer; # .bz
+        "application/x-bzip2" = archive_viewer; # .bz2
+        "application/gzip" = archive_viewer;
+        "application/x-gzip" = archive_viewer;
+        
+      # misc
+        #"application/octet-stream" = "";
+        #"text/calendar" = "";
       };
       #defaultApplications = {
       #  "word"
@@ -325,7 +360,7 @@ echo "$WORKDIR/nix-function-calls.svg"
   services.gpg-agent = {
     enable = true;
     enableZshIntegration = true;
-    pinentryPackage = pkgs.pinentry-gnome3;
+    #pinentryPackage = pkgs.pinentry-gnome3;
   };
 
   #services.dbus.packages = [ pkgs.gcr ];
@@ -343,9 +378,6 @@ echo "$WORKDIR/nix-function-calls.svg"
   
   programs.vscode = {
     enable = true;
-    extensions = with pkgs.vscode-extensions; [
-      
-    ];
   };
 
 
