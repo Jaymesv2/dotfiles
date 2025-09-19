@@ -19,8 +19,10 @@
     };
 
 
+    programs.zsh.interactiveShellInit = "source ${pkgs.zsh-nix-shell}/share/zsh-nix-shell/nix-shell.plugin.zsh";
     programs.zsh.enable = true;
     environment.pathsToLink = [ "/share/zsh" ];
+
     programs.neovim = {
       enable = true;
       defaultEditor = true;
