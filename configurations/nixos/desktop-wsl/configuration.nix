@@ -2,8 +2,11 @@
     imports = [
         ../../../modules/nixos/nix.nix
     ];
-    wsl.enable = true;
-    wsl.defaultUser = "trent";
+    wsl = {
+        enable = true;
+        defaultUser = "trent";
+    };
+
     networking.hostName = "desktop-wsl";
 
     users.groups.trent = {};
@@ -18,9 +21,12 @@
       # initialPassword = "123abc"; # best password
     };
 
+    programs.zsh = {
+        enable = true;
+        interactiveShellInit = "source ${pkgs.zsh-nix-shell}/share/zsh-nix-shell/nix-shell.plugin.zsh";
 
-    programs.zsh.interactiveShellInit = "source ${pkgs.zsh-nix-shell}/share/zsh-nix-shell/nix-shell.plugin.zsh";
-    programs.zsh.enable = true;
+    };
+
     environment.pathsToLink = [ "/share/zsh" ];
 
     programs.neovim = {
@@ -41,6 +47,12 @@
       nerd-fonts.fira-code
       nerd-fonts.droid-sans-mono
       # (nerdfonts.override { } )
+    ];
+
+    environment.systemPackages = with pkgs; [
+      wget
+      neovim
+      wslu
     ];
 
 
