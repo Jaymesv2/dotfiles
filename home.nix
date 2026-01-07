@@ -153,7 +153,7 @@ echo "$WORKDIR/nix-function-calls.svg"
         monero-gui
         monero-cli
 
-        rpi-imager
+        #rpi-imager
 
         # drawing
         inkscape
@@ -360,7 +360,7 @@ echo "$WORKDIR/nix-function-calls.svg"
   services.gpg-agent = {
     enable = true;
     enableZshIntegration = true;
-    #pinentryPackage = pkgs.pinentry-gnome3;
+    pinentry.package = pkgs.pinentry-rofi;
   };
 
   #services.dbus.packages = [ pkgs.gcr ];
