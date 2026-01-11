@@ -1,8 +1,8 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    home-manager.url = "github:nix-community/home-manager/release-25.05";
+    home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-gaming.url = "github:fufexan/nix-gaming";
     sops-nix.url = "github:Mic92/sops-nix";
@@ -23,9 +23,7 @@
 	      system = "x86_64-linux";
 	      config.allowUnfree = true;
 	      # required by logseq and obsidian
-	      config.permittedInsecurePackages = [
-            "electron-25.9.0"
-          ];
+	      # config.permittedInsecurePackages = [ "electron-25.9.0" ];
 	    };
 	    extraSpecialArgs = {
           nix-gaming = inputs.nix-gaming;

@@ -86,7 +86,8 @@
       #withJava = true;
       #withPrimus = true;
 
-      extraPkgs = p: with p; [ glxinfo ];
+      # extraPkgs = p: with p; [ glxinfo ];
+      extraPkgs = p: with p; [ mesa-demos ];
     };
   };
   programs.java.enable = true;
@@ -137,7 +138,7 @@
 
 
 
-  services.globalprotect.enable = true;
+  # services.globalprotect.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -162,7 +163,7 @@
     greetd.gtkgreet
     cage
     dig
-    globalprotect-openconnect
+    # globalprotect-openconnect
   ];
 
   services.flatpak.enable = true;
@@ -176,7 +177,7 @@
   fonts.packages = with pkgs; [
     noto-fonts
     noto-fonts-cjk-sans
-    noto-fonts-emoji
+    noto-fonts-color-emoji
     liberation_ttf
     fira-code
     fira-code-symbols

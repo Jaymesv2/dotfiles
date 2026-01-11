@@ -15,6 +15,7 @@
 
   nixpkgs.config.permittedInsecurePackages = [
     "electron-27.3.11"
+    #"qtwebengine-5.15.19"
   ];
   nixpkgs.config.allowUnfreePredicate = pkg: 
   builtins.elem (lib.getName pkg) [
@@ -62,7 +63,7 @@ echo "$WORKDIR/nix-function-calls.svg"
       # ----- SYSTEM -----
 
       # fonts
-      fira-code-nerdfont
+      nerd-fonts.fira-code
 
 
       nemo
@@ -100,7 +101,7 @@ echo "$WORKDIR/nix-function-calls.svg"
       ctags
       just
 
-      yubikey-personalization-gui
+      # yubikey-personalization-gui
       yubioath-flutter
       #yubikey-manager-qt
       # ----- languages -----
@@ -130,8 +131,8 @@ echo "$WORKDIR/nix-function-calls.svg"
         libreoffice
         todoist-electron
         pdfmixtool
-        libsForQt5.okular
-	    notepadqq
+        # libsForQt5.okular
+	    #notepadqq
         
         # other
         qjournalctl
@@ -145,7 +146,7 @@ echo "$WORKDIR/nix-function-calls.svg"
         vlc
 
         prusa-slicer
-        freecad
+        #freecad
         librecad
 
         # crypto 
@@ -183,7 +184,7 @@ echo "$WORKDIR/nix-function-calls.svg"
 	prismlauncher
     packwiz
 
-	graalvm-ce
+	graalvmPackages.graalvm-ce
 
       
     ]) ++ [
@@ -343,7 +344,7 @@ echo "$WORKDIR/nix-function-calls.svg"
   
   programs.rofi = {
     enable = true;
-    package = pkgs.rofi-wayland;
+    package = pkgs.rofi;
   };
 
   

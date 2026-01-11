@@ -9,12 +9,12 @@
             target = ".local/java/java17";
         };
         
-        "java/java23" = { 
-            source = pkgs.jdk23; 
-            target = ".local/java/java23";
-        };
+        # "java/java23" = { 
+        #     source = pkgs.jdk23; 
+        #     target = ".local/java/java23";
+        # };
         "java/graalvm" = { 
-            source = pkgs.graalvm-ce; 
+            source = pkgs.graalvmPackages.graalvm-ce; 
             target = ".local/java/graalvm";
         };
         # "default/useradd".text = "GROUP=100 ...";

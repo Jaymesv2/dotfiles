@@ -12,6 +12,7 @@
         condition = "gitdir:~/Documents/classes/";
         path = "${config.sops.secrets."university.gitconfig".path}";
     }];
+
   };
   sops.secrets."university.gitconfig" = {
           sopsFile = ./git/university.sops.gitconfig;
