@@ -1,5 +1,5 @@
 -- default configuration
-require('illuminate').configure({
+--[[ require('illuminate').configure({
     -- providers: provider used to get references in the buffer, ordered by priority
     providers = {
         'lsp',
@@ -52,5 +52,5 @@ require('illuminate').configure({
     should_enable = function(bufnr) return true end,
     -- case_insensitive_regex: sets regex case sensitivity
     case_insensitive_regex = false,
-})
+}) ]]
 

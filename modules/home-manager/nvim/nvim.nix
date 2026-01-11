@@ -161,7 +161,7 @@ in {
       which-key-nvim # https://github.com/folke/which-key.nvim
       legendary-nvim # 
 
-      vim-illuminate # https://github.com/RRethy/vim-illuminate
+      #vim-illuminate # https://github.com/RRethy/vim-illuminate
 
 
         # Status line
