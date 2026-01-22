@@ -5,7 +5,7 @@
 { lib, config, pkgs, pkgs-unstable, ... }: let something = "something"; in {
   imports =
     [ ./network.nix
-      ./marc_laptop.nix
+      ./new_laptop.nix
       ./sops.nix
       ./audio.nix
       ./printer.nix
@@ -14,6 +14,7 @@
       ../modules/nixos/nix.nix
     ];
     
+
   # nix = {
   #   # pkgs.nixFlakes is an alias for pkgs.nixVersions.stable
   #   package = pkgs.nixVersions.stable;

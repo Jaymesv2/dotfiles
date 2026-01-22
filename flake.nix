@@ -11,6 +11,9 @@
     # nix-gaming.inputs.nixpkgs.follows = "nixpkgs";
     disko.url = "github:nix-community/disko/latest";
     disko.inputs.nixpkgs.follows = "nixpkgs";
+
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
   };
 
   outputs = inputs: with inputs; {
@@ -65,7 +68,7 @@
     nixosConfigurations = {
       nixos = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-	    modules = [ ./system/configuration.nix inputs.sops-nix.nixosModules.sops ];
+	    modules = [ ./system/configuration.nix inputs.sops-nix.nixosModules.sops inputs.nixos-hardware.nixosModules.framework-16-amd-ai-300-series ];
         specialArgs = {
           pkgs-unstable = import nixpkgs-unstable {
             system = "x86_64-linux";
