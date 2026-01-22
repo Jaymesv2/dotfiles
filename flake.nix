@@ -9,10 +9,11 @@
 
     nixos-wsl.url = "github:nix-community/NixOS-WSL";
     # nix-gaming.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
     disko.url = "github:nix-community/disko/latest";
     disko.inputs.nixpkgs.follows = "nixpkgs";
-
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    impermanence.url = "github:nix-community/impermanence";
 
   };
 
@@ -68,7 +69,15 @@
     nixosConfigurations = {
       nixos = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-	    modules = [ ./system/configuration.nix inputs.sops-nix.nixosModules.sops inputs.nixos-hardware.nixosModules.framework-16-amd-ai-300-series ];
+	    modules = [ 
+            ./system/configuration.nix 
+            inputs.sops-nix.nixosModules.sops 
+            inputs.nixos-hardware.nixosModules.framework-16-amd-ai-300-series 
+            inputs.impermanence.nixosModules.impermanence
+            inputs.disko.nixosModules.disko
+            ./system/hardware/laptop_disk.nix
+
+            ];
         specialArgs = {
           pkgs-unstable = import nixpkgs-unstable {
             system = "x86_64-linux";

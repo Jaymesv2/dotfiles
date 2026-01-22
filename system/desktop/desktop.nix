@@ -1,47 +1,28 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { lib, config, pkgs, pkgs-unstable, ... }: let something = "something"; in {
   imports =
-    [ ./network.nix
-      ./new_laptop.nix
-      ./sops.nix
-      ./audio.nix
-      ./printer.nix
+    [ ./desktop-hardware-configuration.nix # Include the results of the hardware scan.
+      ./network.nix
+      # ./sops.nix
+    #   ./audio.nix
       # ./postgres.nix
-      ./graphics.nix
-      ../modules/nixos/nix.nix
-      ./persist.nix
+      # ./graphics.nix
     ];
     
+  nix = {
+    # pkgs.nixFlakes is an alias for pkgs.nixVersions.stable
+    package = pkgs.nixVersions.stable;
 
-  # nix = {
-  #   # pkgs.nixFlakes is an alias for pkgs.nixVersions.stable
-  #   package = pkgs.nixVersions.stable;
-  #   gc = {
-  #       automatic = true;
-  #       persistent = true;
-  #       randomizedDelaySec = "45min";
-  #   };
-  #
-  #   settings = {
-  #     experimental-features = [ "nix-command" "flakes" ];
-  #     substituters = [
-  #       "https://nix-gaming.cachix.org"
-  #       "https://cache.garnix.io"
-  #     ];
-  #     trusted-public-keys = [
-  #       "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
-  #       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
-  #     ];
-  #     trusted-users = [
-  #       "root"
-  #       "trent"
-  #       "@wheel"
-  #     ];
-  #   };
-  # };
+    settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+      substituters = ["https://nix-gaming.cachix.org"];
+      trusted-public-keys = ["nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="];
+      trusted-users = [
+        "root"
+        "trent"
+        "@wheel"
+      ];
+    };
+  };
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -50,12 +31,12 @@
 
 
   # Bootloader.
-  boot.loader.systemd-boot.configurationLimit = 10;
+  boot.loader.systemd-boot.configurationLimit = 15;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.initrd.luks.devices."luks-9a777e5b-11f1-4bff-b65a-4427855f3cc0".device = "/dev/disk/by-uuid/9a777e5b-11f1-4bff-b65a-4427855f3cc0";
-  networking.hostName = "nixos"; # Define your hostname.
+  # boot.initrd.luks.devices."luks-9a777e5b-11f1-4bff-b65a-4427855f3cc0".device = "/dev/disk/by-uuid/9a777e5b-11f1-4bff-b65a-4427855f3cc0";
+  networking.hostName = "desktop"; # Define your hostname.
 
   services.udev.packages = with pkgs; [
     ledger-udev-rules
@@ -80,6 +61,33 @@
   # time.timeZone = "America/New_York";
 
 
+
+
+
+
+  # ------ POWER MANAGEMENT
+
+  # services.acpid.enable = true;
+
+
+  # services.upower.enable = true;
+
+  # powerManagement.enable = true;
+  # services.thermald.enable = true;
+  # powerManagement.powertop.enable = true;
+
+  # services.auto-cpufreq.enable = false;
+  # services.auto-cpufreq.settings = {
+  #   battery = {
+  #      governor = "powersave";
+  #      turbo = "never";
+  #   };
+  #   charger = {
+  #      governor = "performance";
+  #      turbo = "auto";
+  #   };
+  # };
+
   # ------------ STEAM -------------
   programs.steam = {
     enable = true;
@@ -88,8 +96,7 @@
       #withJava = true;
       #withPrimus = true;
 
-      # extraPkgs = p: with p; [ glxinfo ];
-      extraPkgs = p: with p; [ mesa-demos ];
+      extraPkgs = p: with p; [ glxinfo ];
     };
   };
   programs.java.enable = true;
@@ -138,8 +145,6 @@
     enable = true;
   };
 
-
-
   # services.globalprotect.enable = true;
 
   # List packages installed in system profile. To search, run:
@@ -179,15 +184,14 @@
   fonts.packages = with pkgs; [
     noto-fonts
     noto-fonts-cjk-sans
-    noto-fonts-color-emoji
+    noto-fonts-emoji
     liberation_ttf
     fira-code
     fira-code-symbols
     mplus-outline-fonts.githubRelease
     dina-font
     proggyfonts
-    nerd-fonts.fira-code
-    nerd-fonts.droid-sans-mono
+    (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
     # (nerdfonts.override { } )
   ];
 
@@ -248,6 +252,6 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "23.11"; # Did you read the comment?
+  system.stateVersion = "24.11"; # Did you read the comment?
 
 }
