@@ -186,7 +186,8 @@ echo "$WORKDIR/nix-function-calls.svg"
     packwiz
 
 	graalvmPackages.graalvm-ce
-
+    kopia
+    kopia-ui
       
     ]) ++ [
         pkgs-unstable.devenv

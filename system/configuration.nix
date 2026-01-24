@@ -5,7 +5,7 @@
 { lib, config, pkgs, pkgs-unstable, ... }: let something = "something"; in {
   imports =
     [ ./network.nix
-      ./new_laptop.nix
+      ./laptop.nix
       ./sops.nix
       ./audio.nix
       ./printer.nix
@@ -42,6 +42,7 @@
   #     ];
   #   };
   # };
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -54,7 +55,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.initrd.luks.devices."luks-9a777e5b-11f1-4bff-b65a-4427855f3cc0".device = "/dev/disk/by-uuid/9a777e5b-11f1-4bff-b65a-4427855f3cc0";
   networking.hostName = "nixos"; # Define your hostname.
 
   services.udev.packages = with pkgs; [
@@ -120,9 +120,13 @@
     shell = pkgs.zsh;
     extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" ];
     packages = with pkgs; [];
-
-    initialPassword = "123abc"; # best password
+    hashedPassword = "$y$j9T$PoIVXXZUTD0aNXvUtlmyK/$VJH7ZxK7V9Caq99dpvrjPhJY/nKrjrzBpHZYSdBWu53";
+    # hashedPasswordFile = config.sops.secrets.trent-password.path;
+    # initialPassword = "123abc"; # best password
   };
+  users.users.root.hashedPassword = "$y$j9T$ibbF4vj1t1WEmM9WEgk7E.$igM9JiPYciGdJnzP5Rxg8hUNovpl.SMMsFLsxZOWsw6";
+
+  # sops.secrets.trent-password.neededForUsers = true;
   programs.zsh.enable = true;
 
   users.groups.trent = {};
@@ -165,6 +169,7 @@
     greetd.gtkgreet
     cage
     dig
+    kopia
     # globalprotect-openconnect
   ];
 
@@ -215,7 +220,6 @@
   # };
 
   #programs.regreet.enable = true;
-
 
   programs.nix-ld.enable = true;
   environment.variables = {

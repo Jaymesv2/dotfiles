@@ -250,11 +250,15 @@ awful.screen.connect_for_each_screen(function(s)
 	 --    fs_widget({
 		-- mounts = {'/', '/home'}
 	 --    }),
-	    cpu_widget({
-		width = 50,
-		step_width = 2,
-		step_spacing=1
-	    }),
+     
+        cpu_widget({
+            width = 50,
+            step_width = 2,
+            step_spacing=1
+        }),
+	    -- ram_widget({
+					--
+	    -- }),
 	    ram_widget({
 
 	    }),

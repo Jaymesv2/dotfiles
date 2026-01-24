@@ -14,6 +14,7 @@
     disko.url = "github:nix-community/disko/latest";
     disko.inputs.nixpkgs.follows = "nixpkgs";
     impermanence.url = "github:nix-community/impermanence";
+    self.submodules = true;
 
   };
 
@@ -75,7 +76,7 @@
             inputs.nixos-hardware.nixosModules.framework-16-amd-ai-300-series 
             inputs.impermanence.nixosModules.impermanence
             inputs.disko.nixosModules.disko
-            ./system/hardware/laptop_disk.nix
+            # ./system/hardware/laptop_disk.nix
 
             ];
         specialArgs = {
