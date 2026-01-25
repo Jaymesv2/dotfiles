@@ -54,6 +54,11 @@ in rec {
     "burpsuite"
 ];
 
+  # automatically create the home manager symlink
+  home.activation.homeManagerSymlink = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    run ln -s $VERBOSE_ARG ${home.homeDirectory}/.config/nix ${home.homeDirectory}/.config/home-manager
+  '';
+
   # hardware.enableRedistributableFirmware = true;
   # hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   home = {
