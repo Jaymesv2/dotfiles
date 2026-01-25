@@ -110,7 +110,10 @@
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
   };
-
+  # enable tpm
+  security.tpm2.enable = true;
+  security.tpm2.pkcs11.enable = true;  # expose /run/current-system/sw/lib/libtpm2_pkcs11.so
+  security.tpm2.tctiEnvironment.enable = true;  # TPM2TOOLS_TCTI and TPM2_PKCS11_TCTI env variables
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.trent = {
@@ -118,7 +121,7 @@
     description = "Trent";
     group = "trent";
     shell = pkgs.zsh;
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" "tss" ];
     packages = with pkgs; [];
     hashedPassword = "$y$j9T$PoIVXXZUTD0aNXvUtlmyK/$VJH7ZxK7V9Caq99dpvrjPhJY/nKrjrzBpHZYSdBWu53";
     # hashedPasswordFile = config.sops.secrets.trent-password.path;

@@ -13,9 +13,13 @@
 
     disko.url = "github:nix-community/disko/latest";
     disko.inputs.nixpkgs.follows = "nixpkgs";
-    impermanence.url = "github:nix-community/impermanence";
-    self.submodules = true;
 
+    impermanence.url = "github:nix-community/impermanence";
+
+    lanzaboote.url = "github:nix-community/lanzaboote/v1.0.0";
+    lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
+
+    self.submodules = true;
   };
 
   outputs = inputs: with inputs; {
@@ -76,6 +80,7 @@
             inputs.nixos-hardware.nixosModules.framework-16-amd-ai-300-series 
             inputs.impermanence.nixosModules.impermanence
             inputs.disko.nixosModules.disko
+            inputs.lanzaboote.nixosModules.lanzaboote
             # ./system/hardware/laptop_disk.nix
 
             ];

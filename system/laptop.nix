@@ -1,7 +1,8 @@
 { pkgs, lib, config, options, ...} : {
     #imports = [./hardware/new_laptop.nix];
 
-    imports = [ ./hardware/laptop/disk.nix ./hardware/laptop/hardware-configuration.nix ];
+    imports = [ ./hardware/laptop/disk.nix ./hardware/laptop/hardware-configuration.nix ./hardware/laptop/secureboot.nix ];
+    # fileSystems."/var/log".neededForBoot = true;
     
 
     # boot.kernelParams = [ "amdgpu.abmlevel=0" "mt7925e.disable_aspm=1"];
