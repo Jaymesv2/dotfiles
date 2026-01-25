@@ -1,4 +1,32 @@
-{ lib, pkgs, pkgs-unstable, nix-gaming, ... }: rec {
+{ lib, pkgs, pkgs-unstable, nix-gaming, ... }: let 
+    # https://discourse.nixos.org/t/nix-flamegraph-or-profiling-tool/33333
+    stackCollapse = pkgs.writeTextFile {
+      name = "stack-collapse.py";
+      destination = "/bin/stack-collapse.py";
+      text = builtins.readFile (builtins.fetchurl
+        {
+          url = "https://raw.githubusercontent.com/NixOS/nix/master/contrib/stack-collapse.py";
+          sha256 = "sha256:0mi9cf3nx7xjxcrvll1hlkhmxiikjn0w95akvwxs50q270pafbjw";
+        });
+      executable = true;
+    };
+    nixFunctionCalls = pkgs.writeShellApplication {
+      name = "nixFunctionCalls";
+      runtimeInputs = [ stackCollapse pkgs.inferno ];
+      text = ''
+#!/usr/bin/env zsh
+
+WORKDIR=$(mktemp -d)
+
+nix eval -vvvvvvvvvvvvvvvvvvvv --raw --option trace-function-calls true $1 1>/dev/null 2> $WORKDIR/nix-function-calls.trace
+stack-collapse.py $WORKDIR/nix-function-calls.trace > $WORKDIR/nix-function-calls.folded
+inferno-flamegraph $WORKDIR/nix-function-calls.folded > $WORKDIR/nix-function-calls.svg
+echo "$WORKDIR/nix-function-calls.svg"
+      ''; #./nix-function-calls.sh;
+      checkPhase = "";
+    };
+
+in rec {
   imports = [
     # home/nvim/nvim.nix
     modules/home-manager/nvim/nvim.nix
@@ -33,34 +61,7 @@
     homeDirectory = "/home/trent";
     stateVersion = "23.11";
     packages = 
-        (let
-        # https://discourse.nixos.org/t/nix-flamegraph-or-profiling-tool/33333
-        stackCollapse = pkgs.writeTextFile {
-          name = "stack-collapse.py";
-          destination = "/bin/stack-collapse.py";
-          text = builtins.readFile (builtins.fetchurl
-            {
-              url = "https://raw.githubusercontent.com/NixOS/nix/master/contrib/stack-collapse.py";
-              sha256 = "sha256:0mi9cf3nx7xjxcrvll1hlkhmxiikjn0w95akvwxs50q270pafbjw";
-            });
-          executable = true;
-        };
-        nixFunctionCalls = pkgs.writeShellApplication {
-          name = "nixFunctionCalls";
-          runtimeInputs = [ stackCollapse pkgs.inferno ];
-          text = ''
-#!/usr/bin/env zsh
-
-WORKDIR=$(mktemp -d)
-
-nix eval -vvvvvvvvvvvvvvvvvvvv --raw --option trace-function-calls true $1 1>/dev/null 2> $WORKDIR/nix-function-calls.trace
-stack-collapse.py $WORKDIR/nix-function-calls.trace > $WORKDIR/nix-function-calls.folded
-inferno-flamegraph $WORKDIR/nix-function-calls.folded > $WORKDIR/nix-function-calls.svg
-echo "$WORKDIR/nix-function-calls.svg"
-          ''; #./nix-function-calls.sh;
-          checkPhase = "";
-        };
-      in [ nixFunctionCalls stackCollapse ] ) ++ (with pkgs; [
+        ([ nixFunctionCalls stackCollapse ] ) ++ (with pkgs; [
       # ----- SYSTEM -----
 
       # fonts
@@ -180,6 +181,9 @@ echo "$WORKDIR/nix-function-calls.svg"
         sops
 
         zotero
+        ymuse
+        alsa-utils
+
 
 	#osu-lazer-bin
 	prismlauncher
@@ -237,6 +241,7 @@ echo "$WORKDIR/nix-function-calls.svg"
 
   
   xdg = {
+    #enable = true;
     portal = {
       enable = true;
       xdgOpenUsePortal = true;
@@ -310,6 +315,7 @@ echo "$WORKDIR/nix-function-calls.svg"
     userDirs = {
       enable = true;
       createDirectories = true;
+
       extraConfig = {
         XDG_MISC_DIR = "${home.homeDirectory}/Misc";
       };
