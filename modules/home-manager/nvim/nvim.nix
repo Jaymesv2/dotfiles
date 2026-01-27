@@ -106,13 +106,9 @@ in {
     in [ # non lazy plugins
         pkgs-unstable.vimPlugins.lz-n
     ] ++ /*builtins.map makeOptional*/ (with pkgs-unstable.vimPlugins; [
-      lean-nvim
 
       bufresize-nvim
       # hbac-nvim
-
-      rustaceanvim
-
 
       # Treesitter
       nvim-treesitter.withAllGrammars
@@ -158,7 +154,9 @@ in {
       # winshift-nvim # https://github.com/sindrets/winshift.nvim
       # nvim-window-picker # https://github.com/s1n7ax/nvim-window-picker/
 
+      
       which-key-nvim # https://github.com/folke/which-key.nvim
+      mini-icons
       legendary-nvim # 
 
       #vim-illuminate # https://github.com/RRethy/vim-illuminate
@@ -259,13 +257,12 @@ in {
 
 
 
-      
 
       # Language Support
-        # Misc
-        vimtex # 
-
+        lean-nvim
+        Coqtail # https://github.com/whonore/Coqtail
         rustaceanvim # https://github.com/mrcjkb/rustaceanvim
+        vimtex # 
 
         # Haskell
         haskell-tools-nvim # https://github.com/mrcjkb/haskell-tools.nvim
@@ -275,7 +272,6 @@ in {
         # haskell-debug-adapter # https://github.com/phoityne/haskell-debug-adapter/
 
 
-      Coqtail # https://github.com/whonore/Coqtail
 
       # markdown-preview-nvim # https://github.com/iamcco/markdown-preview.nvim
       conform-nvim # https://github.com/stevearc/conform.nvim
