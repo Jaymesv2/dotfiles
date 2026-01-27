@@ -81,8 +81,6 @@
             inputs.impermanence.nixosModules.impermanence
             inputs.disko.nixosModules.disko
             inputs.lanzaboote.nixosModules.lanzaboote
-            # ./system/hardware/laptop_disk.nix
-
             ];
         specialArgs = {
           pkgs-unstable = import nixpkgs-unstable {
