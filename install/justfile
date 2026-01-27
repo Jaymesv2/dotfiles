@@ -1,0 +1,56 @@
+
+SYSTEM := "laptop"
+USER := "trent"
+DRIVE := "/dev/nvme0n1"
+LUKSPARTITION := "/dev/nvme0n1p2"
+
+
+# 
+
+# Format the disks and write the filesystem
+format_disk:
+    sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode destroy,format,mount ../system/hardware/{{SYSTEM}}/disk.nix
+
+# install nixos
+install_nixos:
+    sudo nixos-install --no-root-passwd --flake '..#nixos' # install, the passwords are in the config 
+
+# copy the nixos and sops configs to be able to activate nixos and home manager generations along with the kopia config to restore from backup
+copy_configs:
+    mkdir -p /mnt/home/{{USER}}/.config
+
+    cp .. /mnt/home/{{USER}}/.config/nix/
+    cp ../../kopia /mnt/home/{{USER}}/.config/
+    cp ../../sops  /mnt/home/{{USER}}/.config/
+    cp ../../.ssh  /mnt/home/{{USER}}/
+
+    sudo nixos-enter --root /mnt -c 'chown -R {{USER}}:{{USER}} .config'
+
+# reboot here and wait for the system to generate the secure boot keys, it will automatically restart and then secure boot should be ready. 
+# Secure boot still needs to be reenabled in the UEFI but its setup.
+
+
+# Enable automatic full disk encryption unlocking
+tpm_fde:
+    # PCR 0 includes the firmware code, PCR 1 includes the 
+    # PCR 7 is the secure boot policy and state so that is very important to have enabled
+    # PCR 12 should have the kernel commandline and some other stuff for measured boot but lanzaboote doesn't support it yet (maybe never?) so its unused.
+
+    # PCR 0 seems to break this sometimes but i'll look into that if it breaks something :/
+    # sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+2+7+12 --wipe-slot=tpm2 /dev/nvme0n1p2
+    # sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=7+12 --wipe-slot=tpm2 /dev/nvme0n1p2 # lanzaboote doesn't set pcr 12 :/
+    sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcr-bank=sha256 --tpm2-pcrs=0+7 --wipe-slot=tpm2 {{LUKSPARTITION}}
+
+home-manager-init:
+    nix run home-manager/master -- init --switch --flake '~/.config/nix#{{USER}}@nixos'
+
+# reset_tpm_fde:
+#     sudo systemd-cryptenroll --wipe-slot tpm2 /dev/nvme0n1p2
+
+restore:
+    #BACKUP_ID="$(kopia snapshot list --json | jq --raw-output '.[-1] | .id')" 
+    #kopia --config-file "/home/{{USER}}/.config/kopia/repository.conf" restore .
+    sudo kopia snap restore .
+
+fprint:
+    sudo fprintd-enroll {{USER}}
