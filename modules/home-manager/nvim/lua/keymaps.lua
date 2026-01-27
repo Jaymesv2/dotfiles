@@ -11,10 +11,13 @@ local opts = {
     silent = true,       -- do not show message
 }
 
-
-vim.keymap.set({'n', 'x', 'o'}, 's',  '<Plug>(leap-forward)', { desc = 'Leap forward' })
-vim.keymap.set({'n', 'x', 'o'}, 'S',  '<Plug>(leap-backward)', { desc = 'Leap backward' })
-vim.keymap.set({'n', 'x', 'o'}, 'gs', '<Plug>(leap-from-window)', { desc = 'Leap across buffers' } )
+wk.add({
+    mode = {'n','x','o'},
+    group = "leap",
+    {'s',  '<Plug>(leap-forward)', desc = 'Leap forward'},
+    {'S',  '<Plug>(leap-backward)', desc = 'Leap backward'},
+    {'gs', '<Plug>(leap-from-window)', desc = 'Leap across buffers' }
+})
 
 -----------------
 -- Normal mode --
@@ -43,24 +46,21 @@ vim.keymap.set('n', '<Leader>p', '"+p')
 vim.keymap.set('n', '<Leader>Y', '"*y')
 vim.keymap.set('n', '<Leader>P', '"*p')
 
-vim.keymap.set('n', '<Leader>ff', function() require('telescope.builtin').find_files() end, {desc = 'Telescope find files'})
-vim.keymap.set('n', '<Leader>fg', function() require('telescope.builtin').live_grep() end, {desc = 'Telescope live grep'})
-vim.keymap.set('n', '<Leader>fb', function() require('telescope.builtin').buffers() end, {desc = 'Telescope buffers'})
-vim.keymap.set('n', '<Leader>fh', function() require('telescope.builtin').help_tags() end, { desc = 'Telescope help tags'})
-vim.keymap.set('n', '<Leader>fc', function() require('telescope.builtin').tags() end, { desc = 'Telescope tags' })
-vim.keymap.set('n', '<Leader>fr', function() require('telescope.builtin').registers() end, { desc = 'Telescope registers' })
-vim.keymap.set('n', '<Leader>fs', function() require('telescope.builtin').spell_suggest() end, {desc = 'Telescope spell suggest'})
-vim.keymap.set('n', '<leader>fk', function() require('telescope.builtin').keymaps() end, { desc = 'Telescope keymaps' })
-vim.keymap.set('n', '<leader>fm', function() require('telescope.builtin').marks() end, { desc = 'Telescope marks' })
-vim.keymap.set('n', '<leader>fj', function() require('telescope.builtin').jumplist() end, { desc = 'Telescope Jumplist' })
-vim.keymap.set('n', '<leader>fa', function() require('telescope.builtin').builtin() end, { desc = 'Telescope all' })
-
-
-wk.register({
-    f = {
-        name = "find"
-    }
-}, {prefix = "<leader>"})
+wk.add({
+    mode = {'n'},
+    group = "find",
+    {'<Leader>ff', function() require('telescope.builtin').find_files() end, desc = 'Telescope find files'},
+    {'<Leader>fg', function() require('telescope.builtin').live_grep() end, desc = 'Telescope live grep'},
+    {'<Leader>fb', function() require('telescope.builtin').buffers() end, desc = 'Telescope buffers'},
+    {'<Leader>fh', function() require('telescope.builtin').help_tags() end, desc = 'Telescope help tags'},
+    {'<Leader>fc', function() require('telescope.builtin').tags() end, desc = 'Telescope tags'},
+    {'<Leader>fr', function() require('telescope.builtin').registers() end, desc = 'Telescope registers'},
+    {'<Leader>fs', function() require('telescope.builtin').spell_suggest() end, desc = 'Telescope spell suggest'},
+    {'<leader>fk', function() require('telescope.builtin').keymaps() end, desc = 'Telescope keymaps'},
+    {'<leader>fm', function() require('telescope.builtin').marks() end, desc = 'Telescope marks'},
+    {'<leader>fj', function() require('telescope.builtin').jumplist() end, desc = 'Telescope Jumplist'},
+    {'<leader>fa', function() require('telescope.builtin').builtin() end, desc = 'Telescope all'}
+})
 
 vim.keymap.set('n', '<leader>k', ':WhichKey<CR>', { desc = "Whichkey"} )
 
@@ -78,24 +78,32 @@ vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', opts)
 -- vim.api.nvim_set_keymap("n", "<leader>ol", [[:lua ToggleTerm("vertical")<cr>]], opts)
 -- vim.api.nvim_set_keymap("i", "<C-s>", "<esc>:lua ToggleTerm()<cr>", opts)
 -- vim.api.nvim_set_keymap("t", "<C-s>", "<C-\\><C-n>:lua ToggleTerm()<cr>", opts)
-
-vim.keymap.set('n', '<leader>tt', ':ToggleTerm<CR>')
-vim.keymap.set('n', '<leader>ta', ':ToggleTermToggleAll<CR>')
-vim.keymap.set('n', '<leader>te', ':TermExec<CR>')
-vim.keymap.set('n', '<leader>ts', ':TermSelect<CR>')
-
-
-
-
-
+wk.add({
+    mode = {'n'},
+    group = "terminal",
+    {'<leader>tt', ':ToggleTerm<CR>'},
+    {'<leader>ta', ':ToggleTermToggleAll<CR>'},
+    {'<leader>te', ':TermExec<CR>'},
+    {'<leader>ts', ':TermSelect<CR>'}
+})
 
 
-vim.keymap.set({'n', 'v'}, '<leader>oo', ':OverseerToggle<CR>', { desc = "Toggle overseer" } )
 
-vim.keymap.set({'n', 'v'}, '<leader>or', ':OverseerRun<CR>')
-vim.keymap.set({'n', 'v'}, '<leader>oi', ':OverseerInfo<CR>')
-vim.keymap.set({'n', 'v'}, '<leader>oc', ':OverseerClose<CR>')
-vim.keymap.set({'n', 'v'}, '<leader>ob', ':OverseerBuild<CR>')
+
+
+
+-----------------
+-- OverSeer --
+-----------------
+wk.add({
+    mode = {'n', 'v'},
+    group = "overseer",
+    {'<leader>oo', ':OverseerToggle<CR>', desc = "Toggle overseer" },
+    {'<leader>or', ':OverseerRun<CR>'},
+    {'<leader>oi', ':OverseerInfo<CR>'},
+    {'<leader>oc', ':OverseerClose<CR>'},
+    {'<leader>ob', ':OverseerBuild<CR>'}
+})
 
 
 
@@ -117,9 +125,6 @@ vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
 
 
 
------------------
--- OverSeer --
------------------
 
 --vim.keymap.set('n', '<Leader>o', ':setlocal spell! spelllang=en_us<CR>')
 
@@ -184,36 +189,29 @@ local br = require('bufresize')
 local function optsWithDesc(desc)
     return { noremap=true, silent=true, desc = desc }
 end
-
-vim.keymap.set('n', '<A-h>', function()
-    ss.resize_left()
-end, { desc = "Resize split left" })
-
-vim.keymap.set('n', '<A-j>', function()
-    ss.resize_down()
-end, optsWithDesc("Resize split down"))
-
-vim.keymap.set('n', '<A-k>', function()
-    ss.resize_up()
-end,   optsWithDesc("Resize split up" ))
-
-vim.keymap.set('n', '<A-l>', function()
-    ss.resize_right()
-end, optsWithDesc("Resize split right"))
+wk.add({
+    mode = {'n'},
+    group = "smart-splits",
+    -- resize
+    {'<A-h>', function() ss.resize_left() end, desc = "Resize split left"},
+    {'<A-j>', function() ss.resize_down() end, desc = "Resize split down"},
+    {'<A-k>', function() ss.resize_up() end,   desc = "Resize split up" },
+    {'<A-l>', function() ss.resize_right() end, desc = "Resize split right"},
+    {'<C-h>', require('smart-splits').move_cursor_left,  desc = "Move left" },
+    {'<C-j>', require('smart-splits').move_cursor_down,  desc = "Move down" },
+    {'<C-k>', require('smart-splits').move_cursor_up,  desc = "Move up" },
+    {'<C-l>', require('smart-splits').move_cursor_right,  desc = "Move right" },
+    {'<C-\\>', require('smart-splits').move_cursor_previous,  desc = "Move to previous split"  },
+    { '<leader><leader>h', require('smart-splits').swap_buf_left, desc = "Swap buffer left" },
+    { '<leader><leader>j', require('smart-splits').swap_buf_down, desc = "Swap buffer down" },
+    { '<leader><leader>k', require('smart-splits').swap_buf_up, desc = "Swap buffer up" },
+    { '<leader><leader>l', require('smart-splits').swap_buf_right, desc = "Swap buffer right" }
+})
 
 -- moving between splits
-vim.keymap.set('n', '<C-h>', require('smart-splits').move_cursor_left, { desc = "Move left"})
-vim.keymap.set('n', '<C-j>', require('smart-splits').move_cursor_down, { desc = "Move down"})
-vim.keymap.set('n', '<C-k>', require('smart-splits').move_cursor_up, { desc = "Move up"})
-vim.keymap.set('n', '<C-l>', require('smart-splits').move_cursor_right, { desc = "Move right"})
-vim.keymap.set('n', '<C-\\>', require('smart-splits').move_cursor_previous, { desc = "Move to previous split" })
 
 
 -- swapping buffers between windows
-vim.keymap.set('n', '<leader><leader>h', require('smart-splits').swap_buf_left, { desc = "Swap buffer left"})
-vim.keymap.set('n', '<leader><leader>j', require('smart-splits').swap_buf_down, { desc = "Swap buffer down"})
-vim.keymap.set('n', '<leader><leader>k', require('smart-splits').swap_buf_up, { desc = "Swap buffer up"})
-vim.keymap.set('n', '<leader><leader>l', require('smart-splits').swap_buf_right, { desc = "Swap buffer right"})
 
 -- vim.keymap.set(
 -- 	"t",
@@ -256,8 +254,10 @@ end
 vim.keymap.set({'n', 'i', 't'}, "<C-s>", ToggleTerm, opts)
 
 
-
--- nvim keybind
-vim.keymap.set('n', '<leader>ef', function() vim.cmd.SopsEncrypt() end, { desc = '[E]ncrypt [F]ile' })
-vim.keymap.set('n', '<leader>df', function() vim.cmd.SopsDecrypt() end, { desc = '[D]ecrypt [F]ile' })
+wk.add({
+    mode = {'n'},
+    group = "sops",
+    { '<leader>ef', function() vim.cmd.SopsEncrypt() end, desc = '[E]ncrypt [F]ile' },
+    { '<leader>df', function() vim.cmd.SopsDecrypt() end, desc = '[D]ecrypt [F]ile' }
+})
 
