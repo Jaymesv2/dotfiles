@@ -59,7 +59,7 @@ beautiful.notification_icon_size = 128
 -- load widgets
 local cyclefocus = require('awesome-cyclefocus')
 local volume_widget = require("awesome-wm-widgets.pactl-widget.volume")
-local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
+local batteryarc_widget = require("widgets.batteryarc-widget.batteryarc")
 local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
 local logout_menu_widget = require("awesome-wm-widgets.logout-menu-widget.logout-menu")
 local logout_popup = require("awesome-wm-widgets.logout-popup-widget.logout-popup")
