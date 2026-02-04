@@ -6,7 +6,6 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-gaming.url = "github:fufexan/nix-gaming";
     sops-nix.url = "github:Mic92/sops-nix";
-
     nixos-wsl.url = "github:nix-community/NixOS-WSL";
     # nix-gaming.inputs.nixpkgs.follows = "nixpkgs";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -19,15 +18,24 @@
     lanzaboote.url = "github:nix-community/lanzaboote/v1.0.0";
     lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
 
+    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel";
+
+    nix-amd-npu.url = "github:robcohen/nix-amd-npu";
+    nix-amd-npu.inputs.nixpkgs.follows = "nixpkgs";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+
+    cwcwm.url = "github:Cudiph/cwcwm";
+    cwcwm.inputs.nixpkgs.follows = "nixpkgs";
+
     self.submodules = true;
   };
 
   outputs = inputs: with inputs; {
     defaultPackage = home-manager.defaultPackage;
-
     homeConfigurations = {
       # laptop config
       "trent@nixos" = home-manager.lib.homeManagerConfiguration {
+      # "trent@nixos" = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
 	      system = "x86_64-linux";
 	      config.allowUnfree = true;
@@ -41,15 +49,15 @@
             config.allowUnfree = true;
           };
           sops-nix = inputs.sops-nix;
-
         };
+        #minimal = true; # I want to enable this later but don't have the time rn
         modules = [ 
             ./home.nix 
             sops-nix.homeManagerModules.sops
         ];
       };
       # wsl config
-      "trent@desktop-wsl" = home-manager.lib.homeManagerConfiguration {
+      /* "trent@desktop-wsl" = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
 	      system = "x86_64-linux";
 	      config.allowUnfree = true;
@@ -68,7 +76,7 @@
           # sops-nix = inputs.sops-nix;
 					#
         };
-      };
+      }; */
     };
 
     nixosConfigurations = {
@@ -81,10 +89,23 @@
             inputs.impermanence.nixosModules.impermanence
             inputs.disko.nixosModules.disko
             inputs.lanzaboote.nixosModules.lanzaboote
-            ];
+            nix-amd-npu.nixosModules.default
+            { 
+                # add the cachyos kernel overlay and 
+                nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ]; 
+                nix.settings.substituters = [ "https://attic.xuyh0120.win/lantian" ];
+                nix.settings.trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
+                hardware.amd-npu.enable = true;
+            } 
+            inputs.cwcwm.nixosModules.cwc
+
+        ];
         specialArgs = {
           pkgs-unstable = import nixpkgs-unstable {
             system = "x86_64-linux";
+            overlays = [
+                inputs.cwcwm.overlays.default # add cwc to unstable
+            ];
           };
           nixpkgs = nixpkgs;
           nixpkgs-unstable = nixpkgs-unstable;
