@@ -13,7 +13,14 @@ iron.setup {
       },
       lua = {
           command = {"lua"}
+      },
+      prolog = {
+          command = function(meta) 
+              local filename = vim.api.nvim_buf_get_name(meta.current_bufnr)
+              return {"swipl", filename}
+          end
       }
+      
     },
     -- How the repl window will be displayed
     -- See below for more information
