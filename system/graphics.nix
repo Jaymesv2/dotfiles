@@ -1,4 +1,5 @@
-{ pkgs, config, ... }: {
+{ pkgs, config, pkgs-unstable, ... }: {
+  imports = [ ./cwc.nix ];
   services.xserver = {
     # dpi = 166;
     enable = true;
@@ -31,8 +32,8 @@
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
+    withUWSM = true;
+
     #enableNvidiaPatches = true;
   };
-
-
 }
