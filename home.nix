@@ -35,7 +35,7 @@ in rec {
     home/waybar.nix
     home/ssh.nix
     home/git.nix
-    home/emacs/emacs.nix
+    # home/emacs/emacs.nix
     home/sops.nix
     home/java.nix
     home/awesome.nix
@@ -56,7 +56,7 @@ in rec {
 
   # automatically create the home manager symlink
   home.activation.homeManagerSymlink = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    run ln -s $VERBOSE_ARG ${home.homeDirectory}/.config/nix ${home.homeDirectory}/.config/home-manager
+    run ln $VERBOSE_ARG -sfnT "${home.homeDirectory}/.config/nix" "${home.homeDirectory}/.config/home-manager"
   '';
 
   # hardware.enableRedistributableFirmware = true;
@@ -72,11 +72,11 @@ in rec {
       # fonts
       nerd-fonts.fira-code
 
-
+      phoronix-test-suite
       nemo
 
       libnotify
-
+      bubblewrap
       # ----- cli tools -----
       lnav
       tree
@@ -126,7 +126,7 @@ in rec {
       # ----- applications -----
     
         # communication
-        discord
+        # discord
         signal-desktop
         thunderbird
         qpwgraph
@@ -224,7 +224,43 @@ in rec {
     };
   };
 
+  programs.discord = {
+    enable = true;
+    settings = {
+        SKIP_HOST_UPDATE=true;
+        DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING=true;
+    };
+  };
 
+  # 'programs.vicinae'.
+  # setup home manager `backupCommand`
+  # services.local-ai
+
+  # `services.home-manager.autoUpgrade.useFlake = true;`.
+/*
+* 2025-10-11 00:06:01 [unread]
+
+  A new option is availabe: `home-manager.minimal`
+  
+  By default, Home Manager imports all modules, which leads to increased
+  evaluation time. Some users may wish to only import the modules they
+  actually use. When the new option is enabled, Home Manager will only
+  import the basic set of modules it requires to function. Other modules
+  will have to be enabled manually, like this:
+  
+  ```nix
+    imports = [
+      "${modulesPath}/programs/fzf.nix"
+    ];
+  ```
+
+: 'programs.nix-search-tv'.
+
+  anime-downloader
+
+'services.home-manager.autoExpire'.
+'services.linux-wallpaperengine'.
+*/
   programs.nushell = {
     enable = true;
     environmentVariables= {
