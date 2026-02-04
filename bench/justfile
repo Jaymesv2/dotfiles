@@ -1,0 +1,39 @@
+
+nr := 'nix run nixpkgs#'
+results := "./results/cachy-latest-lto-zen4"
+
+run := '0'
+
+memory:
+    {{nr}}sysbench -- memory --memory-block-size=1M --memory-total-size=50G run > {{results}}/sysbench-{{run}}.txt
+
+cpu:
+    sudo {{nr}}stress-ng -- --cpu 0 --timeout 60s --metrics-brief --perf --tz > {{results}}/stress-ng-{{run}}.txt
+
+perf:
+    sudo {{nr}}linuxPackages.perf -- bench sched pipe -l 1000000 > {{results}}/perf-pipe-{{run}}.txt
+    sudo {{nr}}linuxPackages.perf -- bench sched messaging -l 10000 > {{results}}/perf-messaging-{{run}}.txt
+
+perf2:
+    sudo {{nr}}linuxPackages.perf -- bench sched pipe -l 10000000
+    sudo {{nr}}linuxPackages.perf -- bench sched messaging -l 10000 
+
+    
+fio-randrw:
+    # random read/write 4k (latency + IOPS)
+    {{nr}}fio -- --name=randrw4k --directory=`mktemp -d` \
+      --rw=randrw --rwmixread=70 --bs=4k --iodepth=32 --numjobs=4 \
+      --size=8G --runtime=60 --time_based --group_reporting \
+      --direct=1 --ioengine=io_uring --output {{results}}/fio-randrw-{{run}}.txt
+
+fio-sequential:
+    # sequential 1M write (throughput)
+    {{nr}}fio -- --name=seqwrite1m --directory=`mktemp -d` \
+      --rw=write --bs=1M --iodepth=8 --numjobs=1 \
+      --size=16G --runtime=60 --time_based --group_reporting \
+      --direct=1 --ioengine=io_uring --output {{results}}/fio-sequential-{{run}}.txt
+
+fio: fio-randrw fio-sequential
+
+all: perf memory cpu fio
+
