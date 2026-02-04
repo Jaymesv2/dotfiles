@@ -31,30 +31,36 @@ local batteryarc_widget = {}
 local profile_widget= {}
 local battery_info_widget = {} 
 
+local function set_power_profile(bus, profile_name)
+    -- blocking calls are cringe
+    local ok, err = pcall(function()
+        return bus:call(
+            "org.freedesktop.UPower.PowerProfiles",
+            "/org/freedesktop/UPower/PowerProfiles",
+            "org.freedesktop.DBus.Properties",
+            "Set",
+            GLib.Variant("(ssv)", {
+                "org.freedesktop.UPower.PowerProfiles",
+                "ActiveProfile",
+                GLib.Variant("s", profile_name)
+            }),
+            nil, -- reply type
+            Gio.DBusCallFlags.NONE,
+            -1,
+            nil,
+            nil
+        )
+    end)
+    if not ok then
+        -- error handling
+    end
+end
+
+
 local function worker(user_args)
     -- connect to the system bus
+    local enable_profiles = true
 
-    local bus = Gio.bus_get_sync(Gio.BusType.SYSTEM)
-
-    local batt_proxy = Gio.DBusProxy.new_sync(
-      bus,
-      Gio.DBusProxyFlags.NONE,
-      nil,        -- GDBusInterfaceInfo (optional)
-      "org.freedesktop.UPower",
-      "/org/freedesktop/UPower/devices/DisplayDevice",
-      "org.freedesktop.UPower.Device",
-      nil         -- cancellable
-    )
-
-    local profiles_proxy = Gio.DBusProxy.new_sync(
-      bus,
-      Gio.DBusProxyFlags.NONE,
-      nil,        -- GDBusInterfaceInfo (optional)
-      "org.freedesktop.UPower.PowerProfiles",
-      "/org/freedesktop/UPower/PowerProfiles",
-      "org.freedesktop.UPower.PowerProfiles",
-      nil         -- cancellable
-    )
     
     local args = user_args or {}
 
@@ -94,150 +100,32 @@ local function worker(user_args)
         widget = { }
     }
 
-    battery_info_charge_state = wibox.widget {
-        id = "charge_state",
-        markup = "",
-        align  = "center",
-        widget = wibox.widget.textbox
-    }
-    battery_info_remaining_state = wibox.widget {
-        id = "remaining_state",
-        markup = "",
-        align  = "center",
-        widget = wibox.widget.textbox
-    }
-
-    battery_info_widget = wibox.widget {
-        battery_info_charge_state,
-        battery_info_remaining_state,
-        layout = wibox.layout.flex.vertical
-    }
-
-
-
-    local state_tbl = {
-        [0] = "Unknown",
-        [1] = "Charging",
-        [2] = "Discharging",
-        [4] = "Fully Charged"
+    local popup_layout = { 
+        {
+            {
+                markup = "...",
+                align  = "center",
+                widget = wibox.widget.textbox
+            },
+            {
+                markup = "...",
+                align  = "center",
+                widget = wibox.widget.textbox
+            },
+            layout = wibox.layout.flex.vertical
+        },
+        -- profile_widget, 
+        layout = wibox.layout.flex.vertical 
     }
 
-    local update_battery_info = function()
-        local state = batt_proxy:get_cached_property("State").value
-        local charge = batt_proxy:get_cached_property("Percentage").value
-        local tte = batt_proxy:get_cached_property("TimeToEmpty").value
-        local ttf = batt_proxy:get_cached_property("TimeToFull").value
-
-        battery_info_charge_state:set_markup( string.format("%d%%, %s", charge, state_tbl[state]))
-        if state == 1  then
-            if ttf == 0 then
-                battery_info_remaining_state:set_markup(string.format("Estimating"))
-            else 
-                battery_info_remaining_state:set_markup(string.format("%02d:%02d:%02d remaining", (ttf/3600), ((ttf/60)%60), (ttf%60) ))
-            end
-        elseif state == 2 then
-            if tte == 0 then
-                battery_info_remaining_state:set_markup(string.format("Estimating"))
-            else 
-                battery_info_remaining_state:set_markup(string.format("%02d:%02d:%02d remaining", (tte/3600), ((tte/60)%60), (tte%60) ))
-            end
-        elseif state == 4 then
-            battery_info_remaining_state:set_markup(string.format("Fully Charged"))
-        end
+    if enable_profiles then
+        table.insert(popup_layout, {
+            id = "profiles",
+            layout = wibox.layout.flex.vertical
+        })
     end
 
-    update_battery_info()
-
-    -- I hate this so much   
-    -- This table maps the names of the power profiles to child ids of the profile_widget
-    profile_widgets_name_map = {}
-
-    local function initial_profile_widget() 
-
-        -- make the profiles widget 
-        local profiles = profiles_proxy:get_cached_property("Profiles")
-        local profile_widget = wibox.layout.flex.vertical()
-        
-        for i = 0, profiles:n_children()-1 do
-            local profile = profiles:get_child_value(i).value
-            profile_widgets_name_map[profile["Profile"]] = i+1 
-
-            local checkbox = wibox.widget.checkbox()
-
-            checkbox.checked        = true
-            checkbox.color          = "#ff0000"
-            checkbox.paddings       = 2
-            checkbox.shape          = gears.shape.circle
-
-            checkbox:buttons(
-                awful.button({}, 1, function()
-                    local BUS_NAME = "org.freedesktop.UPower.PowerProfiles"
-                    local OBJ_PATH = "/org/freedesktop/UPower/PowerProfiles"
-                    local IFACE    = "org.freedesktop.UPower.PowerProfiles"
-
-                    local params = GLib.Variant("(ssv)", {
-                        IFACE,
-                        "ActiveProfile",
-                        GLib.Variant("s", profile["Profile"]),
-                    })
-                    -- blocking calls are cringe
-                    local ok, err = pcall(function()
-                        return bus:call(
-                            BUS_NAME,
-                            OBJ_PATH,
-                            "org.freedesktop.DBus.Properties",
-                            "Set",
-                            params,
-                            nil, -- reply type
-                            Gio.DBusCallFlags.NONE,
-                            -1,
-                            nil,
-                            nil
-                        )
-                    end)
-                    if not ok then
-                        -- error handling
-                    end
-                end)
-            )
-
-
-            profile_widget:add( wibox.widget {
-                checkbox,
-                {
-                    markup = profile["Profile"],
-                    align = 'center',
-                    valign = 'center',
-                    widget = wibox.widget.textbox,
-                },
-                -- id = profile["Profile"],
-                layout = wibox.layout.flex.horizontal
-            })
-        end
-        return profile_widget
-    end
-
-
-    profile_widget = initial_profile_widget()
-
-
-
-    local update_profiles = function() 
-        local profiles = profiles_proxy:get_cached_property("Profiles")
-        local active_profile = profiles_proxy:get_cached_property("ActiveProfile").value
-
-        local num_profiles = profiles:n_children()
-        for i = 0, num_profiles-1 do
-            local profile = profiles:get_child_value(i).value
-            local is_active = profile["Profile"] == active_profile
-            profile_widget.children[profile_widgets_name_map[profile["Profile"]]].children[1].checked = is_active
-        end
-    end
-
-    update_profiles()
-
-
-    popup:setup { battery_info_widget, profile_widget, layout = wibox.layout.flex.vertical }
+    popup:setup(popup_layout)
 
     -- Do not update process rows when mouse cursor is over the widget
     -- popup:connect_signal("mouse::enter", function() is_update = false end)
@@ -265,18 +153,14 @@ local function worker(user_args)
         widget = wibox.container.arcchart
     }
 
-
     batteryarc_widget:buttons(
-            awful.util.table.join(
-                    -- button
-                    awful.button({}, 1, function()
-                        if popup.visible then
-                            popup.visible = not popup.visible
-                        else
-                            popup:move_next_to(mouse.current_widget_geometry)
-                        end
-                    end)
-            )
+        awful.button({}, 1, function()
+            if popup.visible then
+                popup.visible = not popup.visible
+            else
+                popup:move_next_to(mouse.current_widget_geometry)
+            end
+        end)
     )
 
     local last_battery_check = os.time()
@@ -297,9 +181,69 @@ local function worker(user_args)
         }
     end
 
-    local function update_arc_widget(widget)
-        local charge = batt_proxy:get_cached_property("Percentage").value
-        local state = batt_proxy:get_cached_property("State").value
+
+    local function update_battery_popup(battery_info_widget, charge, state, tte, ttf)
+        local state_tbl = {
+            [0] = "Unknown",
+            [1] = "Charging",
+            [2] = "Discharging",
+            [4] = "Fully Charged"
+        }
+
+        local battery_info_charge_state = battery_info_widget.children[1]
+        local battery_info_remaining_state = battery_info_widget.children[2]
+
+        battery_info_charge_state:set_markup( string.format("%d%%, %s", charge, state_tbl[state]))
+        local time_est
+        if state == 1 then
+            time_est = ttf
+        else 
+            time_est = tte
+        end
+
+        if state == 1  or state == 2 then
+            if time_est == 0 then
+                battery_info_remaining_state:set_markup(string.format("Estimating"))
+            else 
+                battery_info_remaining_state:set_markup(string.format("%02d:%02d:%02d remaining", (time_est/3600), ((time_est/60)%60), (time_est%60) ))
+            end
+        else
+            battery_info_remaining_state:set_markup(string.format("Fully Charged"))
+        end
+    end
+
+
+
+    local function update_profile_widget(profile_widget, set_profile, profiles, active_profile) 
+        profile_widget:reset()
+
+        for _, profile_name in ipairs(profiles) do
+            profile_widget:add( wibox.widget {
+                {
+                    checked = profile_name == active_profile,
+                    color = "#ff0000",
+                    paddings = 2,
+                    shape = gears.shape.circle,
+                    widget = wibox.widget.checkbox, 
+                    buttons = gears.table.join(
+                        awful.button({}, 1, function()
+                            set_profile(profile_name)
+                        end)
+                    )
+                },
+                {
+                    markup = profile_name,
+                    align = 'center',
+                    valign = 'center',
+                    widget = wibox.widget.textbox,
+                },
+                -- id = profile["Profile"],
+                layout = wibox.layout.flex.horizontal
+            })
+        end
+    end
+
+    local function update_arc_widget(widget, charge, state)
 
         local isCharging = state == 1 or state == 4
         -- state 4 is fully charged
@@ -341,18 +285,100 @@ local function worker(user_args)
         end
     end
 
-    update_arc_widget(batteryarc_widget)
+
+    local function conv_profiles_gobject(profiles)    
+        local lst = {}
+        for i = 0, profiles:n_children()-1 do
+            lst[#lst+1] = profiles:get_child_value(i).value["Profile"]
+        end
+        return lst
+    end
     
-    batt_proxy.on_g_properties_changed = function(_, changed, invalidated) 
-        update_arc_widget(batteryarc_widget) 
-        update_battery_info()
+    local function dbus_setup()
+        Gio.bus_get(Gio.BusType.SYSTEM, nil, function(_,res)
+            local ok, bus = pcall(Gio.bus_get_finish, res)
+            if not ok then
+                naughty.notify{text = "failed to connect to system bus"}
+            end
+
+            bus_setup_cancel = Gio.Cancellable.new()
+            
+            Gio.DBusProxy.new(
+                bus,
+                Gio.DBusProxyFlags.NONE,
+                nil,        -- GDBusInterfaceInfo (optional)
+                "org.freedesktop.UPower",
+                "/org/freedesktop/UPower/devices/DisplayDevice",
+                "org.freedesktop.UPower.Device",
+                bus_cancel_setup,         -- cancellable
+                function(_, res)
+                    local ok, batt_proxy =  pcall(function() return Gio.DBusProxy.new_finish(res) end)
+                    if not ok then
+                        naughty.notify{text = "Failed to connect to UPower display device with error: " .. tostring(batt_proxy)}
+                    end
+                    -- batteryarc_widget.batt_proxy = batt_proxy
+                    -- initial setup
+                    local percentage = batt_proxy:get_cached_property("Percentage").value
+                    local state = batt_proxy:get_cached_property("State").value
+
+                    update_arc_widget(batteryarc_widget, percentage, state)
+                    update_battery_popup(popup.widget.children[1], percentage, state, batt_proxy:get_cached_property("TimeToEmpty").value, batt_proxy:get_cached_property("TimeToFull").value)
+                    
+                    -- naughty.notify{text = "connected to display device"}
+                    -- on change handler
+                    batt_proxy.on_g_properties_changed = function(_, changed, invalidated) 
+                        local charge = batt_proxy:get_cached_property("Percentage").value
+                        local state = batt_proxy:get_cached_property("State").value
+                        local tte = batt_proxy:get_cached_property("TimeToEmpty").value
+                        local ttf = batt_proxy:get_cached_property("TimeToFull").value
+                        update_arc_widget(batteryarc_widget, charge, state) 
+                        update_battery_popup(popup.widget.children[1], charge, state, tte, ttf)
+                        -- naughty.notify{text = "batt_state_update"}
+                    end
+                    -- naughty.notify{text = "batt_state_update end"}
+                end,
+                nil
+            )
+
+            if enable_profiles then
+                Gio.DBusProxy.new(
+                    bus,
+                    Gio.DBusProxyFlags.NONE,
+                    nil,        -- GDBusInterfaceInfo (optional)
+                    "org.freedesktop.UPower.PowerProfiles",
+                    "/org/freedesktop/UPower/PowerProfiles",
+                    "org.freedesktop.UPower.PowerProfiles",
+                    bus_cancel_setup,        -- cancellable
+                    function(_, res) 
+                        local ok, profiles_proxy =  pcall(function() return Gio.DBusProxy.new_finish(res) end)
+                        if not ok then
+                            naughty.notify {text = "failed to connect to profiles proxy with error: " .. tostring(profiles_proxy)}
+                        end
+
+                        local function set_profile(name)
+                            set_power_profile(bus, name)
+                        end
+
+                        local active_profile = profiles_proxy:get_cached_property("ActiveProfile").value
+                        local profiles = conv_profiles_gobject(profiles_proxy:get_cached_property("Profiles"))
+                        update_profile_widget(popup.widget.children[2], set_profile, profiles, active_profile)
+                        
+                        profiles_proxy.on_g_properties_changed = function(_, changed, invalidated) 
+                            local active_profile = profiles_proxy:get_cached_property("ActiveProfile").value
+                            local profiles = conv_profiles_gobject(profiles_proxy:get_cached_property("Profiles"))
+                            update_profile_widget(popup.widget.children[2], set_profile, profiles, active_profile)
+                            -- naughty.notify{text = "profile_state_update"}
+                        end
+                        -- naughty.notify{text = "profile_state_update end"}
+                    end,
+                    nil
+                )
+            end
+        end)
     end
-    profiles_proxy.on_g_properties_changed = function(_, changed, invalidated) 
-        update_profiles()
-    end
+    dbus_setup()
 
     return batteryarc_widget
-
 end
 
 return setmetatable(batteryarc_widget, { __call = function(_, ...)

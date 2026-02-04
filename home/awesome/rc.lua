@@ -282,8 +282,9 @@ awful.screen.connect_for_each_screen(function(s)
 	    },
             mytextclock,
 	    logout_menu_widget{
-		onlock = function() awful.spawn.with_shell('i3lock -k') end
-	    }
+            -- onlock = function() awful.spawn.with_shell('loginctl lock-sessions') end
+            onlock = function() awful.spawn.with_shell('loginctl lock-session') end
+        }
         },
     }
 end)
@@ -389,6 +390,8 @@ globalkeys = gears.table.join(
               {description = "reload awesome", group = "awesome"}),
     awful.key({ modkey, "Shift"   }, "q", function() logout_popup.launch() end,
               {description = "opens the logout popup", group = "awesome"}),
+    awful.key({ modkey, "Shift"   }, "l", function() awful.spawn("loginctl lock-session") end,
+              {description = "locks the screen", group = "awesome"}),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)          end,
               {description = "increase master width factor", group = "layout"}),
@@ -712,4 +715,4 @@ awful.spawn.with_shell("blueman-applet")
 awful.spawn.with_shell("nitrogen --restore")
 awful.spawn.with_shell("flameshot")
 awful.spawn.with_shell("systemctl --user import-environment PATH && systemctl --user restart xdg-desktop-portal.service")
-
+awful.spawn.with_shell("kopia-ui")
