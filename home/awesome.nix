@@ -17,4 +17,18 @@
       recursive = true;
       target = ".config/awesome";
   };
+
+  home.packages = with pkgs; [ xsecurelock picom nitrogen xscreensaver ];
+
+  services.screen-locker = {
+    enable = true;
+    xautolock.enable = false;
+    lockCmd = "${pkgs.xsecurelock}/bin/xsecurelock";
+    lockCmdEnv = [
+      # "XSECURELOCK_PAM_SERVICE=xsecurelock"
+      "XSECURELOCK_BLANK_TIMEOUT=-1"
+      "XSECURELOCK_SAVER=saver_xscreensaver"
+      # "XSECURELOCK_DISCARD_FIRST_KEYPRESS=1"
+    ];
+  };
 }
