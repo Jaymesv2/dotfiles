@@ -64,7 +64,7 @@
   ];
 
     # emulate aarch64 for building rpi images
-  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+  #boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
 
 
@@ -143,6 +143,7 @@
 
   virtualisation.docker = {
     enable = true;
+    enableOnBoot = false;
   };
 
 
