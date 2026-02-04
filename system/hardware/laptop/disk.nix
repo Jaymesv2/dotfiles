@@ -3,7 +3,8 @@
     disk = {
       main = {
         type = "disk";
-        device = "/dev/nvme0n1";
+        # device = "/dev/nvme0n1";
+        device = "/dev/disk/by-id/nvme-Samsung_SSD_990_PRO_2TB_S7KHNJ0WB35025A";
         content = {
           type = "gpt";
           partitions = {
@@ -38,7 +39,6 @@
                   type = "btrfs";
                   # name the volume
                   extraArgs = [ "-L" "nixos" "-f" ];
-                  
                   subvolumes = {
                     # persistent data
                     "/persistent" = {
