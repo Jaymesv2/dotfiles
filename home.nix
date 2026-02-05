@@ -39,6 +39,7 @@ in rec {
     home/sops.nix
     home/java.nix
     home/awesome.nix
+    home/television.nix
   ];
 
   nixpkgs.config.permittedInsecurePackages = [
@@ -65,7 +66,132 @@ in rec {
     username = "trent";
     homeDirectory = "/home/trent";
     stateVersion = "23.11";
-    packages = 
+    sessionVariables = {
+      XDG_CACHE_HOME  = "$HOME/.cache";
+      XDG_CONFIG_HOME = "$HOME/.config";
+      XDG_DATA_HOME   = "$HOME/.local/share";
+      XDG_STATE_HOME  = "$HOME/.local/state";
+
+      XDG_CURRENT_DESKTOP="GNOME";
+
+      EDITOR = "nvim";
+      BROWSER = "firefox";
+      TERMINAL = "alacritty";
+      TERM = "alacritty";
+      
+      # NIXOS_OZONE_WL = "1"; # Needed for electron on wayland
+    };
+  };
+
+  programs.home-manager.enable = true;
+  news.display = "silent";
+
+  xdg = {
+    # Maybe this would be useful at some point
+    # autostart = {
+    #   enable = true;
+    #   entries = [
+    #     
+    #   ];
+    # };
+    #enable = true;
+    portal = {
+      enable = true;
+      xdgOpenUsePortal = true;
+      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+      # config.common.default = "*";
+      config = {
+        common = {
+          default = [
+            "gtk"
+          ];
+          "org.freedesktop.impl.portal.FileChooser" = [
+            "nemo"
+          ];
+          "org.freedesktop.impl.portal.Secret" = [
+            "gnome-keyring"
+          ];
+        };
+        x-gnome = {
+          default = [
+            "gtk"
+          ];
+        };
+      };
+    };
+
+    terminal-exec = {
+      enable = true;
+      
+    };
+
+    mime.enable = true;
+    mimeApps = {
+      enable = true;
+      defaultApplications = let 
+        document_viewer = "org.pwmt.zathura-pdf-mupdf.desktop;";
+        image_viewer = "sxiv.desktop";
+        video_player = "vlc.desktop";
+        archive_viewer = "org.gnome.FileRoller.desktop";
+    in {
+      # documents
+        "application/pdf" = document_viewer;
+        "application/vnd.amazon.ebook" = document_viewer;
+        "application/epub+zip" = document_viewer;
+        #"text/html" = "firefox.desktop";
+
+
+      # images
+        "image/jpeg" = image_viewer;
+        "image/webp" = image_viewer;
+        "image/png" = image_viewer;
+        "image/gif" = image_viewer;
+
+        "image/apng" = image_viewer;
+        "image/avif" = image_viewer;
+        "image/vnd.microsoft.icon" = image_viewer;
+        
+      # audio
+
+      # video
+        "video/mp4" = video_player;
+        "video/x-msvideo" = video_player; # .avi
+
+      # archives
+        "application/x-bzip" = archive_viewer; # .bz
+        "application/x-bzip2" = archive_viewer; # .bz2
+        "application/gzip" = archive_viewer;
+        "application/x-gzip" = archive_viewer;
+        
+      # misc
+        #"application/octet-stream" = "";
+        #"text/calendar" = "";
+      };
+      #defaultApplications = {
+      #  "word"
+      #};
+    };
+    userDirs = {
+      enable = true;
+      createDirectories = true;
+
+      extraConfig = {
+        XDG_MISC_DIR = "${home.homeDirectory}/Misc";
+      };
+    };
+    #  I think I need to add these to XDG_DATA_DIRS or PATH
+    # '/var/lib/flatpak/exports/share'
+    # '/home/trent/.local/share/flatpak/exports/share'
+
+
+    # xdg.configFile = {
+    #     "gtk-4.0/assets".source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/assets";
+    #     "gtk-4.0/gtk.css".source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/gtk.css";
+    #     "gtk-4.0/gtk-dark.css".source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/gtk-dark.css";
+    # };
+  };
+
+  home.packages = 
         ([ nixFunctionCalls stackCollapse ] ) ++ (with pkgs; [
       # ----- SYSTEM -----
 
@@ -200,29 +326,11 @@ in rec {
       
     ]) ++ [
         pkgs-unstable.devenv
-
         pkgs-unstable.qbittorrent
 	    # nix-gaming.packages.x86_64-linux.osu-stable
 	    # nix-gaming.packages.x86_64-linux.osu-lazer-bin
-    ];
+  ];
 
-
-    sessionVariables = {
-      XDG_CACHE_HOME  = "$HOME/.cache";
-      XDG_CONFIG_HOME = "$HOME/.config";
-      XDG_DATA_HOME   = "$HOME/.local/share";
-      XDG_STATE_HOME  = "$HOME/.local/state";
-
-      XDG_CURRENT_DESKTOP="GNOME";
-
-      EDITOR = "nvim";
-      BROWSER = "firefox";
-      TERMINAL = "alacritty";
-      TERM = "alacritty";
-      
-      # NIXOS_OZONE_WL = "1"; # Needed for electron on wayland
-    };
-  };
 
   programs.discord = {
     enable = true;
@@ -254,7 +362,6 @@ in rec {
     ];
   ```
 
-: 'programs.nix-search-tv'.
 
   anime-downloader
 
@@ -278,100 +385,8 @@ in rec {
 
   };
   
-  programs.home-manager.enable = true;
 
   
-  xdg = {
-    #enable = true;
-    portal = {
-      enable = true;
-      xdgOpenUsePortal = true;
-      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-      # config.common.default = "*";
-      config = {
-        common = {
-          default = [
-            "gtk"
-          ];
-          "org.freedesktop.impl.portal.FileChooser" = [
-            "nemo"
-          ];
-          "org.freedesktop.impl.portal.Secret" = [
-            "gnome-keyring"
-          ];
-        };
-        x-gnome = {
-          default = [
-            "gtk"
-          ];
-        };
-      };
-    };
-    mime.enable = true;
-    mimeApps = {
-      enable = true;
-      defaultApplications = let 
-        document_viewer = "org.pwmt.zathura-pdf-mupdf.desktop;";
-        image_viewer = "sxiv.desktop";
-        video_player = "vlc.desktop";
-        archive_viewer = "org.gnome.FileRoller.desktop";
-    in {
-      # documents
-        "application/pdf" = document_viewer;
-        "application/vnd.amazon.ebook" = document_viewer;
-        "application/epub+zip" = document_viewer;
-        #"text/html" = "firefox.desktop";
-
-
-      # images
-        "image/jpeg" = image_viewer;
-        "image/webp" = image_viewer;
-        "image/png" = image_viewer;
-        "image/gif" = image_viewer;
-
-        "image/apng" = image_viewer;
-        "image/avif" = image_viewer;
-        "image/vnd.microsoft.icon" = image_viewer;
-        
-      # audio
-
-      # video
-        "video/mp4" = video_player;
-        "video/x-msvideo" = video_player; # .avi
-
-      # archives
-        "application/x-bzip" = archive_viewer; # .bz
-        "application/x-bzip2" = archive_viewer; # .bz2
-        "application/gzip" = archive_viewer;
-        "application/x-gzip" = archive_viewer;
-        
-      # misc
-        #"application/octet-stream" = "";
-        #"text/calendar" = "";
-      };
-      #defaultApplications = {
-      #  "word"
-      #};
-    };
-    userDirs = {
-      enable = true;
-      createDirectories = true;
-
-      extraConfig = {
-        XDG_MISC_DIR = "${home.homeDirectory}/Misc";
-      };
-    };
-    #  I think I need to add these to XDG_DATA_DIRS or PATH
-    # '/var/lib/flatpak/exports/share'
-    # '/home/trent/.local/share/flatpak/exports/share'
-
-
-    # xdg.configFile = {
-    #     "gtk-4.0/assets".source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/assets";
-    #     "gtk-4.0/gtk.css".source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/gtk.css";
-    #     "gtk-4.0/gtk-dark.css".source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/gtk-dark.css";
-    # };
-  };
 
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
