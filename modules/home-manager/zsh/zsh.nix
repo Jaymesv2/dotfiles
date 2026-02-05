@@ -88,4 +88,12 @@
     nix-direnv.enable = true;
     config = {};
   };
+
+  programs.nix-index = {
+    enable = true;
+    symlinkToCacheHome = true;
+  };
+  programs.nix-index-database.comma.enable = true;
+
+
 }

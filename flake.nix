@@ -27,6 +27,9 @@
     cwcwm.url = "github:Cudiph/cwcwm";
     cwcwm.inputs.nixpkgs.follows = "nixpkgs";
 
+    nix-index-database.url = "github:nix-community/nix-index-database";
+    nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
+
     self.submodules = true;
   };
 
@@ -53,6 +56,7 @@
         #minimal = true; # I want to enable this later but don't have the time rn
         modules = [ 
             ./home.nix 
+            nix-index-database.homeModules.default
             sops-nix.homeManagerModules.sops
         ];
       };
@@ -89,7 +93,8 @@
             inputs.impermanence.nixosModules.impermanence
             inputs.disko.nixosModules.disko
             inputs.lanzaboote.nixosModules.lanzaboote
-            nix-amd-npu.nixosModules.default
+            inputs.nix-index-database.nixosModules.default 
+            inputs.nix-amd-npu.nixosModules.default
             { 
                 # add the cachyos kernel overlay and 
                 nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ]; 
