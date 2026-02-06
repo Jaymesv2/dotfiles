@@ -1,8 +1,10 @@
 { lib, pkgs, options, config, ... }: {
   programs.git = {
     enable = true;
-    userEmail = "ghastfilms613@gmail.com";
-    userName = "Trent";
+    settings.user = {
+        email = "ghastfilms613@gmail.com";
+        name = "Trent";
+    };
     # signing = {
     #   signByDefault = true;
     #   key = "";
