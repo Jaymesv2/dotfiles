@@ -45,6 +45,7 @@ do
 end
 -- }}}
 
+
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/default.lua")
@@ -259,9 +260,7 @@ awful.screen.connect_for_each_screen(function(s)
 	    -- ram_widget({
 					--
 	    -- }),
-	    ram_widget({
-
-	    }),
+	    ram_widget({ }),
 	    volume_widget{
             widget_type = 'vertical_bar',
 		    width = 10,
@@ -270,7 +269,7 @@ awful.screen.connect_for_each_screen(function(s)
 		    --shape = 'powerline',
 		    with_icon = true
 	    },
-	    mpdarc_widget,
+	    -- mpdarc_widget,
 	    batteryarc_widget{
 		    arc_thickness = 3
 	    },
@@ -707,6 +706,9 @@ end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+
+require("naughty.dbus")  
+
 -- }}}
 
 --awful.spawn.with_shell("picom --config ~/.config/picom/picom.conf")
