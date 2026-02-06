@@ -1,11 +1,22 @@
 { pkgs, lib, ... }: {
   programs.ssh = {
     enable = true;
-    addKeysToAgent = "yes";
+    enableDefaultConfig = false;
     matchBlocks = {
-      # "*".extraOptions = {
-      #   AddKeysToAgent = "yes";
-      # };
+      "*" = {
+        addKeysToAgent = "yes";
+        # default config
+        forwardAgent = false; 
+        compression = false; 
+        serverAliveInterval = 0; 
+        serverAliveCountMax = 3; 
+        hashKnownHosts = false; 
+        userKnownHostsFile = "~/.ssh/known_hosts"; 
+        controlMaster = "no"; 
+        controlPath = "~/.ssh/master-%r@%n:%p"; 
+        controlPersist = "no"; 
+
+      };
       "10.0.0.246".user = "trent";
       "10.0.0.1".extraOptions = {
         PubkeyAcceptedAlgorithms = "+ssh-rsa";
