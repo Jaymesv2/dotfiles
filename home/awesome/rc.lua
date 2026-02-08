@@ -638,6 +638,34 @@ awful.rules.rules = {
       }, properties = { titlebars_enabled = false }
     },
 
+    { rule_any = {
+        class = { "steam_app_505460" }
+        -- name = { "War  " }
+      },
+      callback = function(c)
+          naughty.notify {text = "managing a foxhole client"}
+          -- local keys = c:keys()
+          -- c:keys(gears.table.join(keys,
+          --     awful.key({"Alt"}, "1", function() naughty.notify {text = "foxhole client 1"} end,
+          --     { description = "Foxhole Client 1", group = "client"}),
+          --     awful.key({"Alt"}, "2", function() naughty.notify {text = "foxhole client 2"} end,
+          --     { description = "Foxhole Client 2", group = "client"}),
+          --     awful.key({"Alt"}, "3", function() naughty.notify {text = "foxhole client 3"} end,
+          --     { description = "Foxhole Client 3", group = "client"})
+          -- ))
+      end
+    },
+    -- { rule_any = {
+    --     class = { "Alacritty" }
+    --     -- name = { "War  " }
+    --   },
+    --   callback = function(c)
+    --       naughty.notify({ title = "shit broke" })
+    --
+    --   end
+    -- },
+
+
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { screen = 1, tag = "2" } },

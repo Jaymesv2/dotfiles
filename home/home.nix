@@ -1,45 +1,18 @@
-{ lib, pkgs, pkgs-unstable, nix-gaming, ... }: let 
-    # https://discourse.nixos.org/t/nix-flamegraph-or-profiling-tool/33333
-    stackCollapse = pkgs.writeTextFile {
-      name = "stack-collapse.py";
-      destination = "/bin/stack-collapse.py";
-      text = builtins.readFile (builtins.fetchurl
-        {
-          url = "https://raw.githubusercontent.com/NixOS/nix/master/contrib/stack-collapse.py";
-          sha256 = "sha256:0mi9cf3nx7xjxcrvll1hlkhmxiikjn0w95akvwxs50q270pafbjw";
-        });
-      executable = true;
-    };
-    nixFunctionCalls = pkgs.writeShellApplication {
-      name = "nixFunctionCalls";
-      runtimeInputs = [ stackCollapse pkgs.inferno ];
-      text = ''
-#!/usr/bin/env zsh
-
-WORKDIR=$(mktemp -d)
-
-nix eval -vvvvvvvvvvvvvvvvvvvv --raw --option trace-function-calls true $1 1>/dev/null 2> $WORKDIR/nix-function-calls.trace
-stack-collapse.py $WORKDIR/nix-function-calls.trace > $WORKDIR/nix-function-calls.folded
-inferno-flamegraph $WORKDIR/nix-function-calls.folded > $WORKDIR/nix-function-calls.svg
-echo "$WORKDIR/nix-function-calls.svg"
-      ''; #./nix-function-calls.sh;
-      checkPhase = "";
-    };
-
-in rec {
+{ lib, pkgs, pkgs-unstable, nix-gaming, ... }: rec {
   imports = [
     # home/nvim/nvim.nix
-    modules/home-manager/nvim/nvim.nix
-    modules/home-manager/zsh/zsh.nix
-    home/alacritty.nix
-    home/waybar.nix
-    home/ssh.nix
-    home/git.nix
-    # home/emacs/emacs.nix
-    home/sops.nix
-    home/java.nix
-    home/awesome.nix
-    home/television.nix
+    ../modules/home-manager/nvim/nvim.nix
+    ../modules/home-manager/zsh/zsh.nix
+    ./alacritty.nix
+    ./waybar.nix
+    ./ssh.nix
+    ./git.nix
+    # emacs/emacs.nix
+    ./sops.nix
+    ./java.nix
+    ./awesome.nix
+    ./television.nix
+    ./xdg.nix
   ];
 
   nixpkgs.config.permittedInsecurePackages = [
@@ -47,21 +20,19 @@ in rec {
     #"qtwebengine-5.15.19"
   ];
   nixpkgs.config.allowUnfreePredicate = pkg: 
-  builtins.elem (lib.getName pkg) [
-    "discord"
-    "obsidian"
-    "todoist-electron"
-    "vscode"
-    "burpsuite"
-];
+    builtins.elem (lib.getName pkg) [
+      "discord"
+      "obsidian"
+      "todoist-electron"
+      "vscode"
+      "burpsuite"
+  ];
 
   # automatically create the home manager symlink
   home.activation.homeManagerSymlink = lib.hm.dag.entryAfter ["writeBoundary"] ''
     run ln $VERBOSE_ARG -sfnT "${home.homeDirectory}/.config/nix" "${home.homeDirectory}/.config/home-manager"
   '';
 
-  # hardware.enableRedistributableFirmware = true;
-  # hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   home = {
     username = "trent";
     homeDirectory = "/home/trent";
@@ -85,114 +56,10 @@ in rec {
 
   programs.home-manager.enable = true;
   news.display = "silent";
+  nixpkgs.overlays = [ (import ../pkgs/overlay.nix) ];
 
-  xdg = {
-    # Maybe this would be useful at some point
-    # autostart = {
-    #   enable = true;
-    #   entries = [
-    #     
-    #   ];
-    # };
-    #enable = true;
-    portal = {
-      enable = true;
-      xdgOpenUsePortal = true;
-      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-      # config.common.default = "*";
-      config = {
-        common = {
-          default = [
-            "gtk"
-          ];
-          "org.freedesktop.impl.portal.FileChooser" = [
-            "nemo"
-          ];
-          "org.freedesktop.impl.portal.Secret" = [
-            "gnome-keyring"
-          ];
-        };
-        x-gnome = {
-          default = [
-            "gtk"
-          ];
-        };
-      };
-    };
-
-    terminal-exec = {
-      enable = true;
-      
-    };
-
-    mime.enable = true;
-    mimeApps = {
-      enable = true;
-      defaultApplications = let 
-        document_viewer = "org.pwmt.zathura-pdf-mupdf.desktop;";
-        image_viewer = "sxiv.desktop";
-        video_player = "vlc.desktop";
-        archive_viewer = "org.gnome.FileRoller.desktop";
-    in {
-      # documents
-        "application/pdf" = document_viewer;
-        "application/vnd.amazon.ebook" = document_viewer;
-        "application/epub+zip" = document_viewer;
-        #"text/html" = "firefox.desktop";
-
-
-      # images
-        "image/jpeg" = image_viewer;
-        "image/webp" = image_viewer;
-        "image/png" = image_viewer;
-        "image/gif" = image_viewer;
-
-        "image/apng" = image_viewer;
-        "image/avif" = image_viewer;
-        "image/vnd.microsoft.icon" = image_viewer;
-        
-      # audio
-
-      # video
-        "video/mp4" = video_player;
-        "video/x-msvideo" = video_player; # .avi
-
-      # archives
-        "application/x-bzip" = archive_viewer; # .bz
-        "application/x-bzip2" = archive_viewer; # .bz2
-        "application/gzip" = archive_viewer;
-        "application/x-gzip" = archive_viewer;
-        
-      # misc
-        #"application/octet-stream" = "";
-        #"text/calendar" = "";
-      };
-      #defaultApplications = {
-      #  "word"
-      #};
-    };
-    userDirs = {
-      enable = true;
-      createDirectories = true;
-
-      extraConfig = {
-        XDG_MISC_DIR = "${home.homeDirectory}/Misc";
-      };
-    };
-    #  I think I need to add these to XDG_DATA_DIRS or PATH
-    # '/var/lib/flatpak/exports/share'
-    # '/home/trent/.local/share/flatpak/exports/share'
-
-
-    # xdg.configFile = {
-    #     "gtk-4.0/assets".source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/assets";
-    #     "gtk-4.0/gtk.css".source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/gtk.css";
-    #     "gtk-4.0/gtk-dark.css".source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/gtk-dark.css";
-    # };
-  };
-
-  home.packages = 
-        ([ nixFunctionCalls stackCollapse ] ) ++ (with pkgs; [
+  home.packages = (with pkgs; [
+      nixFunctionCalls stackCollapse 
       # ----- SYSTEM -----
 
       # fonts
@@ -439,32 +306,12 @@ in rec {
     enable = true;
   };
 
-
   programs.zathura = {
     enable = true;
     options = {
         selection-clipboard = "clipboard";
     };
   };
-
-  # gtk = {
-  #   enable = true;
-  #   theme = {
-  #     name = "Arc";
-  #     package = pkgs.arc-theme;
-  #   };
-  # };
-  
-
-
-
-  # wayland.windowManager.hyprland = {
-  #   enable = true;
-  #   enableNvidiaPatches = true;
-  #   xwayland.enable = true;
-  # };
-  # programs.thunderbird.enable = true;
-
 
 }
 
