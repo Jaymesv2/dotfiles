@@ -1,11 +1,21 @@
 
-SYSTEM := "laptop"
+SYSTEM := "desktop"
 USER := "trent"
-DRIVE := "/dev/nvme0n1"
+# DRIVE := "/dev/nvme0n1"
 LUKSPARTITION := "/dev/nvme0n1p2"
-
+USB_DRIVE:="/run/media/trent/USB_DISK"
 
 # 
+copy_to_disk:
+    # #!/usr/bin/env bash
+    # make the .config dir
+    mkdir -p "{{USB_DRIVE}}/.config"
+
+    # copy the required files
+    cp -r ~/.config/kopia "{{USB_DRIVE}}/.config/kopia"
+    cp -r ~/.config/sops "{{USB_DRIVE}}/.config/sops"
+    cp -r ~/.config/nix "{{USB_DRIVE}}/.config/nix"
+
 
 # Format the disks and write the filesystem
 format_disk:
@@ -13,18 +23,18 @@ format_disk:
 
 # install nixos
 install_nixos:
-    sudo nixos-install --no-root-passwd --flake '..#nixos' # install, the passwords are in the config 
+    sudo nixos-install --no-root-passwd --flake '..#{{SYSTEM}}' # install, the passwords are in the config 
 
 # copy the nixos and sops configs to be able to activate nixos and home manager generations along with the kopia config to restore from backup
 copy_configs:
     mkdir -p /mnt/home/{{USER}}/.config
 
-    cp .. /mnt/home/{{USER}}/.config/nix/
-    cp ../../kopia /mnt/home/{{USER}}/.config/
-    cp ../../sops  /mnt/home/{{USER}}/.config/
-    cp ../../.ssh  /mnt/home/{{USER}}/
+    cp -r .. /mnt/home/{{USER}}/.config/nix/
+    cp -r ../../kopia /mnt/home/{{USER}}/.config/
+    cp -r ../../sops  /mnt/home/{{USER}}/.config/
+    # cp ../../.ssh  /mnt/home/{{USER}}/
 
-    sudo nixos-enter --root /mnt -c 'chown -R {{USER}}:{{USER}} .config'
+    sudo nixos-enter --root /mnt -c 'chown -R {{USER}}:{{USER}} /home/{{USER}}/.config'
 
 # reboot here and wait for the system to generate the secure boot keys, it will automatically restart and then secure boot should be ready. 
 # Secure boot still needs to be reenabled in the UEFI but its setup.
@@ -42,7 +52,7 @@ tpm_fde:
     sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcr-bank=sha256 --tpm2-pcrs=0+7 --wipe-slot=tpm2 {{LUKSPARTITION}}
 
 home-manager-init:
-    nix run home-manager/master -- init --switch --flake '~/.config/nix#{{USER}}@nixos'
+    nix run home-manager/master -- init --switch --flake '~/.config/nix#{{USER}}@{{SYSTEM}}'
 
 # reset_tpm_fde:
 #     sudo systemd-cryptenroll --wipe-slot tpm2 /dev/nvme0n1p2
