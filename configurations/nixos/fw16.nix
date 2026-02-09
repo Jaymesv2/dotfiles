@@ -84,13 +84,11 @@
   programs.steam = {
     enable = true;
     gamescopeSession.enable = true;
-    package = pkgs.steam.override {
-      #withJava = true;
-      #withPrimus = true;
-
-      # extraPkgs = p: with p; [ glxinfo ];
-      extraPkgs = p: with p; [ mesa-demos ];
-    };
+    package = (pkgs.steam.override {extraPkgs = p: [ p.mesa-demos ]; }).overrideAttrs (old: {
+        postInstall = (old.postInstall or "") + ''
+          wrapProgram $out/bin/steam --add-flags "-cef-disable-gpu"
+        '';
+      });
   };
   programs.java.enable = true;
 
