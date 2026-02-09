@@ -45,6 +45,16 @@
       "L+    /opt/rocm   -    -    -     -    ${rocmEnv}"
     ];
 
+
+
+    services.xserver.monitorSection = ''
+      Section "Monitor"
+        Identifier "DisplayPort-2"
+        Option "PreferredMode" "2560x1440"
+        Option "PreferredRefresh" "144"
+      EndSection
+    '';
+
     # environment.systemPackages = with pkgs; [ 
     # ];
 
