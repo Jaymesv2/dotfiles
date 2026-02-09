@@ -1,10 +1,11 @@
 {config, lib, pkgs, pkgs-unstable, ... }: let 
 in {
-  imports = [ ../../../home/util/workingFiles.nix ];
+  imports = [ ../workingFiles.nix ];
   workingFiles.enable = true;
   workingFiles.file.neovimConfig.linkSource = ".config/nix/modules/home-manager/nvim";
   # 
   programs.neovim.package = pkgs-unstable.neovim-unwrapped; 
+
   home.file.neovimConfig = {
       enable = true;
       source = ./.;
@@ -106,6 +107,9 @@ in {
     in [ # non lazy plugins
         pkgs-unstable.vimPlugins.lz-n
     ] ++ /*builtins.map makeOptional*/ (with pkgs-unstable.vimPlugins; [
+      # AI?? REALLY?? I LOVE AI!!!! SO GOOOOOOD
+      avante-nvim
+
 
       bufresize-nvim
       # hbac-nvim
