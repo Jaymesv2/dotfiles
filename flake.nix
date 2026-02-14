@@ -35,6 +35,10 @@
   };
 
   outputs = inputs: with inputs; {
+    # packages = let
+    #     pkgs = import nixpkgs { system = "x86_64-linux"; };
+    # in ((import ./pkgs/default.nix) {pkgs};)
+    
     defaultPackage = home-manager.defaultPackage;
     homeConfigurations = {
       # laptop config
