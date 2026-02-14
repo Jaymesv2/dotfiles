@@ -46,14 +46,16 @@
     ];
 
 
-
-    services.xserver.monitorSection = ''
-      Section "Monitor"
-        Identifier "DisplayPort-2"
-        Option "PreferredMode" "2560x1440"
-        Option "PreferredRefresh" "144"
-      EndSection
-    '';
+    services.xserver.xrandrHeads = [
+        {
+            primary = true;
+            output = "DisplayPort-2";
+            monitorConfig = ''
+                Option "PreferredMode" "2560x1440"
+                Option "PreferredRefresh" "144"
+            '';
+        }
+    ];
 
     # environment.systemPackages = with pkgs; [ 
     # ];
