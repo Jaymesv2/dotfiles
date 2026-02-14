@@ -13,6 +13,7 @@
       ../../system/graphics.nix
       ../../modules/nixos/nix.nix
       ../../system/persist.nix
+      ../../system/probe_rs_rules.nix
     ];
     
 
@@ -119,12 +120,13 @@
     description = "Trent";
     group = "trent";
     shell = pkgs.zsh;
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" "tss" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" "tss" "plugdev" ];
     packages = with pkgs; [];
     hashedPassword = "$y$j9T$PoIVXXZUTD0aNXvUtlmyK/$VJH7ZxK7V9Caq99dpvrjPhJY/nKrjrzBpHZYSdBWu53";
     # hashedPasswordFile = config.sops.secrets.trent-password.path;
     # initialPassword = "123abc"; # best password
   };
+
   users.users.root.hashedPassword = "$y$j9T$ibbF4vj1t1WEmM9WEgk7E.$igM9JiPYciGdJnzP5Rxg8hUNovpl.SMMsFLsxZOWsw6";
 
   # sops.secrets.trent-password.neededForUsers = true;
