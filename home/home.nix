@@ -60,6 +60,9 @@
 
   home.packages = (with pkgs; [
       nixFunctionCalls stackCollapse 
+
+      freecad
+
       # ----- SYSTEM -----
 
       # fonts
