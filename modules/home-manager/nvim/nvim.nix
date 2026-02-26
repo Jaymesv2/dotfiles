@@ -13,7 +13,23 @@ in {
       target = ".config/nvim";
   };
 
+  # home.file.codexConfig = {
+  #   target = ".config/codex/config.toml";
+  #   text = ''
+  #       [mcp_servers.mcphub]
+  #       url = "http://localhost:3000/mcp"
+  #   '';
+  #   enable = true;
+  # };
+
+
   home.packages = with pkgs; [
+    codex
+    codex-acp
+    mcphub
+    mcp-nixos
+    mcp-proxy
+
     neovide
     clang-tools
     nixd
@@ -106,6 +122,7 @@ in {
         makeOptional = x: {plugin = x; optional = true;};
     in [ # non lazy plugins
         pkgs-unstable.vimPlugins.lz-n
+        pkgs.mcphub-nvim
     ] ++ /*builtins.map makeOptional*/ (with pkgs-unstable.vimPlugins; [
       # AI?? REALLY?? I LOVE AI!!!! SO GOOOOOOD
       avante-nvim

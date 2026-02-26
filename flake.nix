@@ -31,6 +31,13 @@
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
 
+
+    mcphub.url = "github:ravitemer/mcp-hub";
+    mcphub.inputs.nixpkgs.follows = "nixpkgs";
+
+    mcphub-nvim.url = "github:ravitemer/mcphub.nvim"; # neovim plugin
+    mcphub-nvim.inputs.nixpkgs.follows = "nixpkgs";
+
     self.submodules = true;
   };
 
@@ -86,6 +93,9 @@
             (./configurations/home-manager + "/trent@desktop.nix")
             nix-index-database.homeModules.default
             sops-nix.homeManagerModules.sops
+            {
+                nixpkgs.overlays = [ (prev: final: { mcphub = inputs.mcphub.packages."x86_64-linux".default; mcphub-nvim = inputs.mcphub-nvim.packages."x86_64-linux".default; }) ]; 
+            }
         ];
       };
 
