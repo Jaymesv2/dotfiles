@@ -108,6 +108,7 @@ in {
             };
             meta.homepage = "https://github.com/kwkarlwang/bufresize.nvim";
         };
+
         # hbac-nvim = pkgs-unstable.vimUtils.buildVimPlugin {
         #     pname = "hbac-nvim";
         #     version = "2022-05-28";
@@ -119,11 +120,13 @@ in {
         #     };
         #     meta.homepage = "https://github.com/axkirillov/hbac.nvim";
         # };
+
         makeOptional = x: {plugin = x; optional = true;};
     in [ # non lazy plugins
         pkgs-unstable.vimPlugins.lz-n
-        pkgs.mcphub-nvim
+        # pkgs.mcphub-nvim
     ] ++ /*builtins.map makeOptional*/ (with pkgs-unstable.vimPlugins; [
+        mcphub-nvim
       # AI?? REALLY?? I LOVE AI!!!! SO GOOOOOOD
       avante-nvim
 
