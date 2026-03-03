@@ -7,7 +7,8 @@
     systemd.network.wait-online.enable = false;
     boot.loader.timeout = 1;
 
-    boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
+    boot.kernelPackages = pkgs.linuxPackages_latest;
+    # pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
     #linuxPackages-cachyos-latest;
     # linux-cachyos-latest-lto-zen4
     # linux-cachyos-bore-lto
