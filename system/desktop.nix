@@ -56,6 +56,14 @@
             '';
         }
     ];
+    services.xserver.inputClassSections = 
+ [''
+  Identifier "libinput pointer catchall"
+  MatchIsPointer "on"
+  MatchDevicePath "/dev/input/event*"
+  Driver "libinput"
+  Option "AccelProfile" "flat"
+ ''];
 
     # environment.systemPackages = with pkgs; [ 
     # ];

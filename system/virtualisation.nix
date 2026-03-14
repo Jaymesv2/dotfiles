@@ -4,10 +4,10 @@
   programs.virt-manager.enable = true;
 
   virtualisation = {
-    docker = {
-      enable = true;
-      enableOnBoot = false;
-    };
+    # docker = {
+    #   enable = true;
+    #   enableOnBoot = false;
+    # };
     podman = {
       enable = true;
       autoPrune.enable = true;
@@ -26,8 +26,11 @@
 
   users.users.trent.extraGroups = ["podman"];
 
-  environment.persistence."/persistent" = {
-    directories = [
-      { directory = "/var/lib/docker"; user = "root"; group = "root"; mode="u=rwx,g=x,o="; }
-    ];
+  # for now podman on root won't persist
+
+  # environment.persistence."/persistent" = {
+  #   directories = [
+  #     { directory = "/var/lib/containers"; user = "root"; group = "root"; mode="u=rwx,g=x,o="; }
+  #   ];
+  # };
 }

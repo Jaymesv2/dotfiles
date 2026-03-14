@@ -21,6 +21,7 @@
       ../../system/printer.nix
       ../../system/graphics.nix
       ../../system/desktop.nix
+      ../../system/virtualisation.nix
     ];
     
 
@@ -148,14 +149,6 @@
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
 
-
-  virtualisation.docker = {
-    enable = true;
-    enableOnBoot = false;
-  };
-
-
-
   # services.globalprotect.enable = true;
 
   # List packages installed in system profile. To search, run:
@@ -218,6 +211,7 @@
   services.libinput = {
     touchpad.naturalScrolling = false;
     touchpad.accelProfile = "flat";
+    mouse.accelProfile = "flat";
   };
 
 

@@ -14,8 +14,8 @@
      ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --dport ${builtins.toString port} -j RETURN || true
     '') wireguard_ports);
 
+      allowedTCPPorts = [ 9999 ];
   };
-
   # ------ DNS -----
 
   #networking.nameservers = [ "1.1.1.1#one.one.one.one" "1.0.0.1#one.one.one.one" ];

@@ -22,18 +22,26 @@ require("avante").setup({
   --     },
   --   },
   -- },
-  provider = "codex",
-  acp_providers = {
-    codex = {
-      command = "codex-acp",
-      args = {},
-      env = {
-        HOME = os.getenv("HOME"),
-        PATH = os.getenv("PATH"),
-      },
-    },
+  
+  provider = "claude",
+  providers = {
+    claude = {
+        auth_type = "max"
+    }
   },
-  auto_suggestions_provider = "openai",
+  -- provider = "codex",
+  -- acp_providers = {
+  --   codex = {
+  --     command = "codex-acp",
+  --     args = {},
+  --     env = {
+  --       HOME = os.getenv("HOME"),
+  --       PATH = os.getenv("PATH"),
+  --     },
+  --   },
+  -- },
+
+  -- auto_suggestions_provider = "openai",
   system_prompt = function()
     local hub = require("mcphub").get_hub_instance()
     return hub and hub:get_active_servers_prompt() or ""

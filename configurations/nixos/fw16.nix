@@ -14,6 +14,7 @@
       ../../modules/nixos/nix.nix
       ../../system/persist.nix
       ../../system/probe_rs_rules.nix
+      ../../system/podman.nix
     ];
     
 
@@ -137,14 +138,6 @@
   # virtualization stuff
   programs.dconf.enable = true;
 
-  virtualisation.libvirtd.enable = true;
-  programs.virt-manager.enable = true;
-
-
-  virtualisation.docker = {
-    enable = true;
-    enableOnBoot = false;
-  };
 
 
 
@@ -154,6 +147,10 @@
   # $ nix search wget
   environment.pathsToLink = [ "/share/zsh" ];
   environment.systemPackages = with pkgs; [
+    podman
+    podman-tui
+    dive
+    passt
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
     qemu

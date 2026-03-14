@@ -13,11 +13,11 @@
       experimental-features = [ "nix-command" "flakes" ];
       substituters = [
         "https://nix-gaming.cachix.org"
-        "https://cache.garnix.io"
+        # "https://cache.garnix.io"
       ];
       trusted-public-keys = [
         "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
-        "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
+        # "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
       ];
       trusted-users = [
         "root"
