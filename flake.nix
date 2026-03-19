@@ -38,6 +38,9 @@
     mcphub-nvim.url = "github:ravitemer/mcphub.nvim"; # neovim plugin
     mcphub-nvim.inputs.nixpkgs.follows = "nixpkgs";
 
+    mcp-servers-nix.url = "github:natsukium/mcp-servers-nix";
+    mcp-servers-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     self.submodules = true;
   };
 
@@ -93,6 +96,7 @@
         };
         #minimal = true; # I want to enable this later but don't have the time rn
         modules = [ 
+            inputs.mcp-servers-nix.homeManagerModules.default
             (./configurations/home-manager + "/trent@desktop.nix")
             nix-index-database.homeModules.default
             sops-nix.homeManagerModules.sops

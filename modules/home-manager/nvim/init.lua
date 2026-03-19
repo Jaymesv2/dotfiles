@@ -136,6 +136,10 @@ require('smart-splits').setup({
     },
   },
 })
+
+
+
+
 -- require("hbac").setup({
 --   autoclose     = true, -- set autoclose to false if you want to close manually
 --   threshold     = 10, -- hbac will start closing :unedited buffers once that number is reached
@@ -148,13 +152,28 @@ require('smart-splits').setup({
 --   },
 -- })
 
-require("notify")
-require('dressing').setup({
-    input = {
-        enable = true,
-    },
+require('snacks').setup({ 
+    input = { enabled = true },
+    picker = { enabled = true },
+    notifier = { enabled = true },
 })
-vim.notify = require("notify")
+
+require('render-markdown').setup({
+    completions = { lsp = { enabled = true } },
+    -- completions = { coq = { enabled = true } }, -- if using coq
+})
+
+
+
+-- require("notify")
+-- require('dressing').setup({
+--     input = {
+--         enable = true,
+--     },
+-- })
+-- vim.notify = require("notify")
+
+
 
 vim.keymap.set({'n', 'x', 'o'}, 's',  '<Plug>(leap-forward)', { desc = 'Leap forward' })
 vim.keymap.set({'n', 'x', 'o'}, 'S',  '<Plug>(leap-backward)', { desc = 'Leap backward' })

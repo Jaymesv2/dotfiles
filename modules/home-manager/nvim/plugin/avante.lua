@@ -1,5 +1,23 @@
+
+
+
+-- require('img-clip').setup ({
+--   -- use recommended settings from above
+-- })
+-- require('render-markdown').setup ({
+--   -- use recommended settings from above
+-- })
+
 require("avante_lib").load()
 require("avante").setup({
+  input = {
+    provider = "snacks",
+    provider_opts = {
+      title = "Avante Input",
+      icon = " ",
+      placeholder = "Enter you api key"
+    },
+  },
   -- ---@alias Provider "claude" | "openai" | "azure" | "gemini" | "cohere" | "copilot" | string
   -- ---@type Provider
   -- provider = "openai", -- The provider used in Aider mode or in the planning phase of Cursor Planning Mode

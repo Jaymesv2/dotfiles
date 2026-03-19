@@ -29,7 +29,7 @@ in {
     mcphub
     mcp-nixos
     mcp-proxy
-
+    openssl
     neovide
     clang-tools
     nixd
@@ -38,7 +38,14 @@ in {
     fd
     ripgrep
     lua-language-server
+
+    nodejs
+    uv
   ];
+
+  home.sessionVariables = {
+    UV_PYTHON_PREFERENCE = "only-managed";
+  };
 
   programs.neovim = {
 
@@ -130,6 +137,8 @@ in {
       # AI?? REALLY?? I LOVE AI!!!! SO GOOOOOOD
       avante-nvim
 
+      render-markdown-nvim # avante dep
+
 
       bufresize-nvim
       # hbac-nvim
@@ -155,7 +164,8 @@ in {
       # UI
       # dashboard-nvim
       nvim-tree-lua # https://github.com/nvim-tree/nvim-tree.lua
-      dressing-nvim # https://github.com/stevearc/dressing.nvim?tab=readme-ov-file
+      # dressing-nvim # https://github.com/stevearc/dressing.nvim?tab=readme-ov-file
+      snacks-nvim
       nvim-notify # https://github.com/rcarriga/nvim-notify
       nui-nvim # https://github.com/MunifTanjim/nui.nvim
 

@@ -1,0 +1,44 @@
+{
+  "servers": {
+    "git": {
+      "args": [
+        "mcp-server-git",
+        "--repository",
+        "${PWD}"
+      ],
+      "autoApprove": [
+        "git_diff",
+        "git_diff_staged",
+        "git_diff_unstaged",
+        "git_log",
+        "git_show",
+        "git_status"
+      ],
+      "command": "uvx"
+    },
+    "nixos": {
+      "args": [],
+      "autoApprove": [
+        "nixos_search",
+        "nixos_info",
+        "nixos_channels",
+        "nixos_stats",
+        "home_manager_search",
+        "home_manager_info",
+        "home_manager_stats",
+        "home_manager_list_options",
+        "home_manager_options_by_prefix",
+        "darwin_search",
+        "darwin_info",
+        "darwin_stats",
+        "darwin_list_options",
+        "darwin_options_by_prefix",
+        "nixos_flakes_stats",
+        "nixos_flakes_search",
+        "nixhub_package_versions",
+        "nixhub_find_version"
+      ],
+      "command": "mcp-nixos"
+    }
+  }
+}
