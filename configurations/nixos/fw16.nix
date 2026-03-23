@@ -14,7 +14,7 @@
       ../../modules/nixos/nix.nix
       ../../system/persist.nix
       ../../system/probe_rs_rules.nix
-      ../../system/podman.nix
+      ../../system/virtualisation.nix
     ];
     
 

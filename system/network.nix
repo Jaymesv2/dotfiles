@@ -1,21 +1,20 @@
 { config, pkgs, lib, ...}: let wireguard_ports = [1443 1337 51820 57422 57797 55570]; in {
   networking.firewall = {
-   allowedTCPPorts = [ 53317 ];
-   # if packets are still dropped, they will show up in dmesg
-   logReversePathDrops = true;
-   # wireguard trips rpfilter up
-   extraCommands = 
-    builtins.concatStringsSep "\n" (builtins.map (port: ''
-     ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --sport ${builtins.toString port} -j RETURN
-     ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --dport ${builtins.toString port} -j RETURN
-    '') wireguard_ports);
-   extraStopCommands = 
-    builtins.concatStringsSep "\n" (builtins.map (port: ''
-     ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --sport ${builtins.toString port} -j RETURN || true
-     ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --dport ${builtins.toString port} -j RETURN || true
-    '') wireguard_ports);
+    # if packets are still dropped, they will show up in dmesg
+    logReversePathDrops = true;
+    # wireguard trips rpfilter up
+    extraCommands = 
+      builtins.concatStringsSep "\n" (builtins.map (port: ''
+        ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --sport ${builtins.toString port} -j RETURN
+        ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --dport ${builtins.toString port} -j RETURN
+      '') wireguard_ports);
+    extraStopCommands = 
+      builtins.concatStringsSep "\n" (builtins.map (port: ''
+        ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --sport ${builtins.toString port} -j RETURN || true
+        ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --dport ${builtins.toString port} -j RETURN || true
+      '') wireguard_ports);
 
-      allowedTCPPorts = [ 9999 ];
+    allowedTCPPorts = [ 9999 53317 ];
   };
   # ------ DNS -----
 
