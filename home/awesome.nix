@@ -35,7 +35,7 @@
     ];
   };
   systemd.user.services.xss-lock.Unit = {
-      ConditionEnvironment = "XDG_SESSION_TYPE=x11";
+      # ConditionEnvironment = "XDG_SESSION_TYPE=x11";
       ConditionPathExists = "/tmp/.X11-unix/X0";
   };
   # The home manager module tries to enable dpms when xss-lock starts so this just removes that
@@ -46,7 +46,7 @@
       Description = "Disable X11 DPMS and screen blanking";
       PartOf = [ "graphical-session.target" ];
       After  = [ "graphical-session.target" "xss-lock.service" ];
-      ConditionEnvironment = "XDG_SESSION_TYPE=x11";
+      # ConditionEnvironment = "XDG_SESSION_TYPE=x11";
       ConditionPathExists = "/tmp/.X11-unix/X0";
     };
   
@@ -71,7 +71,7 @@
     Unit = {
       Description = "xidlehook control socket";
       PartOf = [ "xidlehook.service" ];
-      ConditionEnvironment = "XDG_SESSION_TYPE=x11";
+      # ConditionEnvironment = "XDG_SESSION_TYPE=x11";
       ConditionPathExists = "/tmp/.X11-unix/X0";
     };
 
@@ -92,7 +92,7 @@
       Wants = [ "xidlehook.socket" ];
       After    = [ "xidlehook.socket" "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
-      ConditionEnvironment = "XDG_SESSION_TYPE=x11";
+      # ConditionEnvironment = "XDG_SESSION_TYPE=x11";
       ConditionPathExists = "/tmp/.X11-unix/X0";
     };
     Service = {

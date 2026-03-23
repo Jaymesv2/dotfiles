@@ -1,5 +1,6 @@
 { config, pkgs, lib, ...}: let wireguard_ports = [1443 1337 51820 57422 57797 55570]; in {
   networking.firewall = {
+   allowedTCPPorts = [ 53317 ];
    # if packets are still dropped, they will show up in dmesg
    logReversePathDrops = true;
    # wireguard trips rpfilter up

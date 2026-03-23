@@ -92,8 +92,8 @@
       #globalprotect-openconnect
       wireguard-tools
       findutils
-
       kopia
+      intiface-central
 
       wireshark
 
