@@ -24,7 +24,7 @@
       "discord"
       "obsidian"
       "todoist-electron"
-      "vscode"
+      # "vscode"
       "burpsuite"
   ];
 
@@ -305,9 +305,7 @@
   
   services.mpd.enable = true;
   
-  programs.vscode = {
-    enable = true;
-  };
+  # programs.vscode.enable = true;
 
   programs.zathura = {
     enable = true;
