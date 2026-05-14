@@ -41,12 +41,12 @@ require("avante").setup({
   --   },
   -- },
   
-  provider = "claude",
-  providers = {
-    claude = {
-        auth_type = "max"
-    }
-  },
+  -- provider = "claude",
+  -- providers = {
+  --   claude = {
+  --       auth_type = "pro"
+  --   }
+  -- },
   -- provider = "codex",
   -- acp_providers = {
   --   codex = {
@@ -57,7 +57,14 @@ require("avante").setup({
   --       PATH = os.getenv("PATH"),
   --     },
   --   },
-  -- },
+  --{
+  provider = "opencode",
+  acp_providers = {
+    ["opencode"] = {
+      command = "opencode",
+      args = { "acp" }
+    }
+  },
 
   -- auto_suggestions_provider = "openai",
   system_prompt = function()

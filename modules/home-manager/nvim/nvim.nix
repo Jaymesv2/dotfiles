@@ -38,7 +38,7 @@ in {
     fd
     ripgrep
     lua-language-server
-
+    opencode
     nodejs
     uv
   ];

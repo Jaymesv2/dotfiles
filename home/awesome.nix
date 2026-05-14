@@ -104,8 +104,8 @@
         "--socket" "%t/xidlehook.sock" 
         "--timer" 
             (builtins.toString ((config.services.screen-locker.inactiveInterval - 1)*60))
-            "'${pkgs.brightnessctl}/brightnessctl set 30%'" 
-            "'${pkgs.brightnessctl}/brightnessctl set 100%'"
+            "'${pkgs.brightnessctl}/bin/brightnessctl set 30%'" 
+            "'${pkgs.brightnessctl}/bin/brightnessctl set 100%'"
         "--timer" 
             (builtins.toString ((config.services.screen-locker.inactiveInterval)*60))
             "'${pkgs.brightnessctl}/bin/brightnessctl set 100%; ${pkgs.systemd}/bin/loginctl lock-session; ${pkgs.systemd}/bin/systemctl suspend'" 
