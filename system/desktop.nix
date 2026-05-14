@@ -8,12 +8,11 @@
     environment.systemPackages = with pkgs; [
       piper
       libratbag
-
-
-    linux-firmware 
+      linux-firmware 
       input-remapper
       nvtopPackages.amd
       rocmPackages.rocm-smi
+      solaar
     ];
     services.input-remapper.enable = true;
     # boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
@@ -63,7 +62,17 @@
   MatchDevicePath "/dev/input/event*"
   Driver "libinput"
   Option "AccelProfile" "flat"
- ''];
+ ''
+ ''
+  Identifier "Disable Middle Emulation"
+  MatchIsPointer "yes"
+  Option "MiddleEmulation" "false"
+ ''
+ ];
+
+    services.xserver.displayManager.sessionCommands = ''
+      xset m 0 0
+    '';
 
     # environment.systemPackages = with pkgs; [ 
     # ];
