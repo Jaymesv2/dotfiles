@@ -122,13 +122,13 @@
             inputs.disko.nixosModules.disko
             inputs.lanzaboote.nixosModules.lanzaboote
             inputs.nix-index-database.nixosModules.default 
-            inputs.nix-amd-npu.nixosModules.default
+            # inputs.nix-amd-npu.nixosModules.default
             { 
                 # add the cachyos kernel overlay and 
                 nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ]; 
                 nix.settings.substituters = [ "https://attic.xuyh0120.win/lantian" ];
                 nix.settings.trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
-                hardware.amd-npu.enable = true;
+                # hardware.amd-npu.enable = true;
             } 
             inputs.cwcwm.nixosModules.cwc
 
