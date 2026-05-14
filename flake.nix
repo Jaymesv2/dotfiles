@@ -6,7 +6,6 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-gaming.url = "github:fufexan/nix-gaming";
     sops-nix.url = "github:Mic92/sops-nix";
-    nixos-wsl.url = "github:nix-community/NixOS-WSL";
     # nix-gaming.inputs.nixpkgs.follows = "nixpkgs";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
@@ -41,8 +40,6 @@
     mcp-servers-nix.url = "github:natsukium/mcp-servers-nix";
     mcp-servers-nix.inputs.nixpkgs.follows = "nixpkgs";
     
-    # lam.url = "/home/trent/Documents/code/python/Linux-Arctis-Manager";
-    
     self.submodules = true;
   };
 
@@ -63,7 +60,10 @@
         systems = [
             "x86_64-linux"
         ];
+        flake = { inherit flakeModules; } // {
+        };
         perSystem = {config, pkgs, system, ...}: {
+            # packages.default = home-manager.defaultPackage;
           #   _module.args.pkgs = import inputs.nixpkgs {
           #   inherit system;
           #   overlays = [
@@ -77,80 +77,5 @@
           #   };
           # };
         };
-        flake = { inherit flakeModules; }  // {
-
-
-
-    nixosConfigurations = {
-
-
-      desktop-wsl = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-	    modules = [ 
-            ./configurations/nixos/desktop-wsl.nix
-            inputs.nixos-wsl.nixosModules.wsl
-            # ./system/configuration.nix 
-            # inputs.sops-nix.nixosModules.sops 
-        ];
-        specialArgs = {
-          pkgs-unstable = import nixpkgs-unstable {
-            system = "x86_64-linux";
-          };
-          nixpkgs = nixpkgs;
-          nixpkgs-unstable = nixpkgs-unstable;
-          nixpkgs2311 = nixpkgs;
-        };
-      };
-
-     #  nixosVM = nixpkgs.lib.nixosSystem {
-     #    system = "x86_64-linux";
-	    # modules = [     
-     #        ./system/configuration.nix 
-     #        inputs.sops-nix.nixosModules.sops 
-					#
-     #        inputs.home-manager.nixosModules.home-manager
-     #        {
-     #            home-manager.useGlobalPkgs = true;
-     #            home-manager.useUserPackages = true;
-     #            home-manager.users.trent = import ./home/home.nix;
-					#
-     #            home-manager.extraSpecialArgs = {
-     #              nix-gaming = inputs.nix-gaming;
-     #              pkgs-unstable = import nixpkgs-unstable {
-     #                system = "x86_64-linux";
-     #                config.allowUnfree = true;
-     #              };
-     #              sops-nix = inputs.sops-nix;
-     #            };
-     #            nixpkgs.config.permittedInsecurePackages = [
-     #                "electron-27.3.11"
-     #            ];
-					#
-     #            home-manager.sharedModules = [
-     #                inputs.sops-nix.homeManagerModules.sops
-     #            ];
-     #        }
-     #    ];
-     #    specialArgs = {
-     #      pkgs-unstable = import nixpkgs-unstable {
-     #        system = "x86_64-linux";
-     #      };
-     #      nixpkgs = nixpkgs;
-     #      nixpkgs-unstable = nixpkgs-unstable;
-     #      nixpkgs2311 = nixpkgs;
-     #    };
-     #  };
-    };
-
-
-        };
     });
-
-  # inputs: with inputs; {
-    # packages = let
-    #     pkgs = import nixpkgs { system = "x86_64-linux"; };
-    # in ((import ./pkgs/default.nix) {pkgs};)
-    
-    # defaultPackage = home-manager.defaultPackage;
-
 }
