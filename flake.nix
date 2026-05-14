@@ -42,153 +42,47 @@
     mcp-servers-nix.inputs.nixpkgs.follows = "nixpkgs";
     
     # lam.url = "/home/trent/Documents/code/python/Linux-Arctis-Manager";
-
+    
     self.submodules = true;
   };
 
-  outputs = inputs: with inputs; {
-    # packages = let
-    #     pkgs = import nixpkgs { system = "x86_64-linux"; };
-    # in ((import ./pkgs/default.nix) {pkgs};)
-    
-    defaultPackage = home-manager.defaultPackage;
-    homeConfigurations = {
-      # laptop config
-      "trent@nixos" = home-manager.lib.homeManagerConfiguration {
-      # "trent@nixos" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-	      system = "x86_64-linux";
-	      config.allowUnfree = true;
-	      # required by logseq and obsidian
-	      # config.permittedInsecurePackages = [ "electron-25.9.0" ];
-	    };
-	    extraSpecialArgs = {
-          nix-gaming = inputs.nix-gaming;
-          pkgs-unstable = import nixpkgs-unstable {
-            system = "x86_64-linux";
-            config.allowUnfree = true;
-          };
-          sops-nix = inputs.sops-nix;
-        };
-        #minimal = true; # I want to enable this later but don't have the time rn
-        modules = [ 
-            (./configurations/home-manager + "/trent@fw16.nix")
-            nix-index-database.homeModules.default
-            sops-nix.homeManagerModules.sops
-            {
-                nixpkgs.overlays = [ (prev: final: { mcphub = inputs.mcphub.packages."x86_64-linux".default; mcphub-nvim = inputs.mcphub-nvim.packages."x86_64-linux".default; }) ]; 
-            }
-        ];
+  outputs = inputs@{flake-parts, nixpkgs, home-manager, nix-gaming, nixpkgs-unstable, nix-index-database, sops-nix,  ... }: 
+    flake-parts.lib.mkFlake { inherit inputs; } (top@{config, withSystem, moduleWithSystem, flake-parts-lib, ...}: let
+      inherit (flake-parts-lib) importApply;
+      flakeModules = {
+          homeConfigurations = ./modules/flake-parts/homeConfigurations.nix;
+          desktop = importApply ./configurations/desktop.nix { inherit withSystem; };
+          laptop = importApply  ./configurations/laptop.nix { inherit withSystem; };
       };
-      "trent@desktop" = home-manager.lib.homeManagerConfiguration {
-      # "trent@nixos" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-	      system = "x86_64-linux";
-	      config.allowUnfree = true;
-	      # required by logseq and obsidian
-	      # config.permittedInsecurePackages = [ "electron-25.9.0" ];
-	    };
-	    extraSpecialArgs = {
-          nix-gaming = inputs.nix-gaming;
-          pkgs-unstable = import nixpkgs-unstable {
-            system = "x86_64-linux";
-            config.allowUnfree = true;
-          };
-          sops-nix = inputs.sops-nix;
-        };
-        #minimal = true; # I want to enable this later but don't have the time rn
-        modules = [ 
-            inputs.mcp-servers-nix.homeManagerModules.default
-            (./configurations/home-manager + "/trent@desktop.nix")
-            nix-index-database.homeModules.default
-            sops-nix.homeManagerModules.sops
-            {
-                nixpkgs.overlays = [ (prev: final: { mcphub = inputs.mcphub.packages."x86_64-linux".default; mcphub-nvim = inputs.mcphub-nvim.packages."x86_64-linux".default; }) ]; 
-            }
+    in {
+        imports = [
+            flakeModules.desktop
+            flakeModules.homeConfigurations
+            flakeModules.laptop
         ];
-      };
+        systems = [
+            "x86_64-linux"
+        ];
+        perSystem = {config, pkgs, system, ...}: {
+          #   _module.args.pkgs = import inputs.nixpkgs {
+          #   inherit system;
+          #   overlays = [
+          #     # inputs.foo.overlays.default
+          #     # (final: prev: {
+          #     #   # ... things you need to patch ...
+          #     # })
+          #   ];
+          #   config = { 
+          #       allowUnfree = true;
+          #   };
+          # };
+        };
+        flake = { inherit flakeModules; }  // {
 
-    };
+
 
     nixosConfigurations = {
-      nixos = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-	    modules = [ 
-            # ./system/configuration.nix 
-            ./configurations/nixos/fw16.nix
-            inputs.sops-nix.nixosModules.sops 
-            inputs.nixos-hardware.nixosModules.framework-16-amd-ai-300-series 
-            inputs.impermanence.nixosModules.impermanence
-            inputs.disko.nixosModules.disko
-            inputs.lanzaboote.nixosModules.lanzaboote
-            inputs.nix-index-database.nixosModules.default 
-            # inputs.nix-amd-npu.nixosModules.default
-            { 
-                # add the cachyos kernel overlay and 
-                nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ]; 
-                nix.settings.substituters = [ "https://attic.xuyh0120.win/lantian" ];
-                nix.settings.trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
-                # hardware.amd-npu.enable = true;
-            } 
-            inputs.cwcwm.nixosModules.cwc
 
-        ];
-        specialArgs = {
-          pkgs-unstable = import nixpkgs-unstable {
-            system = "x86_64-linux";
-            overlays = [
-                inputs.cwcwm.overlays.default # add cwc to unstable
-            ];
-          };
-          nixpkgs = nixpkgs;
-          nixpkgs-unstable = nixpkgs-unstable;
-          nixpkgs2311 = nixpkgs;
-        };
-      };
-
-      desktop = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = {
-          pkgs-unstable = import nixpkgs-unstable {
-            system = "x86_64-linux";
-            overlays = [
-                inputs.cwcwm.overlays.default # add cwc to unstable
-            ];
-          };
-          nixpkgs = nixpkgs;
-          nixpkgs-unstable = nixpkgs-unstable;
-          nixpkgs2311 = nixpkgs;
-        };
-	    modules = [ 
-
-            # inputs.lam.nixosModules.default
-            ({ pkgs-unstable, ... }: {
-                imports = [ ./pkgs/linux-arctis-manager-module.nix ];
-                nixpkgs.overlays = [ (prev: final: {
-                    linux-arctis-manager = pkgs-unstable.callPackage ./pkgs/linux-arctis-manager.nix {};
-                })];
-                services.linux-arctis-manager.enable = true;
-            })
-
-            ./configurations/nixos/desktop.nix
-            inputs.nix-gaming.nixosModules.pipewireLowLatency
-            inputs.nix-gaming.nixosModules.platformOptimizations
-            # inputs.nix-gaming.nixosModules.default
-            inputs.sops-nix.nixosModules.sops 
-            inputs.impermanence.nixosModules.impermanence
-            inputs.disko.nixosModules.disko
-            inputs.lanzaboote.nixosModules.lanzaboote
-            inputs.nix-index-database.nixosModules.default 
-            # { 
-            #     # add the cachyos kernel overlay and 
-            #     nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ]; 
-            #     nix.settings.substituters = [ "https://attic.xuyh0120.win/lantian" ];
-            #     nix.settings.trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
-            # } 
-            inputs.cwcwm.nixosModules.cwc
-
-        ];
-      };
 
       desktop-wsl = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -208,13 +102,34 @@
         };
       };
 
-     #  desktop = nixpkgs.lib.nixosSystem {
+     #  nixosVM = nixpkgs.lib.nixosSystem {
      #    system = "x86_64-linux";
-     #    module = [ 
-     #        ./system/desktop.nix 
-     #        inputs.disko.nixosModules.disko
+	    # modules = [     
+     #        ./system/configuration.nix 
      #        inputs.sops-nix.nixosModules.sops 
-     #        ./system/desktop-disk.nix
+					#
+     #        inputs.home-manager.nixosModules.home-manager
+     #        {
+     #            home-manager.useGlobalPkgs = true;
+     #            home-manager.useUserPackages = true;
+     #            home-manager.users.trent = import ./home/home.nix;
+					#
+     #            home-manager.extraSpecialArgs = {
+     #              nix-gaming = inputs.nix-gaming;
+     #              pkgs-unstable = import nixpkgs-unstable {
+     #                system = "x86_64-linux";
+     #                config.allowUnfree = true;
+     #              };
+     #              sops-nix = inputs.sops-nix;
+     #            };
+     #            nixpkgs.config.permittedInsecurePackages = [
+     #                "electron-27.3.11"
+     #            ];
+					#
+     #            home-manager.sharedModules = [
+     #                inputs.sops-nix.homeManagerModules.sops
+     #            ];
+     #        }
      #    ];
      #    specialArgs = {
      #      pkgs-unstable = import nixpkgs-unstable {
@@ -225,45 +140,17 @@
      #      nixpkgs2311 = nixpkgs;
      #    };
      #  };
-
-      nixosVM = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-	    modules = [     
-            ./system/configuration.nix 
-            inputs.sops-nix.nixosModules.sops 
-
-            inputs.home-manager.nixosModules.home-manager
-            {
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.users.trent = import ./home/home.nix;
-
-                home-manager.extraSpecialArgs = {
-                  nix-gaming = inputs.nix-gaming;
-                  pkgs-unstable = import nixpkgs-unstable {
-                    system = "x86_64-linux";
-                    config.allowUnfree = true;
-                  };
-                  sops-nix = inputs.sops-nix;
-                };
-                nixpkgs.config.permittedInsecurePackages = [
-                    "electron-27.3.11"
-                ];
-
-                home-manager.sharedModules = [
-                    inputs.sops-nix.homeManagerModules.sops
-                ];
-            }
-        ];
-        specialArgs = {
-          pkgs-unstable = import nixpkgs-unstable {
-            system = "x86_64-linux";
-          };
-          nixpkgs = nixpkgs;
-          nixpkgs-unstable = nixpkgs-unstable;
-          nixpkgs2311 = nixpkgs;
-        };
-      };
     };
-  };
+
+
+        };
+    });
+
+  # inputs: with inputs; {
+    # packages = let
+    #     pkgs = import nixpkgs { system = "x86_64-linux"; };
+    # in ((import ./pkgs/default.nix) {pkgs};)
+    
+    # defaultPackage = home-manager.defaultPackage;
+
 }
