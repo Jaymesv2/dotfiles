@@ -65,7 +65,7 @@ in{
       # wayland.compositor = "weston";
     };
     # defaultSession = "awesome-session";
-    defaultSession = lib.mkForce "river-session";
+    defaultSession = "hyprland-uwsm";
     sessionPackages = [ 
         pkgs.weston 
         # (pkgs.writeTextFile {
