@@ -39,7 +39,9 @@
 
     mcp-servers-nix.url = "github:natsukium/mcp-servers-nix";
     mcp-servers-nix.inputs.nixpkgs.follows = "nixpkgs";
-    
+    awww.url = "git+https://codeberg.org/LGFae/awww";
+    awww.inputs.nixpkgs.follows = "nixpkgs";
+
     self.submodules = true;
   };
 
@@ -62,20 +64,20 @@
         ];
         flake = { inherit flakeModules; } // {
         };
-        perSystem = {config, pkgs, system, ...}: {
+        perSystem = {config, pkgs, pkgs-unstable, system, ...}: let 
+            pkgs-unstable = import inputs.nixpkgs-unstable { inherit system; };
+
+        in {
+            packages.wifiman = pkgs-unstable.callPackage ./pkgs/wifiman.nix {};
             # packages.default = home-manager.defaultPackage;
-          #   _module.args.pkgs = import inputs.nixpkgs {
-          #   inherit system;
-          #   overlays = [
-          #     # inputs.foo.overlays.default
-          #     # (final: prev: {
-          #     #   # ... things you need to patch ...
-          #     # })
-          #   ];
-          #   config = { 
-          #       allowUnfree = true;
-          #   };
-          # };
+            _module.args.pkgs = import inputs.nixpkgs {
+                inherit system;
+                overlays = [
+                    inputs.aww.overlays.default
+                  # inputs.foo.overlays.default
+                  # ( final: prev: { } )
+                ];
+              };
         };
     });
 }

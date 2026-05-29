@@ -11,13 +11,14 @@
     portal = {
       enable = true;
       xdgOpenUsePortal = true;
-      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+      # extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
+      extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
       # config.common.default = "*";
       config = {
         common = {
-          default = [
-            "gtk"
-          ];
+          # default = [
+          #   "gtk"
+          # ];
           "org.freedesktop.impl.portal.FileChooser" = [
             "nemo"
           ];

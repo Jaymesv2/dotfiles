@@ -50,7 +50,7 @@
       TERMINAL = "alacritty";
       TERM = "alacritty";
       
-      # NIXOS_OZONE_WL = "1"; # Needed for electron on wayland
+      NIXOS_OZONE_WL = "1"; # Needed for electron on wayland
     };
   };
 

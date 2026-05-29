@@ -1,11 +1,83 @@
 { pkgs, lib, config, options, ... }: {
-
+    
+  # xsession.windowManager.awesome = {
+  #   enable = true;
+  #   package = pkgs.writeShellScriptBin "awesome" ''
+  #   ${pkgs.systemd}/bin/systemd-cat -t awesome ${pkgs.awesome}/bin/awesome
+  #   '';
+  # };
   xsession.windowManager.awesome = {
     enable = true;
     package = pkgs.writeShellScriptBin "awesome" ''
     ${pkgs.systemd}/bin/systemd-cat -t awesome ${pkgs.awesome}/bin/awesome
     '';
   };
+
+  # xsession.enable = true;
+  # xsession.windowManager.command = ''
+  #   # Propagate X env into the systemd user instance
+  #   echo 'setting environment'
+  #
+  #   ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all
+  #   echo 'importing environment'
+  #
+  #
+  #
+  #   echo "DISPLAY=$DISPLAY" >> ~/xsession-debug.log
+  #   echo "XAUTHORITY=$XAUTHORITY" >> ~/xsession-debug.log
+  #   systemctl --user show-environment >> /tmp/xsession-debug.log
+  #
+  #   systemctl --user import-environment DISPLAY XAUTHORITY
+  #
+  #   echo 'starting awesome'
+  #   # Start awesome and block until it exits (causes SDDM to log out on exit)
+  #   exec systemctl --user start --wait awesome.service
+  # '';
+
+  systemd.user.targets.awesome-session.Unit = {
+    Description       = "awesome-session";
+    RefuseManualStart = "yes";
+    StopWhenUnneeded  = "yes";
+    BindsTo           = [ "graphical-session.target" ];
+    PropagatesStopTo  = [ "graphical-session.target" ];
+    Before            = [ "graphical-session.target" ];
+    # Wants             = [ "dbus.socket" ];
+    # After             = [ "dbus.socket" ];
+  };
+
+  systemd.user.targets.awesome-session-pre.Unit = {
+    Description      = "Session services which should run before the awesome session is brought up";
+    Documentation    = "man:systemd.target(5)";
+    RefuseManualStart= "yes";
+    StopWhenUnneeded = "yes";
+    BindsTo          = ["graphical-session-pre.target"];
+    PropagatesStopTo = ["graphical-session-pre.target"];
+    Before           = [ "graphical-session-pre.target" "awesome-session.target"];
+  };
+
+  systemd.user.services.awesome = {
+    Unit = {
+      Description = "AwesomeWM window manager";
+      BindsTo          = [ "awesome-session.target" ];
+      PropagatesStopTo = [ "awesome-session.target" ];
+      Before           = [ "awesome-session.target" ];
+      After            = [ "awesome-session-pre.target" ];
+      Wants            = [ "awesome-session-pre.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.awesome}/bin/awesome";
+      # Restart = "on-failure";
+      # RestartSec = 1;
+      Restart = "no";
+      Slice = "session.slice";
+      StandardOutput = "journal";
+      StandardError = "journal";
+    };
+    # Install = {
+    #   WantedBy = [ "graphical-session.target" ];
+    # };
+  };
+
 
   workingFiles.enable = true;
 
@@ -19,6 +91,8 @@
   };
 
   home.packages = with pkgs; [ xsecurelock picom nitrogen xscreensaver xidlehook brightnessctl playerctl ];
+
+
 
   services.screen-locker = {
     enable = true;
@@ -34,20 +108,22 @@
       # "XSECURELOCK_DISCARD_FIRST_KEYPRESS=1"
     ];
   };
+
   systemd.user.services.xss-lock.Unit = {
-      # ConditionEnvironment = "XDG_SESSION_TYPE=x11";
-      ConditionPathExists = "/tmp/.X11-unix/X0";
+      ConditionEnvironment = "XDG_SESSION_TYPE=x11";
+      # ConditionPathExists = "/tmp/.X11-unix/X0";
   };
+
   # The home manager module tries to enable dpms when xss-lock starts so this just removes that
   systemd.user.services.xss-lock.Service.ExecStartPre = lib.mkForce "";
   # there is probably a much better way to do this 
   systemd.user.services.x11-idle-disable = {
     Unit = {
       Description = "Disable X11 DPMS and screen blanking";
-      PartOf = [ "graphical-session.target" ];
-      After  = [ "graphical-session.target" "xss-lock.service" ];
-      # ConditionEnvironment = "XDG_SESSION_TYPE=x11";
-      ConditionPathExists = "/tmp/.X11-unix/X0";
+      PartOf = [ "awesome-session.target" ];
+      After  = [ "awesome-session.target" "xss-lock.service" ];
+      ConditionEnvironment = "XDG_SESSION_TYPE=x11";
+      # ConditionPathExists = "/tmp/.X11-unix/X0";
     };
   
     Service = {
@@ -64,15 +140,15 @@
       ];
     };
   
-    Install.WantedBy = [ "graphical-session.target" ];
+    Install.WantedBy = [ "awesome-session.target" ];
   };
 
   systemd.user.sockets.xidlehook = {
     Unit = {
       Description = "xidlehook control socket";
       PartOf = [ "xidlehook.service" ];
-      # ConditionEnvironment = "XDG_SESSION_TYPE=x11";
-      ConditionPathExists = "/tmp/.X11-unix/X0";
+      ConditionEnvironment = "XDG_SESSION_TYPE=x11";
+      # ConditionPathExists = "/tmp/.X11-unix/X0";
     };
 
     Socket = {
@@ -90,10 +166,10 @@
 
       Requires = [ "xidlehook.socket" ];
       Wants = [ "xidlehook.socket" ];
-      After    = [ "xidlehook.socket" "graphical-session.target" ];
-      PartOf = [ "graphical-session.target" ];
-      # ConditionEnvironment = "XDG_SESSION_TYPE=x11";
-      ConditionPathExists = "/tmp/.X11-unix/X0";
+      After    = [ "xidlehook.socket" "awesome-session.target" ];
+      PartOf = [ "awesome-session.target" ];
+      ConditionEnvironment = "XDG_SESSION_TYPE=x11";
+      # ConditionPathExists = "/tmp/.X11-unix/X0";
     };
     Service = {
       Type = "simple";

@@ -1,6 +1,7 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs-unstable, pkgs, ... }: {
   programs.waybar = {
     enable = true;
+    package = pkgs-unstable.waybar;
     settings = {
       mainBar = {
         layer = "top";
@@ -9,13 +10,13 @@
         output = [ "eDP-1"];
         modules-left = [ 
           "hyprland/workspaces" 
-          "hyprland/mode" 
+          # "hyprland/mode" 
           "wlr/taskbar" 
         ];
         modules-center = [ "hyprland/window"];
         modules-right = [ 
           "tray" 
-          "bluetooth"
+          # "bluetooth"
           "cpu"
           #"disk"
           "memory"
@@ -31,12 +32,12 @@
           # 
           #"group" 
         ];
-        "hyprland/workspaces" = {      
-          disable-scroll = true;      
+        "hyprland/workspaces" = {
+          disable-scroll = true;
           all-outputs = true;    
           format = "{icon}";
-          on-scroll-up = "hyprctl dispatch workspace e+1";
-          on-scroll-down = "hyprctl dispatch workspace e-1";
+          on-scroll-up = "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'";
+          on-scroll-down = "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'";
         };
         # "custom/hello-from-waybar" = {      
         #   format = "hello {}";      
