@@ -15,6 +15,7 @@
       ../../system/persist.nix
       ../../system/probe_rs_rules.nix
       ../../system/virtualisation.nix
+      ../../modules/nixos/impermanence.nix
     ];
     
 
@@ -196,12 +197,6 @@
     nerd-fonts.droid-sans-mono
     # (nerdfonts.override { } )
   ];
-
-  # Why is this here on 24.05??
-  services.displayManager = {
-    defaultSession = "xsession";
-  };
-
 
 
   services.libinput = {

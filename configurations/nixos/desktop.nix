@@ -201,13 +201,6 @@
     # (nerdfonts.override { } )
   ];
 
-  # Why is this here on 24.05??
-  services.displayManager = {
-    defaultSession = "xsession";
-  };
-
-
-
   services.libinput = {
     touchpad.naturalScrolling = false;
     touchpad.accelProfile = "flat";

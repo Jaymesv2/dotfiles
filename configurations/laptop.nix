@@ -66,7 +66,10 @@ in
             nix-index-database.homeModules.default
             sops-nix.homeManagerModules.sops
             {
-                nixpkgs.overlays = [ (prev: final: { mcphub = inputs.mcphub.packages."x86_64-linux".default; mcphub-nvim = inputs.mcphub-nvim.packages."x86_64-linux".default; }) ]; 
+                nixpkgs.overlays = [ 
+                    (prev: final: { mcphub = inputs.mcphub.packages."x86_64-linux".default; mcphub-nvim = inputs.mcphub-nvim.packages."x86_64-linux".default; }) 
+                    inputs.awww.overlays.default
+                ]; 
             }
         ];
       
