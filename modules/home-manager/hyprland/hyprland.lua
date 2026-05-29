@@ -316,7 +316,7 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 --     hl.dsp.exec_cmd('hyprctl keyword monitor "eDP-1, preferred, auto, auto"'), { locked = true })
 
 hl.bind("switch:on:Lid Switch", function() 
-    hl.dispatch(hl.dsp.exxec_cmd("hyprlock"))
+    hl.dispatch(hl.dsp.exec_cmd("hyprlock"))
 end)
 
 

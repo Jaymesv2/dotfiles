@@ -1,56 +1,56 @@
 { lib, pkgs, pkgs-unstable, options, config, ... }: {
     home.packages = [ pkgs-unstable.eww  pkgs.awww ];
 
-  systemd.user.targets.river-session.Unit = {
-    Description = "river-session";
-    RefuseManualStart="yes";
-    StopWhenUnneeded="yes";
-    BindsTo          = [ "graphical-session.target" ];
-    PropagatesStopTo = [ "graphical-session.target" ];
-    Before           = [ "graphical-session.target" ];
-  };
-
-  systemd.user.targets.river-session-pre.Unit = {
-    Description="Session services which should run before the river session is brought up";
-    Documentation="man:systemd.target(5)";
-    RefuseManualStart="yes";
-    StopWhenUnneeded="yes";
-    BindsTo          =["graphical-session-pre.target"];
-    PropagatesStopTo =["graphical-session-pre.target"];
-    Before           =[ "graphical-session-pre.target" "river-session.target"];
-  };
-
-
-  systemd.user.services.river = {
-    Unit = {
-      Description = "River";
-
-      BindsTo          = [ "river-session.target" ];
-      PropagatesStopTo = [ "river-session.target" ];
-      Before           = [ "river-session.target" ];
-      Wants            = [ "river-session-pre.target" ];
-      After            = [ "river-session-pre.target" ];
-    };
-
-    Service = {
-      Type = "notify";
-      EnvironmentFile = "-%h/.config/river/env";
-      ExecStart = "${pkgs-unstable.river}/bin/river";
-      Restart = "on-failure";
-      RestartSec = "2";
-      NotifyAccess = "all";
-      ExecStopPost = "${pkgs.systemd}/bin/systemctl --user unset-environment DISPLAY WAYLAND_DISPLAY";
-      Slice = "session.slice";
-    };
-
-    # Install.WantedBy = [ "graphical-session.target" ];
-  };
+  # systemd.user.targets.river-session.Unit = {
+  #   Description = "river-session";
+  #   RefuseManualStart="yes";
+  #   StopWhenUnneeded="yes";
+  #   BindsTo          = [ "graphical-session.target" ];
+  #   PropagatesStopTo = [ "graphical-session.target" ];
+  #   Before           = [ "graphical-session.target" ];
+  # };
+  #
+  # systemd.user.targets.river-session-pre.Unit = {
+  #   Description="Session services which should run before the river session is brought up";
+  #   Documentation="man:systemd.target(5)";
+  #   RefuseManualStart="yes";
+  #   StopWhenUnneeded="yes";
+  #   BindsTo          =["graphical-session-pre.target"];
+  #   PropagatesStopTo =["graphical-session-pre.target"];
+  #   Before           =[ "graphical-session-pre.target" "river-session.target"];
+  # };
+  #
+  #
+  # systemd.user.services.river = {
+  #   Unit = {
+  #     Description = "River";
+  #
+  #     BindsTo          = [ "river-session.target" ];
+  #     PropagatesStopTo = [ "river-session.target" ];
+  #     Before           = [ "river-session.target" ];
+  #     Wants            = [ "river-session-pre.target" ];
+  #     After            = [ "river-session-pre.target" ];
+  #   };
+  #
+  #   Service = {
+  #     Type = "notify";
+  #     EnvironmentFile = "-%h/.config/river/env";
+  #     ExecStart = "${pkgs-unstable.river}/bin/river";
+  #     Restart = "on-failure";
+  #     RestartSec = "2";
+  #     NotifyAccess = "all";
+  #     ExecStopPost = "${pkgs.systemd}/bin/systemctl --user unset-environment DISPLAY WAYLAND_DISPLAY";
+  #     Slice = "session.slice";
+  #   };
+  #
+  #   # Install.WantedBy = [ "graphical-session.target" ];
+  # };
 
   systemd.user.services.window-manager = {
     Unit = {
-      PartOf    = [ "river-session.target" ];
-      After     = [ "river-session.target" ];
-      Requisite = [ "river-session.target" ];
+      PartOf    = [ "wayland-session@river.target" ];
+      After     = [ "wayland-session@river.target" ];
+      Requisite = [ "wayland-session@river.target" ];
     };
     Service = {
       Type="exec";
@@ -66,12 +66,12 @@
   executable = true;
   text = ''
     #!/usr/bin/env bash
-    # Make sure these environment variables are set for future systemd services.
-    # Aternatively use `dbus-update-activation-environment --system` for these.
-    systemctl --user import-environment  WAYLAND_DISPLAY DISPLAY XCURSOR_SIZE
-
-    # Tell systemd startup is complete.
-    systemd-notify --ready
+    # # Make sure these environment variables are set for future systemd services.
+    # # Aternatively use `dbus-update-activation-environment --system` for these.
+    # systemctl --user import-environment  WAYLAND_DISPLAY DISPLAY XCURSOR_SIZE
+    #
+    # # Tell systemd startup is complete.
+    # systemd-notify --ready
 
     # execute the window manager
     # exec ~/Documents/code/rust/orilla/target/release/orilla
@@ -82,9 +82,9 @@
     Unit = {
       Description = "Animated Background Daemon";
 
-      PartOf    = [ "river-session.target" ];
-      After     = [ "river-session.target" ];
-      Requisite = [ "river-session.target" ];
+      PartOf    = [ "wayland-session@river.target"];
+      After     = [ "wayland-session@river.target"];
+      Requisite = [ "wayland-session@river.target"];
       # ConditionEnvironment = "XDG_SESSION_TYPE=x11";
       # ConditionPathExists = "/tmp/.X11-unix/X0";
     };
@@ -105,7 +105,7 @@
       # ];
     };
 
-    Install.WantedBy = [ "river-session.target" ];
+    Install.WantedBy = ["wayland-session@river.target" ];
   };
 
 

@@ -167,11 +167,10 @@
               blur_size = 8;
             }
           ];
-
-          fingerprint = {
-            enabled = true;
-            ready_message = "Scan fingerprint to unlock";
-            present_message = "Scanning fingerprint";
+          auth = {
+            "fingerprint:enabled" = true;
+            "fingerprint:ready_message" = "Scan fingerprint to unlock";
+            "fingerprint:present_message" = "Scanning fingerprint";
           };
 
           input-field = [
