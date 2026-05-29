@@ -1,4 +1,7 @@
-{ config, pkgs, lib, ...}: let wireguard_ports = [1443 1337 51820 57422 57797 55570]; in {
+{ config, pkgs, lib, ...}: let 
+wireguard_ports = [1443 1337 51820 57422 57797 55570]; 
+kde_connect_port_ranges = [ { from = 1714; to = 1764; } ];
+in {
   networking.firewall = {
     # if packets are still dropped, they will show up in dmesg
     logReversePathDrops = true;
@@ -14,8 +17,16 @@
         ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --dport ${builtins.toString port} -j RETURN || true
       '') wireguard_ports);
 
-    allowedTCPPorts = [ 9999 53317 3000 ];
+    allowedTCPPorts = [ 
+        3000 
+        9999 
+        51828
+        53317 # localsend
+    ];
+    allowedTCPPortRanges = kde_connect_port_ranges;
+    allowedUDPPortRanges = kde_connect_port_ranges;
   };
+# };
   # ------ DNS -----
 
   #networking.nameservers = [ "1.1.1.1#one.one.one.one" "1.0.0.1#one.one.one.one" ];

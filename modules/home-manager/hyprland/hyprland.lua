@@ -19,7 +19,7 @@ hl.monitor({
     output   = "eDP-1",
     mode     = "2560x1600@165";
     position = "auto",
-    scale    = 1.25,
+    scale    = 1.33,
 })
 
 
@@ -127,7 +127,7 @@ hl.config({
 hl.config({
     misc = {
         force_default_wallpaper = -1,    -- Set to 0 or 1 to disable the anime mascot wallpapers
-        disable_hyprland_logo   = false, -- If true disables the random hyprland logo / anime girl background. :(
+        disable_hyprland_logo   = true, -- If true disables the random hyprland logo / anime girl background. :(
     },
 })
 
@@ -146,7 +146,7 @@ hl.config({
 
         follow_mouse = 1,
 
-        sensitivity = 0.5, -- -1.0 - 1.0, 0 means no modification.
+        sensitivity = 0, -- -1.0 - 1.0, 0 means no modification.
         accel_profile = "flat",
 
         touchpad = {
@@ -161,13 +161,21 @@ hl.gesture({
     action = "workspace"
 })
 
--- Example per-device config
--- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Devices/ for more
-hl.device({
-    name        = "epic-mouse-v1",
-    sensitivity = -0.5,
+hl.gesture({
+    fingers = 3,
+    direction = "vertical",
+    action = "scroll_move",
+    scale = 2
 })
 
+-- -- Example per-device config
+-- -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Devices/ for more
+
+-- fw16 mouse config
+hl.device({
+    name = "pixa3854:00-093a:0274-touchpad",
+    sensitivity = 0.75
+})
 
 ---------------------
 ---- KEYBINDINGS ----
@@ -182,16 +190,20 @@ hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(menu))
 local closeWindowBind = hl.bind(mainMod .. " + SHIFT + C", hl.dsp.window.close())
 
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = 0, action = "toggle"}))
+
 hl.bind(mainMod .. " + M", hl.dsp.window.fullscreen({ mode = 1, action = "toggle"}))
 
 -- closeWindowBind:set_enabled(false)
 -- hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 
 
-hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
+-- hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + SHIFT + space", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 
+hl.bind(mainMod .. " + I", hl.dsp.layout("colresize -conf"))  -- step to a narrower preset
+hl.bind(mainMod .. " + O", hl.dsp.layout("colresize +conf"))  -- step to a narrower preset
+hl.bind(mainMod .. " + Y", hl.dsp.layout("expel"))  -- step to a narrower preset
 
 -- hl.bind(mainMod .. " + s", hl.dsp.layout("togglesplit"))    -- dwindle only
 
@@ -202,14 +214,33 @@ hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 -- hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 
 
-local function moveLeft()
-    local layout= hl.get_active_workspace().tiled_layout
-    if layout == "scrolling" then
-        hl.dispatch(hl.dsp.layout("swapcol l"))
-    else
-        hl.dispatch(hl.dsp.window.move({ direction = "left" }))
+-- Executes the bind given in the layout table. if there is no associated layout then it falls back to `otherwise`
+local function layout_bind(bind_table)
+    return function ()
+        local workspace = hl.get_active_special_workspace() or
+                          hl.get_active_workspace()
+
+        if not workspace then
+            return
+        end
+
+        local layout = workspace.tiled_layout
+                
+        if bind_table[layout] then
+            hl.dispatch(bind_table[layout])
+        elseif bind_table["otherwise"] then
+            hl.dispatch(bind_table["otherwise"])
+        end
     end
 end
+
+
+-- local function moveLeft()
+--     local layout= hl.get_active_workspace().tiled_layout
+--     if layout == "scrolling" then
+--     else
+--     end
+-- end
 
 local function moveRight()
     local layout= hl.get_active_workspace().tiled_layout
@@ -227,10 +258,19 @@ hl.bind(mainMod .. " + j",  hl.dsp.focus({ direction = "down"  }))
 hl.bind(mainMod .. " + k",  hl.dsp.focus({ direction = "up"    }))
 hl.bind(mainMod .. " + l",  hl.dsp.focus({ direction = "right" }))
 
-hl.bind(mainMod .. " + SHIFT + h", moveLeft)
+
+hl.bind(mainMod .. " + SHIFT + h", layout_bind({
+    scrolling = hl.dsp.layout("swapcol l"),
+    otherwise = hl.dsp.window.move({ direction = "left" })
+}))
+
 hl.bind(mainMod .. " + SHIFT + j",  hl.dsp.window.move({ direction = "down"  }))
 hl.bind(mainMod .. " + SHIFT + k",  hl.dsp.window.move({ direction = "up"    }))
-hl.bind(mainMod .. " + SHIFT + l", moveRight)
+-- hl.bind(mainMod .. " + SHIFT + l", moveRight)
+hl.bind(mainMod .. " + SHIFT + l", layout_bind({
+    scrolling = hl.dsp.layout("swapcol r"),
+    otherwise = hl.dsp.window.move({ direction = "right" })
+}))
 -- hl.bind(mainMod .. " + SHIFT + p", hl.dsp.layout("promote"))
 
 -- Switch workspaces with mainMod + [0-9]
@@ -267,6 +307,38 @@ hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tr
 hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
 
+
+
+-- hl.bind("switch:on:Lid Switch",
+--     hl.dsp.exec_cmd('hyprctl keyword monitor "eDP-1, disable"'), { locked = true })
+--
+-- hl.bind("switch:off:Lid Switch",
+--     hl.dsp.exec_cmd('hyprctl keyword monitor "eDP-1, preferred, auto, auto"'), { locked = true })
+
+hl.bind("switch:on:Lid Switch", function() 
+    hl.dispatch(hl.dsp.exxec_cmd("hyprlock"))
+end)
+
+
+hl.bind("SUPER + tab", function ()
+    local layouts     = { "scrolling", "dwindle", "master", "monocle" }
+    local workspace   = hl.get_active_workspace()
+    local next_layout = "dwindle"
+
+    if not workspace then
+        return
+    end
+
+    for i = 1, #layouts do
+        if layouts[i] == workspace.tiled_layout then
+            local next_layout_idx = (i % #layouts) + 1
+            next_layout = layouts[next_layout_idx]
+            break
+        end
+    end
+
+    hl.workspace_rule({ workspace = workspace.name, layout = next_layout })
+end)
 
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----
