@@ -2,9 +2,16 @@
     imports = [
         ../modules/home-manager/hyprland/hyprland.nix
     ];
+
     home.packages = [ pkgs.astral 
         # pkgs.phinger-cursors
     ];
+
+    
+    # wayland.windowManager.hyprland.plugins = [
+    #   inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprbars
+    #   "/absolute/path/to/plugin.so"
+    # ];
 
 
     # hyprctl setcursor phinger-cursors-dark 24
@@ -17,6 +24,13 @@
 
     services.kdeconnect = {
         enable = true;
+        indicator = true;
+    };
+    services.flameshot = {
+        enable = true;
+        # settings = {
+        #     
+        # };
     };
 
     services.hypridle = {
@@ -205,14 +219,14 @@
             layer = "Top";
 
             modules = {
-                left = [ "appLauncher" "Workspaces"  ];
+                left = ["Workspaces" "MediaPlayer" ];
                 center = [ "WindowTitle" ];
-                # right = [ "SystemInfo" "MediaPlayer" "Tempo"  [ "Tray" "Settings" ] ];
-                right = [ "SystemInfo" "MediaPlayer"  [ "Tray" "Settings" ] ];
+                right = [ "SystemInfo" [ "Tray" ] [ "Tempo" "Settings" ] ];
+                # right = [ "SystemInfo" "MediaPlayer"   [ "Tray" "Settings" ] ];
             };
             workspaces = {
                 visibilityMode = "All";
-                group_by_monitor = "false";
+                group_by_monitor = false;
                 enable_workspace_filtering = "true";
             };
             window_title = {
@@ -220,7 +234,7 @@
                 truncate_title_after_length = 100;
             };
             tempo = {
-                clock_format = "%a %d %b %T";
+                clock_format = "%a, %b %d %T";
                 weather_location =  "Current";
                 timezones = ["America/Chicago"];
             };
