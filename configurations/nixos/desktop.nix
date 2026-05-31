@@ -5,14 +5,6 @@
 { lib, config, pkgs, pkgs-unstable, ... }: let something = "something"; in {
   imports =
     [ 
-      # ./network.nix
-      # ./laptop.nix
-      # ./sops.nix
-      # ./audio.nix
-      # ./printer.nix
-      # # ./postgres.nix
-      # ./graphics.nix
-
       ../../modules/nixos/nix.nix
       ../../system/persist.nix
       ../../system/network.nix

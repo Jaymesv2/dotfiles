@@ -34,7 +34,8 @@
     };
 
     services.hypridle = {
-        enable = true;
+        # enable = true;
+        # enable = true;
         systemdTarget = "wayland-session@Hyprland.target";
         settings = {
           general = {

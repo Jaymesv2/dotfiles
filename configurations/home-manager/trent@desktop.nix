@@ -8,5 +8,7 @@
     home.packages = [
         nix-gaming.packages.${pkgs.stdenv.hostPlatform.system}.osu-stable
     ];
+    services.hypridle.enable = false;
+
 
 }

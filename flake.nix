@@ -73,7 +73,7 @@
             _module.args.pkgs = import inputs.nixpkgs {
                 inherit system;
                 overlays = [
-                    inputs.aww.overlays.default
+                    inputs.awww.overlays.default
                   # inputs.foo.overlays.default
                   # ( final: prev: { } )
                 ];

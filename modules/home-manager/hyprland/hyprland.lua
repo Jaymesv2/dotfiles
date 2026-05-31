@@ -21,6 +21,12 @@ hl.monitor({
     position = "auto",
     scale    = 1.33,
 })
+hl.monitor({
+    output   = "DP-3",
+    mode     = "2560x1440@144";
+    position = "auto",
+    scale    = 1,
+})
 
 
 ---------------------
@@ -235,29 +241,10 @@ local function layout_bind(bind_table)
 end
 
 
--- local function moveLeft()
---     local layout= hl.get_active_workspace().tiled_layout
---     if layout == "scrolling" then
---     else
---     end
--- end
-
-local function moveRight()
-    local layout= hl.get_active_workspace().tiled_layout
-
-    if layout == "scrolling" then
-        hl.dispatch(hl.dsp.layout("swapcol r"))
-    else
-        hl.dispatch(hl.dsp.window.move({ direction = "right" }))
-    end
-end
-
-
 hl.bind(mainMod .. " + h",  hl.dsp.focus({ direction = "left"  }))
 hl.bind(mainMod .. " + j",  hl.dsp.focus({ direction = "down"  }))
 hl.bind(mainMod .. " + k",  hl.dsp.focus({ direction = "up"    }))
 hl.bind(mainMod .. " + l",  hl.dsp.focus({ direction = "right" }))
-
 
 hl.bind(mainMod .. " + SHIFT + h", layout_bind({
     scrolling = hl.dsp.layout("swapcol l"),
@@ -286,8 +273,22 @@ hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
 
 -- Scroll through existing workspaces with mainMod + scroll
-hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(mainMod .. " + SHIFT + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. " + SHIFT + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
+
+
+
+hl.bind(mainMod .. " + mouse_down", layout_bind({
+    scrolling = hl.dsp.layout("move +col")
+}))
+hl.bind(mainMod .. " + mouse_up", layout_bind({
+    scrolling = hl.dsp.layout("move -col")
+}))
+
+-- hl.dsp.focus({ direction = "left" }))
+-- hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ direction = "right" }))
+
+
 
 -- Move/resize windows with mainMod + LMB/RMB and dragging
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
@@ -318,6 +319,9 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 hl.bind("switch:on:Lid Switch", function() 
     hl.dispatch(hl.dsp.exec_cmd("hyprlock"))
 end)
+
+hl.bind("ALT + tab", hl.dsp.exec_cmd("snappy-switcher next"))
+hl.bind("ALT + SHIFT + tab", hl.dsp.exec_cmd("snappy-switcher prev"))
 
 
 hl.bind("SUPER + tab", function ()
@@ -399,7 +403,6 @@ hl.layout.register("columns", {
 for i = 1, 10 do
     local key = i % 10 -- 10 maps to key 0
     hl.workspace_rule({ workspace = "" .. key, layout="scrolling" })
-
 end
 
 -- hl.workspace_rule({ workspace = "1", layout="scrolling" })   
