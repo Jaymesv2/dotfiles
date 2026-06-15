@@ -11,11 +11,21 @@
       target = ".config/hypr/hyprland";
   };
 
-  home.file.hyprlandImport = {
+  home.file.hyprlandImport = let 
+    myPlugins = with pkgs-unstable.hyprlandPlugins; [ /*hyprspace*/ ];
+  loadLines = lib.concatMapStringsSep "\n"
+    (p: ''hl.exec_cmd("hyprctl plugin load ${p}/lib/lib${p.pname}.so")'')
+    # nixpkgs builds these as lib<name>.so — verify the exact filename below
+    myPlugins;
+  in {
     enable = true;
     recursive = true;
     target = ".config/hypr/hyprland.lua";
     text = ''
+        -- Load plugins
+        -- hl.on("hyprland.start", function()
+        --     ${loadLines}
+        -- end)
         require('hyprland.hyprland')
     '';
   };

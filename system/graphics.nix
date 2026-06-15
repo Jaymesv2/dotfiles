@@ -55,12 +55,6 @@ in{
   services.displayManager = {
     sddm = {
       enable = true;
-      # settings = {
-      #   
-      # };  
-      # settings = {
-        # X11.UserAuthFile = ".Xauthority";
-  # };
       # wayland.enable = true;
       # wayland.compositor = "weston";
     };
@@ -99,19 +93,12 @@ in{
         })
     ];
   };
-  # services.xserver.windowManager.awesome.enable = true;
-
 
   security.pam.services.sddm = {
     fprintAuth = true;
   };
 
-  security.pam.services.hyprlock = {
-    fprintAuth = false;
-  };
-  
-
-
+  security.pam.services.hyprlock.fprintAuth = false;
 
   services.xserver = {
     # dpi = 166;
@@ -121,33 +108,17 @@ in{
       variant = "";
     };
     wacom.enable = true;
-    #logFile = "/dev/null";
     logFile = "/var/log/Xorg.0.log";
-
-    # displayManager = {
-    #   lightdm = {
-    #     enable = false;
-    #     greeters.gtk = {
-    #       enable = true;
-    #     };
-    #   };
-    #   session = [
-    #     {
-    #       manage = "desktop";
-    #       name = "xsession";
-    #       start = ''exec $HOME/.xsession'';
-    #     }
-    #   ];
-    # };
   };
 
   programs.hyprland = {
     enable = true;
-    xwayland.enable = true;
     withUWSM = true;
     portalPackage = pkgs.xdg-desktop-portal-hyprland;
     package = pkgs-unstable.hyprland;
     systemd.setPath.enable = true;
+    xwayland.enable = true;
+
     #enableNvidiaPatches = true;
   };
 

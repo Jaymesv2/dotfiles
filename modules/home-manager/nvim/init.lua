@@ -187,7 +187,14 @@ require('renamer').setup({with_popup=true})
 
 
 
+require('typst-preview').setup {
 
+  dependencies_bin = {
+    tinymist = "/home/trent/.nix-profile/bin/tinymist",
+    websocat = "/home/trent/.nix-profile/bin/websocat"
+  },
+
+}
 
 require('lean').setup{ mappings = true }
 

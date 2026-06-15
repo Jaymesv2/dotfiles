@@ -39,9 +39,9 @@
 
     mcp-servers-nix.url = "github:natsukium/mcp-servers-nix";
     mcp-servers-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     awww.url = "git+https://codeberg.org/LGFae/awww";
     awww.inputs.nixpkgs.follows = "nixpkgs";
-
     self.submodules = true;
   };
 

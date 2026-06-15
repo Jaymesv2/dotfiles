@@ -60,19 +60,20 @@
 
   home.packages = (with pkgs; [
       nixFunctionCalls stackCollapse 
-
       freecad
 
       # ----- SYSTEM -----
-
       # fonts
       nerd-fonts.fira-code
+
+      gnucash
 
       phoronix-test-suite
       nemo
 
       libnotify
       bubblewrap
+
       # ----- cli tools -----
       lnav
       tree
@@ -96,7 +97,6 @@
       intiface-central
 
       wireshark
-
       hexchat
 
       ripgrep
@@ -109,6 +109,7 @@
       #yubikey-manager-qt
       # ----- languages -----
       swi-prolog
+
       # ----- system stuff -----
       networkmanagerapplet
       pavucontrol

@@ -23,7 +23,7 @@ in {
   # };
 
 
-  home.packages = with pkgs; [
+  home.packages = (with pkgs; [
     codex
     codex-acp
     mcphub
@@ -41,7 +41,10 @@ in {
     opencode
     nodejs
     uv
-  ];
+  ]) ++ (with pkgs-unstable; [
+    tinymist
+    websocat
+  ]);
 
   home.sessionVariables = {
     UV_PYTHON_PREFERENCE = "only-managed";
@@ -293,6 +296,7 @@ in {
 
 
       # Language Support
+        typst-preview-nvim
         lean-nvim
         Coqtail # https://github.com/whonore/Coqtail
         rustaceanvim # https://github.com/mrcjkb/rustaceanvim
