@@ -22,7 +22,7 @@ in {
   #   enable = true;
   # };
 
-
+  
   home.packages = (with pkgs; [
     codex
     codex-acp
@@ -54,6 +54,8 @@ in {
 
     enable = true;
     extraLuaPackages = luaPkgs: with luaPkgs; [ jsregexp ];
+    withRuby = false; # who tf uses ruby?
+    withPython3 = true;
 
 
 

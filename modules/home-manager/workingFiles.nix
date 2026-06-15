@@ -120,7 +120,7 @@ in {
         #   })
         # ];
 
-        home.extraActivationPath = with pkgs; [ xorg.lndir ];
+        home.extraActivationPath = with pkgs; [ lndir ];
         #     # This is VERY much hack
         home.activation.workingDirectoryFiles = hm.dag.entryAfter [ "onFilesChange" ] (''
             # if test -e ''${XDG_STATE_HOME}/nix/profiles/home-manager-''${newGenNum}-profile; then

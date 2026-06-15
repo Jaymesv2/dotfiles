@@ -1,4 +1,6 @@
-{ lib, pkgs, pkgs-unstable, ... }: {
+{ lib, pkgs, pkgs-unstable, ... }: let
+    hyprland_target = "wayland-session@hyprland.desktop.target";
+in {
     imports = [
         ../modules/home-manager/hyprland/hyprland.nix
     ];
@@ -14,7 +16,6 @@
     #   inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprbars
     #   "/absolute/path/to/plugin.so"
     # ];
-
 
     # hyprctl setcursor phinger-cursors-dark 24
     home.pointerCursor = {
@@ -73,12 +74,12 @@
     systemd.user.services.hyprpolkitagent = {
       Unit = {
         Description = "Hyprland PolicyKit Agent";
-        PartOf = [  "wayland-session@Hyprland.target" ];
-        After = [  "wayland-session@Hyprland.target" ];
+        PartOf = [  hyprland_target ];
+        After = [  hyprland_target ];
       };
 
       Install = {
-        WantedBy = [  "wayland-session@Hyprland.target"  ];
+        WantedBy = [  hyprland_target ];
       };
 
       Service = {
@@ -97,7 +98,7 @@
         background-color = "#000000";
         border-color = "#FFFFFF";
         border-radius = 0;
-        default-timeout = 30;
+        default-timeout = 30000;
         font = "monospace 10";
         height = 100;
         icons = true;
@@ -112,11 +113,11 @@
     systemd.user.services.mako = {
       Unit = {
         Description = "mako notification daemon";
-        PartOf    = [ "wayland-session@Hyprland.target" ];
-        After     = [ "wayland-session@Hyprland.target" ];
-        Requisite = [ "wayland-session@Hyprland.target" ];
+        PartOf    = [ hyprland_target];
+        After     = [ hyprland_target];
+        Requisite = [ hyprland_target] ;
       };
-      Install.WantedBy = [ "wayland-session@Hyprland.target" ];
+      Install.WantedBy = [hyprland_target];
       Service = {
         Type = "dbus";
         BusName = "org.freedesktop.Notifications";
@@ -144,11 +145,11 @@
     in {
         Unit = {
             Description = "wayland-pipewire-idle-inhibit";
-            PartOf    = [ "wayland-session@Hyprland.target" ];
-            After     = [ "pipewire.service" "wayland-session@Hyprland.target" ];
+            PartOf    = [ hyprland_target ];
+            After     = [ "pipewire.service" hyprland_target ];
             Wants     = [ "pipewire.service" ];
         };
-      Install.WantedBy = [ "wayland-session@Hyprland.target" ];
+      Install.WantedBy = [ hyprland_target ];
 
       Service = {
         ExecStart = "${lib.getExe pkgs.wayland-pipewire-idle-inhibit} --config ${configFile}";
@@ -214,7 +215,7 @@
         package = pkgs-unstable.ashell;
         systemd = {
             enable = true;
-            target = "wayland-session@Hyprland.target";
+            target = hyprland_target;
         };
         settings = {
             outputs = "All";
@@ -228,7 +229,7 @@
                 # right = [ "SystemInfo" "MediaPlayer"   [ "Tray" "Settings" ] ];
             };
             workspaces = {
-                visibilityMode = "All";
+                visibility_mode = "All";
                 group_by_monitor = false;
                 enable_workspace_filtering = "true";
             };
@@ -294,9 +295,9 @@
       Unit = {
         Description = "Animated Background Daemon";
 
-        PartOf    = [ "wayland-session@Hyprland.target"  ];
-        After     = [ "wayland-session@Hyprland.target"  ];
-        Requisite = [ "wayland-session@Hyprland.target"  ];
+        PartOf    = [ hyprland_target  ];
+        After     = [ hyprland_target  ];
+        Requisite = [ hyprland_target  ];
         # ConditionEnvironment = "XDG_SESSION_TYPE=x11";
         # ConditionPathExists = "/tmp/.X11-unix/X0";
       };
@@ -308,6 +309,6 @@
         Slice = "session.slice";
       };
 
-      Install.WantedBy = [ "wayland-session@Hyprland.target"  ];
+      Install.WantedBy = [ hyprland_target ];
     };
 }

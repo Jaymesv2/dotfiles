@@ -88,10 +88,11 @@
     };
     userDirs = {
       enable = true;
+      setSessionVariables = true; # idk why not keep it true after 26.05
       createDirectories = true;
-
       extraConfig = {
-        XDG_MISC_DIR = "${config.home.homeDirectory}/Misc";
+        MISC = "${config.home.homeDirectory}/Misc";
+        # XDG_MISC_DIR = "${config.home.homeDirectory}/Misc";
       };
     };
     #  I think I need to add these to XDG_DATA_DIRS or PATH

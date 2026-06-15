@@ -1,4 +1,4 @@
-{ lib, pkgs, pkgs-unstable, nix-gaming, ... }: rec {
+{ lib, pkgs, config, pkgs-unstable, nix-gaming, ... }: rec {
   imports = [
     # home/nvim/nvim.nix
     ../modules/home-manager/nvim/nvim.nix
@@ -16,7 +16,8 @@
   ];
 
   nixpkgs.config.permittedInsecurePackages = [
-    "electron-27.3.11"
+    # "electron-27.3.11"
+    "electron-39.8.10"
     #"qtwebengine-5.15.19"
   ];
   nixpkgs.config.allowUnfreePredicate = pkg: 
@@ -287,7 +288,10 @@
 
   programs.mpv.enable = true;
   
-  programs.firefox.enable = true;
+  programs.firefox = {
+    enable = true;
+    configPath = "${config.xdg.configHome}/mozilla/firefox";
+  };
 
   programs.gpg = {
     enable = true;

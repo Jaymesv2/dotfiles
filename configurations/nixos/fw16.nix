@@ -163,7 +163,8 @@
     
 
     alacritty
-    neofetch
+    # neofetch
+    fastfetch
     usbutils
     zsh
     wireguard-tools

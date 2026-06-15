@@ -8,7 +8,7 @@
     enableCompletion = true;
     syntaxHighlighting.enable = true;
 
-    initExtra = ''
+    initContent = ''
       zstyle ':completion:*' menu select
       setopt NO_EXTENDED_GLOB
       # bindkey -M menuselect '\r' .accept-line

@@ -90,7 +90,9 @@
       target = ".config/awesome";
   };
 
-  home.packages = with pkgs; [ xsecurelock picom nitrogen xscreensaver xidlehook brightnessctl playerctl ];
+  home.packages = with pkgs; [ xsecurelock nitrogen xscreensaver xidlehook brightnessctl playerctl 
+    # picom
+  ];
 
 
 
@@ -130,9 +132,9 @@
       Type = "oneshot";
       ExecStart = pkgs.writeShellScript "x11-idle-disable" ''
         echo "Disabling dpms idle"
-        ${pkgs.xorg.xset}/bin/xset s off
-        ${pkgs.xorg.xset}/bin/xset s noblank
-        ${pkgs.xorg.xset}/bin/xset -dpms
+        ${pkgs.xset}/bin/xset s off
+        ${pkgs.xset}/bin/xset s noblank
+        ${pkgs.xset}/bin/xset -dpms
       '';
       Environment = [
         "DISPLAY=:0"
