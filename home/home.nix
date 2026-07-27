@@ -125,13 +125,13 @@
     
         # communication
         # discord
-        signal-desktop
+        # signal-desktop
         thunderbird
         qpwgraph
         element-desktop
 
         # productivity
-        logseq
+        # logseq
         obsidian
         libreoffice
         todoist-electron
@@ -206,6 +206,9 @@
 
   programs.discord = {
     enable = true;
+    package = (pkgs.discord.override {
+        commandLineArgs = "--ozone-platform=x11 --disable-features=UseOzonePlatform";
+      });
     settings = {
         SKIP_HOST_UPDATE=true;
         DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING=true;

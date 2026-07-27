@@ -137,10 +137,11 @@ in {
     in [ # non lazy plugins
         pkgs-unstable.vimPlugins.lz-n
         # pkgs.mcphub-nvim
+        ] ++ [ 
+      # AI?? REALLY?? I LOVE AI!!!! SO GOOOOOOD
+      pkgs.vimPlugins.avante-nvim
     ] ++ /*builtins.map makeOptional*/ (with pkgs-unstable.vimPlugins; [
         mcphub-nvim
-      # AI?? REALLY?? I LOVE AI!!!! SO GOOOOOOD
-      avante-nvim
 
       render-markdown-nvim # avante dep
 

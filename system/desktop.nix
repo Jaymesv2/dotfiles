@@ -85,6 +85,18 @@ LABEL="solaar_end"
             '';
             destination = "/etc/udev/rules.d/42-logitech-unify-permissions.rules";
         })
+        (pkgs.writeTextFile rec {
+            name  = "92-keychron.rules";
+            text = ''
+                # 3434:d028 - v0 ultra 8k 2.4ghz
+                # 3434:0c00 - v0 ultra 8k USB
+                KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3434", MODE="0660", GROUP="${config.users.groups.plugdev.name}", TAG+="uaccess"
+                KERNEL=="ttyACM*", SUBSYSTEM=="tty", ATTRS{idVendor}=="3434", MODE="0660", GROUP="${config.users.groups.plugdev.name}", TAG+="uaccess"
+            '';
+            destination = "/etc/udev/rules.d/${name}";
+        })
+
+
 
 
     ];

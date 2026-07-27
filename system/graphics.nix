@@ -51,7 +51,8 @@
 in{
   imports = [ ./cwc.nix ];
 
-  
+
+
   services.displayManager = {
     sddm = {
       enable = true;

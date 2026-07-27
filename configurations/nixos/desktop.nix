@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ lib, config, pkgs, pkgs-unstable, ... }: let something = "something"; in {
+{ lib, config, options, pkgs, pkgs-unstable, ... }: let something = "something"; in {
   imports =
     [ 
       ../../modules/nixos/nix.nix
@@ -122,12 +122,17 @@
     description = "Trent";
     group = "trent";
     shell = pkgs.zsh;
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" "tss" "plugdev" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" "tss" config.users.groups.plugdev.name ];
     packages = with pkgs; [];
     hashedPassword = "$y$j9T$PoIVXXZUTD0aNXvUtlmyK/$VJH7ZxK7V9Caq99dpvrjPhJY/nKrjrzBpHZYSdBWu53";
     # hashedPasswordFile = config.sops.secrets.trent-password.path;
     # initialPassword = "123abc"; # best password
   };
+
+  users.groups.plugdev = {
+    name = "plugdev";
+  };
+
   users.users.root.hashedPassword = "$y$j9T$ibbF4vj1t1WEmM9WEgk7E.$igM9JiPYciGdJnzP5Rxg8hUNovpl.SMMsFLsxZOWsw6";
 
   # sops.secrets.trent-password.neededForUsers = true;

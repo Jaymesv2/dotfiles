@@ -15,16 +15,22 @@
 ------------------
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
-hl.monitor({
-    output   = "eDP-1",
-    mode     = "2560x1600@165";
-    position = "auto",
-    scale    = 1.33,
-})
+-- hl.monitor({
+--     output   = "eDP-1",
+--     mode     = "2560x1600@165";
+--     position = "auto",
+--     scale    = 1.33,
+-- })
 hl.monitor({
     output   = "DP-3",
     mode     = "2560x1440@144";
-    position = "auto",
+    position = "0x0",
+    scale    = 1,
+})
+hl.monitor({
+    output   = "DP-2",
+    mode     = "2560x1440@100";
+    position = "2560x0",
     scale    = 1,
 })
 
@@ -308,7 +314,8 @@ hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tr
 hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
 
-
+-- hl.bind("mouse:278", hl.dsp.pass({window = "class:^(discord)$"}))    -- Pass MOUSE5 to TeamSpeak3.
+hl.bind("F23", hl.dsp.send_shortcut({mods = "", key= "F23", window = "class:^(discord)$"}))
 
 -- hl.bind("switch:on:Lid Switch",
 --     hl.dsp.exec_cmd('hyprctl keyword monitor "eDP-1, disable"'), { locked = true })
@@ -430,6 +437,20 @@ hl.window_rule({
     },
 
     no_focus = true,
+})
+
+hl.window_rule({
+    -- Fix some dragging issues with XWayland
+    name  = "float-picture-in-picture",
+    match = {
+        -- class      = "^$",
+        title      = "Picture-in-Picture",
+        -- xwayland   = true,
+        -- float      = true,
+        -- fullscreen = false,
+        -- pin        = false,
+    },
+    float = true
 })
 
 -- Layer rules also return a handle.

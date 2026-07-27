@@ -31,9 +31,13 @@ in {
     };
     services.flameshot = {
         enable = true;
-        # settings = {
-        #     
-        # };
+        settings = {
+            General = {
+                disabledGrimWarning=true;
+                useGrimAdapter=true;
+            };
+            
+        };
     };
 
     services.hypridle = {
