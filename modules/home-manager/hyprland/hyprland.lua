@@ -15,12 +15,12 @@
 ------------------
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
--- hl.monitor({
---     output   = "eDP-1",
---     mode     = "2560x1600@165";
---     position = "auto",
---     scale    = 1.33,
--- })
+hl.monitor({
+    output   = "eDP-1",
+    mode     = "2560x1600@165";
+    position = "0x0",
+    scale    = 1.33,
+})
 hl.monitor({
     output   = "DP-3",
     mode     = "2560x1440@144";

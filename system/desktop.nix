@@ -1,5 +1,10 @@
 { pkgs, lib, config, options, ...} : {
-    imports = [ ./hardware/desktop/disk.nix ./hardware/desktop/hardware-configuration.nix ./secureboot.nix ];
+    imports = [ 
+      ./hardware/desktop/disk.nix 
+      ./hardware/desktop/hardware-configuration.nix 
+      ./secureboot.nix 
+      ./vmconf.nix
+    ];
 
     boot.initrd.systemd.network.wait-online.enable = false;
     systemd.network.wait-online.enable = false;

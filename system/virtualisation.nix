@@ -1,5 +1,5 @@
 { lib, pkgs, options, config, ... }: {
-  imports = [ ./vmconf.nix ];
+  #imports = [ ./vmconf.nix ];
   programs.virt-manager.enable = true;
 
   virtualisation.containers.enable = true;

@@ -220,6 +220,27 @@
     };
   };
 
+  # home.packages = [ pkgs.kopia-ui ];
+
+  systemd.user.services.kopia-ui = {
+    Unit = {
+      Description = "Kopia UI (backup client)";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.kopia-ui}/bin/kopia-ui --no-sandbox";
+      Environment = [
+        "ELECTRON_OZONE_PLATFORM_HINT=auto"
+        "NIXOS_OZONE_WL=1"
+      ];
+      Restart = "on-failure";
+      RestartSec = 2;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   # 'programs.vicinae'.
   # setup home manager `backupCommand`
   # services.local-ai
