@@ -1,10 +1,14 @@
 { config, pkgs, lib, ...}: let 
-wireguard_ports = [1443 1337 51820 57422 57797 55570]; 
+wireguard_ports = [1443 1337 51820 57422 57797 55570 51828 ]; 
 kde_connect_port_ranges = [ { from = 1714; to = 1764; } ];
 in {
   networking.firewall = {
     # if packets are still dropped, they will show up in dmesg
     logReversePathDrops = true;
+
+    # because wireguard
+    checkReversePath = "loose";
+
     # wireguard trips rpfilter up
     extraCommands = 
       builtins.concatStringsSep "\n" (builtins.map (port: ''
@@ -23,6 +27,8 @@ in {
         51828
         53317 # localsend
     ];
+    allowedUDPPorts = wireguard_ports;
+
     allowedTCPPortRanges = kde_connect_port_ranges;
     allowedUDPPortRanges = kde_connect_port_ranges;
   };

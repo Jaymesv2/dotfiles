@@ -25,6 +25,7 @@
     services.upower.enable = true;
 
     services.xserver.videoDrivers = [ "amdgpu" ]; 
+    services.gnome.gnome-keyring.enable = true;
 
     hardware.graphics = {
         enable = true;

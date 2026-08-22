@@ -67,7 +67,7 @@
       # fonts
       nerd-fonts.fira-code
 
-      gnucash
+      # gnucash
 
       phoronix-test-suite
       nemo
@@ -186,6 +186,8 @@
         zotero
         ymuse
         alsa-utils
+        bitwarden-desktop
+        bitwarden-cli
 
 
 	#osu-lazer-bin
@@ -202,6 +204,9 @@
 	    # nix-gaming.packages.x86_64-linux.osu-stable
 	    # nix-gaming.packages.x86_64-linux.osu-lazer-bin
   ];
+
+
+  services.protonmail-bridge.enable = true;
 
 
   programs.discord = {

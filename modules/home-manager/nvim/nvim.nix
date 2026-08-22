@@ -145,6 +145,7 @@ in {
 
       render-markdown-nvim # avante dep
 
+      avante-nvim
 
       bufresize-nvim
       # hbac-nvim
