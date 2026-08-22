@@ -54,11 +54,21 @@ local menu        = "rofi -show drun"
 -- Autostart necessary processes (like notifications daemons, status bars, etc.)
 -- Or execute your favorite apps at launch like this:
 --
--- hl.on("hyprland.start", function () 
+-- hl.on("hyprland.start", function ()
 --   hl.exec_cmd(terminal)
 --   hl.exec_cmd("nm-applet")
 --   hl.exec_cmd("waybar & hyprpaper & firefox")
 -- end)
+
+-- The [workspace ... silent] prefix is a one-shot rule: it only tags the
+-- window(s) spawned by *this* exec, not every firefox window opened later.
+hl.on("hyprland.start", function ()
+  hl.exec_cmd("[workspace special:browser silent] firefox")
+  hl.exec_cmd("[workspace special:comm silent] discord")
+  hl.exec_cmd("[workspace special:magic silent] solaar")
+end)
+
+
 
 
 -------------------------------
@@ -112,7 +122,7 @@ require('hyprland.style')
 --     rounding    = 0,
 -- })
 
--- See https://wiki.hypr.land/Configuring/Layouts/Dwindle-Layout/ for more
+-- See https://wiki.hypr.land/SQL,Configuring/Layouts/Dwindle-Layout/ for more
 hl.config({
     dwindle = {
         preserve_split = true, -- You probably want this
@@ -275,8 +285,18 @@ for i = 1, 10 do
 end
 
 -- Example special workspace (scratchpad)
-hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("comm"))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:comm" }))
+
+hl.bind(mainMod .. " + Z",         hl.dsp.workspace.toggle_special("magic"))
+hl.bind(mainMod .. " + SHIFT + Z", hl.dsp.window.move({ workspace = "special:magic" }))
+
+hl.bind(mainMod .. " + A",         hl.dsp.workspace.toggle_special("browser"))
+hl.bind(mainMod .. " + SHIFT + A", hl.dsp.window.move({ workspace = "special:browser" }))
+
+hl.bind(mainMod .. " + W",         hl.dsp.workspace.toggle_special("vm"))
+hl.bind(mainMod .. " + SHIFT + W", hl.dsp.window.move({ workspace = "special:vm" }))
+
 
 -- Scroll through existing workspaces with mainMod + scroll
 hl.bind(mainMod .. " + SHIFT + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
@@ -412,6 +432,10 @@ for i = 1, 10 do
     hl.workspace_rule({ workspace = "" .. key, layout="scrolling" })
 end
 
+hl.workspace_rule({ workspace = "special:browser", layout="scrolling" })
+hl.workspace_rule({ workspace = "special:comm", layout="scrolling" })
+hl.workspace_rule({ workspace = "special:magic", layout="scrolling" })
+
 -- hl.workspace_rule({ workspace = "1", layout="scrolling" })   
 
 local suppressMaximizeRule = hl.window_rule({
@@ -437,6 +461,30 @@ hl.window_rule({
     },
 
     no_focus = true,
+})
+
+
+hl.workspace_rule({
+    workspace = "special:vm",
+    monitor = "DP-3"
+})
+
+hl.window_rule({
+    name  = "looking-glass-in-vm",
+    match = { 
+        class = "looking-glass-client"
+    },
+    workspace = "special:vm",
+    fullscreen=true
+})
+
+hl.window_rule({
+    -- Fix some dragging issues with XWayland
+    name  = "discord-in-comm",
+    match = { 
+        initial_class = "discord"
+    },
+    workspace = "special:comm silent"
 })
 
 hl.window_rule({
@@ -470,3 +518,4 @@ hl.window_rule({
     float = true,
 })
 
+hl.bind(mainMod .. " + SHIFT + P",         hl.dsp.exec_cmd("[silent] flameshot gui"))

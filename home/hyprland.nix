@@ -66,8 +66,8 @@ in {
             {
               # timeout = 90;
               timeout = 660;
-              on-timeout = "${pkgs-unstable.hyprland}/bin/hyprctl dispatch 'hl.dps.dpms({ action = \"disable\"})'";
-              on-resume = "${pkgs-unstable.hyprland}/bin/hyprctl dispatch 'hl.dps.dpms({ action = \"enable\"})'";
+              on-timeout = "${pkgs.hyprland}/bin/hyprctl dispatch 'hl.dps.dpms({ action = \"disable\"})'";
+              on-resume = "${pkgs.hyprland}/bin/hyprctl dispatch 'hl.dps.dpms({ action = \"enable\"})'";
             }
           ]; 
         };
@@ -87,7 +87,7 @@ in {
       };
 
       Service = {
-        ExecStart = "${pkgs-unstable.hyprpolkitagent}/libexec/hyprpolkitagent";
+        ExecStart = "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent";
       };
     };
 

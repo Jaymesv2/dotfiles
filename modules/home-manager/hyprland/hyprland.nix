@@ -12,7 +12,7 @@
   };
 
   home.file.hyprlandImport = let 
-    myPlugins = with pkgs-unstable.hyprlandPlugins; [ /*hyprspace*/ ];
+    myPlugins = with pkgs.hyprlandPlugins; [ /*hyprspace*/ ];
   loadLines = lib.concatMapStringsSep "\n"
     (p: ''hl.exec_cmd("hyprctl plugin load ${p}/lib/lib${p.pname}.so")'')
     # nixpkgs builds these as lib<name>.so — verify the exact filename below

@@ -1,12 +1,12 @@
 { lib, pkgs, options, config, ... }: {
   xdg = {
-    # Maybe this would be useful at some point
-    # autostart = {
-    #   enable = true;
-    #   entries = [
-    #     
-    #   ];
-    # };
+    autostart = {
+      enable = true;
+      readOnly = true;
+      entries = [
+        "${config.programs.discord.package}/share/applications/discord.desktop"
+      ];
+    };
     #enable = true;
     portal = {
       enable = true;

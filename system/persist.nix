@@ -15,7 +15,6 @@
       { directory = "/var/lib/fprint"; user = "root"; group = "root"; mode = "u=rwx,g=,o="; }
       { directory = "/var/lib/flatpak"; user = "root"; group = "root"; mode = "u=rwx,g=rx,o=x"; }
       "/var/lib/systemd/coredump"
-      { directory = "/var/lib/swtpm-localca"; user = "tss"; group = "tss"; mode="u=rwx,g=x,o=x"; }
       "/etc/NetworkManager/system-connections"
 
       { directory = "/var/lib/colord"; user = "colord"; group = "colord"; mode = "u=rwx,g=rx,o="; }

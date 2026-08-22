@@ -43,6 +43,13 @@
     awww.url = "git+https://codeberg.org/LGFae/awww";
     awww.inputs.nixpkgs.follows = "nixpkgs";
     self.submodules = true;
+
+    creamlinux-installer = {
+      type = "github";
+      owner = "Novattz";
+      repo = "creamlinux-installer";
+      flake = false;
+    };
   };
 
   outputs = inputs@{flake-parts, nixpkgs, home-manager, nix-gaming, nixpkgs-unstable, nix-index-database, sops-nix,  ... }: 
@@ -69,6 +76,7 @@
 
         in {
             packages.wifiman = pkgs-unstable.callPackage ./pkgs/wifiman.nix {};
+            packages.creamlinux = (((import inputs.creamlinux-installer).override { pname = "creamlinux";}) { inherit pkgs; });
             # packages.default = home-manager.defaultPackage;
             _module.args.pkgs = import inputs.nixpkgs {
                 inherit system;

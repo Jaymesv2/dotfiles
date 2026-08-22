@@ -27,7 +27,6 @@ in {
     codex
     codex-acp
     mcphub
-    mcp-nixos
     mcp-proxy
     openssl
     neovide
@@ -43,6 +42,7 @@ in {
     uv
   ]) ++ (with pkgs-unstable; [
     tinymist
+    mcp-nixos
     websocat
   ]);
 

@@ -116,7 +116,7 @@ in{
     enable = true;
     withUWSM = true;
     portalPackage = pkgs.xdg-desktop-portal-hyprland;
-    package = pkgs-unstable.hyprland;
+    package = pkgs.hyprland;
     systemd.setPath.enable = true;
     xwayland.enable = true;
 
