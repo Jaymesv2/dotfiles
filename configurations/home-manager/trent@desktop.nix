@@ -9,6 +9,7 @@
         nix-gaming.packages.${pkgs.stdenv.hostPlatform.system}.osu-stable
     ];
     services.hypridle.enable = false;
+    programs.discord.package = (pkgs.discord.override { commandLineArgs = "--ozone-platform=x11 --disable-features=UseOzonePlatform"; });
 
 
 }
