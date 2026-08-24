@@ -122,7 +122,7 @@
     description = "Trent";
     group = "trent";
     shell = pkgs.zsh;
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" "tss" config.users.groups.plugdev.name ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" "tss" config.users.groups.plugdev.name "input" "render" "video" ];
     packages = with pkgs; [];
     hashedPassword = "$y$j9T$PoIVXXZUTD0aNXvUtlmyK/$VJH7ZxK7V9Caq99dpvrjPhJY/nKrjrzBpHZYSdBWu53";
     # hashedPasswordFile = config.sops.secrets.trent-password.path;
