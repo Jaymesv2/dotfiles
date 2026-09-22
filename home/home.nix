@@ -122,7 +122,7 @@
       # peazip
 
       # ----- applications -----
-    
+        jellyfin-desktop
         # communication
         # discord
         # signal-desktop

@@ -25,7 +25,7 @@ in {
   
   home.packages = (with pkgs; [
     codex
-    codex-acp
+    # codex-acp
     mcphub
     mcp-proxy
     openssl

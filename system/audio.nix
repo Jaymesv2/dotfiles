@@ -46,7 +46,17 @@
     security.rtkit.enable = true;
 
     environment.systemPackages = with pkgs; [
-        pulseaudioFull
+        # pipewire's pipewire-pulse already serves the PulseAudio protocol;
+        # pulseaudioFull is only kept for its CLI tools (pactl etc). Its own
+        # daemon must never autostart, so drop the XDG autostart entry that
+        # tries to launch `start-pulseaudio-x11` (systemd's xdg-autostart
+        # generator turns it into app-pulseaudio@autostart.service, which
+        # fails on every home-manager/nixos activation).
+        (pulseaudioFull.overrideAttrs (old: {
+            postInstall = (old.postInstall or "") + ''
+                rm -rf $out/etc/xdg/autostart
+            '';
+        }))
         # Console mixer
         pulsemixer
         # Equalizer on sterids
